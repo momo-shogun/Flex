@@ -1,682 +1,783 @@
-# Advanced Features & Innovation Ideas
+# Advanced Features & Innovation Ideas (Tambo Edition)
 ## Take Your Project to the Next Level
 
 ---
 
-## 🚀 Next-Level Features
+## 🤖 Tambo-Powered Features
 
-### 1. **AI Component Generation from Screenshots**
+Instead of complex API integrations, use tambo to build these features conversationally!
 
-Upload a screenshot of any UI → AI generates matching components
+---
+
+## 🚀 Core Features (Must-Have)
+
+### 1. **Component Showcase Canvas**
+
+Interactive grid showing all design system components
 
 ```typescript
-// Implementation concept
-const generateFromScreenshot = async (image: File) => {
-  const base64 = await convertToBase64(image);
-  
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      messages: [{
-        role: 'user',
-        content: [
-          {
-            type: 'image',
-            source: { type: 'base64', media_type: 'image/png', data: base64 }
-          },
-          {
-            type: 'text',
-            text: `Analyze this UI and generate React component code with:
-            1. Component structure
-            2. Props interface
-            3. Tailwind classes
-            4. Accessibility attributes
-            5. Design tokens used
-            
-            Return as JSON with: { component, props, tokens, a11y }`
-          }
-        ]
-      }],
-    })
-  });
-  
-  // AI returns complete component definition
-  return parseComponentFromAI(response);
-};
+// src/components/canvas/Canvas.tsx
+
+export function Canvas() {
+  const selectedId = useDesignSystemStore((s) => s.selectedId);
+
+  return (
+    <div className="flex-1 overflow-auto bg-slate-100 p-8">
+      <div className="max-w-6xl mx-auto space-y-8">
+        
+        {/* Buttons Section */}
+        <section>
+          <h2 className="text-xl font-bold mb-4">Buttons</h2>
+          <div className="flex flex-wrap gap-4">
+            <InteractableButton id="btn-1" type="Button" variant="solid">
+              Solid Button
+            </InteractableButton>
+            <InteractableButton id="btn-2" type="Button" variant="outline">
+              Outline Button
+            </InteractableButton>
+            <InteractableButton id="btn-3" type="Button" variant="ghost">
+              Ghost Button
+            </InteractableButton>
+            <InteractableButton id="btn-4" type="Button" variant="link">
+              Link Button
+            </InteractableButton>
+          </div>
+        </section>
+
+        {/* Inputs Section */}
+        <section>
+          <h2 className="text-xl font-bold mb-4">Inputs</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <InteractableInput
+              id="input-1"
+              type="Input"
+              label="Email"
+              placeholder="you@example.com"
+            />
+            <InteractableInput
+              id="input-2"
+              type="Input"
+              label="Password"
+              inputType="password"
+              placeholder="••••••••"
+            />
+          </div>
+        </section>
+
+        {/* Cards Section */}
+        <section>
+          <h2 className="text-xl font-bold mb-4">Cards</h2>
+          <div className="grid grid-cols-3 gap-4">
+            <InteractableCard id="card-1" type="Card" variant="elevated" hover>
+              <h3 className="font-semibold mb-2">Elevated Card</h3>
+              <p className="text-sm text-gray-600">With hover effect</p>
+            </InteractableCard>
+            <InteractableCard id="card-2" type="Card" variant="outlined">
+              <h3 className="font-semibold mb-2">Outlined Card</h3>
+              <p className="text-sm text-gray-600">With border</p>
+            </InteractableCard>
+            <InteractableCard id="card-3" type="Card" variant="filled">
+              <h3 className="font-semibold mb-2">Filled Card</h3>
+              <p className="text-sm text-gray-600">With background</p>
+            </InteractableCard>
+          </div>
+        </section>
+
+        {/* Alerts Section */}
+        <section>
+          <h2 className="text-xl font-bold mb-4">Alerts</h2>
+          <div className="space-y-3">
+            <InteractableAlert id="alert-1" type="Alert" variant="info" title="Info">
+              This is an informational message
+            </InteractableAlert>
+            <InteractableAlert id="alert-2" type="Alert" variant="success" title="Success">
+              Operation completed successfully
+            </InteractableAlert>
+            <InteractableAlert id="alert-3" type="Alert" variant="warning" title="Warning">
+              Please review before continuing
+            </InteractableAlert>
+            <InteractableAlert id="alert-4" type="Alert" variant="error" title="Error">
+              Something went wrong
+            </InteractableAlert>
+          </div>
+        </section>
+
+        {/* More sections... */}
+      </div>
+    </div>
+  );
+}
 ```
 
-**Why this kills**: Designers can show you ANY app and you replicate it instantly.
+**Ask tambo:** "Create Canvas with sections for all 10 components"
 
 ---
 
-### 2. **Design System Diff Tool**
+### 2. **Live Inspector Panel**
 
-Compare two versions of your design system side-by-side
+Edit any component prop in real-time with instant GSAP feedback
 
-```
-┌─────────────────────────────────────────────┐
-│  Version 1.0          →    Version 2.0      │
-├─────────────────────────────────────────────┤
-│  Primary: #3B82F6     →    Primary: #2563EB │
-│  Radius: 4px          →    Radius: 8px      │
-│  Spacing: 1rem        →    Spacing: 1.5rem  │
-│                                              │
-│  Impact:                                     │
-│  ✅ Contrast improved by 15%                │
-│  ✅ Visual hierarchy stronger               │
-│  ⚠️  Migration affects 47 components        │
-└─────────────────────────────────────────────┘
-```
+**Features:**
+- Click component → Inspector shows all editable props
+- Change variant/size/color → Component animates
+- TypeScript autocomplete for prop values
+- Reset to defaults button
+- Copy component code button
 
-**Features**:
-- Visual diff with highlighting
-- Migration impact analysis
-- Automated migration scripts
-- Rollback capability
+**Ask tambo:** "Enhance Inspector with color picker, slider for numbers, and reset button"
 
 ---
 
-### 3. **Live Collaboration with AI Mediator**
+### 3. **Accessibility Dashboard**
 
-Multiple designers/devs work together + AI suggests consensus
+Real-time WCAG compliance scoring
 
 ```typescript
-interface CollaborationState {
-  users: User[];
-  cursors: Map<string, { x: number; y: number }>;
-  proposals: Proposal[];
-  aiSuggestion?: string;
+// src/components/toolbar/A11yScore.tsx
+
+export function A11yScore() {
+  const score = useDesignSystemStore((s) => s.a11yScore);
+  const issues = useDesignSystemStore((s) => s.a11yIssues);
+
+  const criticalCount = issues.filter((i) => i.impact === 'critical').length;
+  const seriousCount = issues.filter((i) => i.impact === 'serious').length;
+
+  const bgColor =
+    score >= 90 ? 'bg-green-50 text-green-700' :
+    score >= 70 ? 'bg-yellow-50 text-yellow-700' :
+    'bg-red-50 text-red-700';
+
+  return (
+    <div className={`px-3 py-1.5 rounded-lg font-medium text-sm ${bgColor}`}>
+      <span className="mr-2">♿ {score}%</span>
+      {criticalCount > 0 && <span className="text-xs">🔴 {criticalCount}</span>}
+      {seriousCount > 0 && <span className="text-xs ml-1">🟡 {seriousCount}</span>}
+    </div>
+  );
 }
-
-// When users disagree
-const mediateConflict = async (proposals: Proposal[]) => {
-  const prompt = `
-  User A wants: ${proposals[0].description}
-  User B wants: ${proposals[1].description}
-  
-  Current design system: ${systemState}
-  
-  Suggest a compromise that:
-  1. Honors both intentions
-  2. Maintains consistency
-  3. Improves accessibility
-  `;
-  
-  const mediation = await callClaude(prompt);
-  return mediation; // "How about we..."
-};
 ```
 
-**Why this kills**: AI as design referee = future of collaboration
+**Features to add:**
+- Live contrast checker
+- Keyboard navigation validator
+- ARIA attribute checker
+- Touch target size validator (min 44x44px)
+- One-click fix for common issues
+
+**Ask tambo:** "Create A11y analyzer that checks contrast, ARIA, keyboard nav, and touch targets"
 
 ---
 
-### 4. **Responsive Preview Matrix**
+### 4. **Undo/Redo with History Timeline**
 
-See all breakpoints simultaneously with AI suggestions
-
-```
-┌──────────┬──────────┬──────────┬──────────┐
-│  Mobile  │  Tablet  │  Laptop  │  Desktop │
-│  375px   │  768px   │  1024px  │  1920px  │
-├──────────┼──────────┼──────────┼──────────┤
-│  [UI]    │  [UI]    │  [UI]    │  [UI]    │
-│          │          │          │          │
-│  💡 AI: Font too small on mobile           │
-│  💡 AI: Touch targets ok on tablet         │
-└────────────────────────────────────────────┘
-```
-
-**AI analyzes each breakpoint**:
-- Text readability
-- Touch target sizes
-- Layout issues
-- Performance impact
-
----
-
-### 5. **Semantic Design Tokens**
-
-Move beyond colors to semantic meaning
+Visual timeline of all design changes
 
 ```typescript
-// Instead of:
-colors: {
-  primary: '#3B82F6',
-  secondary: '#8B5CF6'
-}
+// src/components/toolbar/HistoryTimeline.tsx
 
-// Use:
-semantic: {
-  action: {
-    primary: { color: '#3B82F6', meaning: 'Call to action' },
-    secondary: { color: '#8B5CF6', meaning: 'Less emphasis' },
-    destructive: { color: '#EF4444', meaning: 'Dangerous action' }
-  },
-  feedback: {
-    success: { color: '#10B981', meaning: 'Positive outcome' },
-    warning: { color: '#F59E0B', meaning: 'Caution needed' },
-    error: { color: '#EF4444', meaning: 'Problem occurred' }
-  },
-  surface: {
-    base: { color: '#FFFFFF', meaning: 'Primary background' },
-    elevated: { color: '#F9FAFB', meaning: 'Cards, modals' }
-  }
+export function HistoryTimeline() {
+  const history = useDesignSystemStore((s) => s.history);
+  const historyIndex = useDesignSystemStore((s) => s.historyIndex);
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg"
+      >
+        History ({history.length})
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-3 z-50">
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {history.map((snapshot, index) => (
+              <div
+                key={index}
+                className={clsx(
+                  'p-2 rounded text-sm cursor-pointer',
+                  index === historyIndex
+                    ? 'bg-blue-100 text-blue-800 font-medium'
+                    : 'hover:bg-gray-100'
+                )}
+              >
+                Step {index + 1}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 ```
 
-**AI understands context**:
-- "Make error states more noticeable" → adjusts `feedback.error`
-- "Soften call-to-actions" → adjusts `action.primary`
+**Ask tambo:** "Add visual history timeline with clickable snapshots"
 
 ---
 
-### 6. **Micro-Interaction Studio**
+### 5. **Theme Switcher**
 
-Design animations conversationally
-
-```
-User: "Make the button feel more responsive"
-
-AI generates:
-{
-  hover: {
-    scale: 1.05,
-    transition: 'transform 0.2s ease-out'
-  },
-  active: {
-    scale: 0.95,
-    transition: 'transform 0.1s ease-in'
-  },
-  tap: {
-    ripple: true,
-    color: 'rgba(59, 130, 246, 0.3)'
-  }
-}
-```
-
-**GSAP integration**:
-```typescript
-const applyMicroInteraction = (element: HTMLElement, config: any) => {
-  gsap.to(element, {
-    ...config.hover,
-    paused: true,
-  }).eventCallback('onStart', () => {
-    // Trigger on hover
-  });
-};
-```
-
----
-
-### 7. **Design System Health Dashboard**
-
-Real-time metrics on your design system
-
-```
-┌─────────────────────────────────────────┐
-│  📊 Design System Health                │
-├─────────────────────────────────────────┤
-│  Consistency Score:        87/100       │
-│  Accessibility Score:      95/100       │
-│  Token Usage:              73%          │
-│  Redundant Styles:         12           │
-│  Unused Components:        3            │
-│                                          │
-│  🔥 Hot Issues:                         │
-│  • 5 components missing focus states    │
-│  • 3 color tokens not in palette        │
-│  • 2 components below contrast minimum  │
-│                                          │
-│  💡 AI Recommendations:                 │
-│  → Consolidate similar button variants  │
-│  → Standardize spacing across cards     │
-│  → Add dark mode variants               │
-└─────────────────────────────────────────┘
-```
-
----
-
-### 8. **Natural Language CSS**
-
-Write styles in plain English
-
-```
-User: "Make the card have a subtle shadow that lifts on hover"
-
-AI generates:
-{
-  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-  transition: 'box-shadow 0.3s ease',
-  '&:hover': {
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
-  }
-}
-
-User: "Make text easier to read"
-
-AI generates:
-{
-  fontSize: '1rem',
-  lineHeight: '1.6',
-  letterSpacing: '0.01em',
-  color: '#1F2937',
-  fontWeight: '400'
-}
-```
-
----
-
-### 9. **A11y Impact Simulator**
-
-Experience your UI from different perspectives
-
-**Modes**:
-1. **Low Vision**: Blur effect + high contrast
-2. **Color Blindness**: Deuteranopia, Protanopia, Tritanopia filters
-3. **Motor Impairment**: Large click targets, keyboard-only nav
-4. **Screen Reader**: Visual description overlay
+Toggle between light/dark and preset themes
 
 ```typescript
-const simulateVisionImpairment = (type: VisionType) => {
-  const filters = {
-    lowVision: 'blur(2px) contrast(150%)',
-    deuteranopia: 'url(#deuteranopia-filter)',
-    protanopia: 'url(#protanopia-filter)',
-    tritanopia: 'url(#tritanopia-filter)',
+// src/components/toolbar/ThemeSwitch.tsx
+
+export function ThemeSwitch() {
+  const theme = useDesignSystemStore((s) => s.theme);
+  const updateTheme = useDesignSystemStore((s) => s.updateTheme);
+  const snapshot = useDesignSystemStore((s) => s.snapshot);
+
+  const toggleMode = () => {
+    snapshot();
+    updateTheme({
+      mode: theme.mode === 'light' ? 'dark' : 'light',
+      colors: theme.mode === 'light' ? getDarkColors() : getLightColors(),
+    });
   };
-  
-  document.body.style.filter = filters[type];
-  
-  // AI analyzes and suggests improvements
-  analyzeAccessibility(type);
-};
-```
 
----
+  return (
+    <button
+      onClick={toggleMode}
+      className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg"
+    >
+      {theme.mode === 'light' ? '🌙' : '☀️'} {theme.mode}
+    </button>
+  );
+}
 
-### 10. **Component Genealogy Tree**
-
-Visual hierarchy of component relationships
-
-```
-BaseButton
-├─ PrimaryButton (inherits all props)
-│  ├─ CTAButton (adds pulse animation)
-│  └─ SubmitButton (adds loading state)
-├─ SecondaryButton
-└─ GhostButton
-    └─ LinkButton (removes background)
-
-AI: "Changing BaseButton.radius affects 6 descendant components"
-```
-
----
-
-### 11. **Design Token Playground**
-
-Interactive token explorer with live preview
-
-```
-┌─────────────────────────────────────────┐
-│  🎨 Token Playground                    │
-├─────────────────────────────────────────┤
-│                                          │
-│  Primary Color: [■ #3B82F6]             │
-│  ├─ 50:  #EFF6FF                        │
-│  ├─ 100: #DBEAFE                        │
-│  ├─ 200: #BFDBFE                        │
-│  ├─ ... (auto-generated scale)          │
-│  └─ 900: #1E3A8A                        │
-│                                          │
-│  Preview:                                │
-│  [Button using primary-500]             │
-│  [Text using primary-700]               │
-│                                          │
-│  💡 AI: This shade works well for        │
-│     actions but may lack contrast       │
-│     for text. Try primary-700.          │
-└─────────────────────────────────────────┘
-```
-
----
-
-### 12. **Export to Multiple Formats**
-
-One design system → many platforms
-
-```typescript
-export const generateExports = async (designSystem: DesignSystem) => {
+function getDarkColors() {
   return {
-    // Web
-    tailwind: generateTailwindConfig(designSystem),
-    css: generateCSSVariables(designSystem),
-    scss: generateSassVariables(designSystem),
-    
-    // React
-    styledComponents: generateStyledComponentsTheme(designSystem),
-    emotionTheme: generateEmotionTheme(designSystem),
-    
-    // Mobile
-    reactNative: generateRNStyleSheet(designSystem),
-    swiftUI: generateSwiftUITokens(designSystem),
-    androidXML: generateAndroidResources(designSystem),
-    
-    // Design tools
-    figmaTokens: generateFigmaVariables(designSystem),
-    sketchPalette: generateSketchPalette(designSystem),
-    
-    // Documentation
-    storybook: generateStorybookStories(designSystem),
-    markdown: generateMarkdownDocs(designSystem),
+    primary: '#60A5FA',
+    secondary: '#A78BFA',
+    success: '#34D399',
+    warning: '#FBBF24',
+    error: '#F87171',
+    neutral: '#9CA3AF',
   };
-};
+}
 ```
+
+**Preset themes to add:**
+- Material Design 3
+- Minimal (monochrome)
+- Playful (rounded, colorful)
+- Enterprise (professional)
+- Brutalist (sharp, high-contrast)
+
+**Ask tambo:** "Add theme presets and smooth transition animation"
 
 ---
 
-### 13. **AI Style Guide Generator**
+### 6. **Export Playground**
 
-Auto-generate documentation from usage
-
-```markdown
-# Button Component
-
-## Usage
-Buttons are used for actions and navigation. They come in 4 variants.
-
-## Variants
-
-### Primary (Use for main actions)
-- 67% of buttons in the system use this variant
-- High contrast ratio: 7.2:1
-- Commonly paired with: icons, loading states
-
-### Secondary (Use for less important actions)
-- 23% of usage
-- Works well in groups
-- Best for: Cancel, Back, Skip
-
-## Accessibility
-✅ WCAG AAA compliant
-✅ Keyboard navigable
-✅ Screen reader friendly
-
-## Common Patterns
-- Forms: Primary for submit, Secondary for cancel
-- Modals: Primary for confirm, Ghost for close
-- Navigation: Ghost for menu items
-
-## AI Insight
-"Primary buttons are overused in Settings page.
-Consider Secondary for non-critical actions."
-```
-
----
-
-### 14. **Voice-Controlled Design**
-
-Hands-free UI editing
+Export design system in multiple formats
 
 ```typescript
-// Setup Web Speech API
-const recognition = new webkitSpeechRecognition();
+// src/utils/export-utils.ts
 
-recognition.onresult = (event) => {
-  const command = event.results[0][0].transcript;
-  
-  // Process natural language
-  processVoiceCommand(command);
+export function exportToTailwind(theme: Theme, tokens: DesignTokens) {
+  return `
+module.exports = {
+  theme: {
+    extend: {
+      colors: ${JSON.stringify(theme.colors, null, 2)},
+      spacing: ${JSON.stringify(theme.spacing, null, 2)},
+      borderRadius: ${JSON.stringify(theme.radius, null, 2)},
+      boxShadow: ${JSON.stringify(theme.shadows, null, 2)},
+    },
+  },
 };
+  `.trim();
+}
 
-// Voice commands:
-"Make everything blue"
-"Increase font sizes"
-"Fix accessibility issues"
-"Show me the button component"
-"Undo that change"
-"Export to Tailwind"
+export function exportToCSSVariables(theme: Theme) {
+  return `
+:root {
+  /* Colors */
+${Object.entries(theme.colors).map(([key, val]) => `  --color-${key}: ${val};`).join('\n')}
+
+  /* Spacing */
+${Object.entries(theme.spacing).map(([key, val]) => `  --spacing-${key}: ${val};`).join('\n')}
+
+  /* Border Radius */
+${Object.entries(theme.radius).map(([key, val]) => `  --radius-${key}: ${val};`).join('\n')}
+
+  /* Shadows */
+${Object.entries(theme.shadows).map(([key, val]) => `  --shadow-${key}: ${val};`).join('\n')}
+}
+  `.trim();
+}
+
+export function exportToJSON(theme: Theme, tokens: DesignTokens) {
+  return JSON.stringify({ theme, tokens }, null, 2);
+}
 ```
 
-**Demo factor**: 🔥🔥🔥🔥🔥
+**Export formats:**
+- Tailwind config
+- CSS variables
+- JSON tokens
+- Figma plugin format
+- React Native styles
+
+**Ask tambo:** "Add export modal with code preview and copy button"
 
 ---
 
-### 15. **Smart Component Suggestions**
+### 7. **Command Palette (Cmd+K)**
 
-AI proactively suggests improvements
+Keyboard-first workflow
+
+```typescript
+// src/components/overlays/CommandPalette.tsx
+
+import { useEffect, useState } from 'react';
+
+export function CommandPalette() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsOpen(true);
+      }
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  if (!isOpen) return null;
+
+  const commands = [
+    { id: 'undo', label: 'Undo', shortcut: 'Cmd+Z' },
+    { id: 'redo', label: 'Redo', shortcut: 'Cmd+Shift+Z' },
+    { id: 'toggle-theme', label: 'Toggle theme', shortcut: 'Cmd+T' },
+    { id: 'export', label: 'Export', shortcut: 'Cmd+E' },
+    { id: 'a11y', label: 'Check accessibility', shortcut: 'Cmd+A' },
+  ];
+
+  const filtered = commands.filter((cmd) =>
+    cmd.label.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-start justify-center pt-32 z-50">
+      <div className="w-full max-w-2xl bg-white rounded-lg shadow-2xl">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Type a command..."
+          className="w-full px-4 py-3 border-b border-gray-200 focus:outline-none text-lg"
+          autoFocus
+        />
+        <div className="max-h-96 overflow-y-auto p-2">
+          {filtered.map((cmd) => (
+            <button
+              key={cmd.id}
+              className="w-full px-4 py-3 flex justify-between items-center hover:bg-gray-100 rounded-lg text-left"
+            >
+              <span>{cmd.label}</span>
+              <span className="text-sm text-gray-500">{cmd.shortcut}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+**Ask tambo:** "Add command palette with fuzzy search"
+
+---
+
+### 8. **Component Variants Explorer**
+
+See all variants of a component at once
 
 ```
 ┌─────────────────────────────────────────┐
-│  💡 Smart Suggestions                   │
+│ Button Variants                         │
 ├─────────────────────────────────────────┤
-│                                          │
-│  🎨 You're using 7 shades of blue       │
-│     → Consolidate to 5 token colors     │
-│     [Apply]                              │
-│                                          │
-│  ♿ 3 buttons lack :focus states         │
-│     → Add global focus ring             │
-│     [Fix All]                            │
-│                                          │
-│  📏 Spacing is inconsistent              │
-│     → Adopt 8px grid system             │
-│     [Preview] [Apply]                    │
-│                                          │
-│  🌙 Missing dark mode                   │
-│     → Generate dark theme               │
-│     [Auto-Generate]                      │
-│                                          │
-│  🚀 Bundle size: 47kb                   │
-│     → Remove unused Radix primitives    │
-│     [Optimize]                           │
+│ ┌──────────┐ ┌──────────┐ ┌──────────┐ │
+│ │  Solid   │ │ Outline  │ │  Ghost   │ │
+│ └──────────┘ └──────────┘ └──────────┘ │
+│                                         │
+│ ┌────┐ ┌──────┐ ┌────────┐             │
+│ │ SM │ │  MD  │ │   LG   │             │
+│ └────┘ └──────┘ └────────┘             │
 └─────────────────────────────────────────┘
 ```
 
+**Ask tambo:** "Create variant explorer that shows all combinations"
+
 ---
 
-## 🎭 Advanced GSAP Animations
+### 9. **Before/After Comparison Mode**
 
-### Morph Animation (Component Evolution)
+See changes before committing
 
 ```typescript
-const morphComponent = (from: Component, to: Component) => {
-  const tl = gsap.timeline();
-  
-  // Phase 1: Preparation
-  tl.to(from.element, {
-    opacity: 0.5,
-    scale: 0.95,
-    duration: 0.3,
-  });
-  
-  // Phase 2: Transform
-  tl.to(from.element, {
-    ...calculateMorphProps(from, to),
-    duration: 0.8,
-    ease: 'power2.inOut',
-  });
-  
-  // Phase 3: Solidify
-  tl.to(from.element, {
-    opacity: 1,
-    scale: 1,
-    duration: 0.3,
-  });
-  
-  // Particle effect for dramatic changes
-  if (hasSignificantChange(from, to)) {
-    createParticleEffect(from.element);
-  }
+// src/components/overlays/CompareMode.tsx
+
+export function CompareMode() {
+  const [sliderPosition, setSliderPosition] = useState(50);
+  const history = useDesignSystemStore((s) => s.history);
+  const currentIndex = useDesignSystemStore((s) => s.historyIndex);
+
+  const before = history[currentIndex - 1];
+  const after = history[currentIndex];
+
+  if (!before || !after) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/90 z-50">
+      <div className="relative h-full">
+        {/* Before (left) */}
+        <div
+          className="absolute top-0 left-0 h-full overflow-hidden"
+          style={{ width: `${sliderPosition}%` }}
+        >
+          <CanvasSnapshot state={before} />
+          <div className="absolute top-4 left-4 bg-white px-3 py-1 rounded-lg text-sm font-medium">
+            Before
+          </div>
+        </div>
+
+        {/* After (right) */}
+        <div
+          className="absolute top-0 right-0 h-full overflow-hidden"
+          style={{ width: `${100 - sliderPosition}%` }}
+        >
+          <CanvasSnapshot state={after} />
+          <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-lg text-sm font-medium">
+            After
+          </div>
+        </div>
+
+        {/* Slider */}
+        <div
+          className="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize"
+          style={{ left: `${sliderPosition}%` }}
+          onMouseDown={(e) => {
+            const handleMove = (e: MouseEvent) => {
+              const percent = (e.clientX / window.innerWidth) * 100;
+              setSliderPosition(Math.max(0, Math.min(100, percent)));
+            };
+            const handleUp = () => {
+              window.removeEventListener('mousemove', handleMove);
+              window.removeEventListener('mouseup', handleUp);
+            };
+            window.addEventListener('mousemove', handleMove);
+            window.addEventListener('mouseup', handleUp);
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+```
+
+**Ask tambo:** "Add before/after slider with drag interaction"
+
+---
+
+### 10. **Responsive Preview**
+
+Test components at different breakpoints
+
+```typescript
+// src/components/overlays/ResponsivePreview.tsx
+
+export function ResponsivePreview() {
+  const [viewport, setViewport] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
+
+  const sizes = {
+    mobile: { width: 375, label: 'Mobile (375px)' },
+    tablet: { width: 768, label: 'Tablet (768px)' },
+    desktop: { width: 1440, label: 'Desktop (1440px)' },
+  };
+
+  return (
+    <div className="fixed inset-0 bg-gray-900 z-50">
+      <div className="h-12 bg-white border-b border-gray-200 flex items-center justify-center gap-3">
+        {Object.entries(sizes).map(([key, { label }]) => (
+          <button
+            key={key}
+            onClick={() => setViewport(key as any)}
+            className={clsx(
+              'px-4 py-1.5 rounded-lg text-sm font-medium',
+              viewport === key
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 hover:bg-gray-200'
+            )}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <div className="h-[calc(100vh-3rem)] flex items-center justify-center p-8">
+        <div
+          className="bg-white rounded-lg shadow-2xl overflow-auto"
+          style={{ width: sizes[viewport].width, maxHeight: '100%' }}
+        >
+          <Canvas />
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+**Ask tambo:** "Add responsive preview with live device sizes"
+
+---
+
+## 💎 Polish Features (Nice-to-Have)
+
+### 11. **GSAP Animation Library**
+
+Pre-built animation presets
+
+```typescript
+// src/utils/animations.ts
+
+import gsap from 'gsap';
+
+export const animations = {
+  entrance: {
+    fadeInUp: (el: HTMLElement) => {
+      gsap.from(el, { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out' });
+    },
+    scaleIn: (el: HTMLElement) => {
+      gsap.from(el, { scale: 0.8, opacity: 0, duration: 0.6, ease: 'back.out(1.7)' });
+    },
+    slideInLeft: (el: HTMLElement) => {
+      gsap.from(el, { x: -50, opacity: 0, duration: 0.6, ease: 'power2.out' });
+    },
+  },
+
+  hover: {
+    lift: (el: HTMLElement) => {
+      gsap.to(el, { y: -4, duration: 0.3, ease: 'power2.out' });
+    },
+    grow: (el: HTMLElement) => {
+      gsap.to(el, { scale: 1.05, duration: 0.3, ease: 'power2.out' });
+    },
+  },
+
+  highlight: {
+    pulse: (el: HTMLElement) => {
+      gsap.fromTo(
+        el,
+        { boxShadow: '0 0 0 0px rgba(59, 130, 246, 0.5)' },
+        {
+          boxShadow: '0 0 0 8px rgba(59, 130, 246, 0)',
+          duration: 0.8,
+          repeat: 2,
+        }
+      );
+    },
+    glow: (el: HTMLElement) => {
+      gsap.to(el, {
+        boxShadow: '0 0 20px rgba(59, 130, 246, 0.6)',
+        duration: 0.5,
+        yoyo: true,
+        repeat: 1,
+      });
+    },
+  },
 };
 ```
 
-### Cascade Animation (System-Wide Updates)
+**Ask tambo:** "Add animation preset picker to Inspector"
+
+---
+
+### 12. **Component Health Dashboard**
+
+Design system health metrics
+
+```
+┌─────────────────────────────────────────┐
+│ Design System Health                    │
+├─────────────────────────────────────────┤
+│ Components: 10                          │
+│ Variants: 47                            │
+│ A11y Score: 92%                         │
+│ Consistency: 85%                        │
+│                                         │
+│ Issues:                                 │
+│ ⚠️  2 components missing focus states   │
+│ ⚠️  3 color contrast warnings           │
+│ ✅ All touch targets > 44px             │
+│ ✅ ARIA labels present                  │
+└─────────────────────────────────────────┘
+```
+
+**Ask tambo:** "Create health dashboard with metrics and warnings"
+
+---
+
+### 13. **Copy Component Code**
+
+One-click copy any component's code
 
 ```typescript
-const cascadeUpdate = (components: Component[]) => {
-  // Stagger updates for visual impact
-  gsap.to(components.map(c => c.element), {
-    scale: 1.05,
-    duration: 0.2,
-    stagger: 0.05,
-    yoyo: true,
-    repeat: 1,
-    onComplete: () => {
-      // Apply actual changes
-      applyUpdates(components);
-    }
-  });
-};
+// In Inspector panel
+function CopyCodeButton({ component }: { component: Component }) {
+  const copyCode = () => {
+    const code = `
+<${component.type}
+  ${Object.entries(component.props)
+    .map(([key, val]) => `${key}="${val}"`)
+    .join('\n  ')}
+>
+  {children}
+</${component.type}>
+    `.trim();
+    navigator.clipboard.writeText(code);
+  };
+
+  return (
+    <button
+      onClick={copyCode}
+      className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg"
+    >
+      📋 Copy Code
+    </button>
+  );
+}
 ```
 
-### A11y Fix Animation (Healing Effect)
+**Ask tambo:** "Add copy code button with syntax highlighting"
+
+---
+
+### 14. **Bulk Operations**
+
+Apply changes to multiple components at once
+
+```
+Select multiple components (Shift+Click):
+→ "Make all buttons larger"
+→ "Round all card corners"
+→ "Apply dark theme to all"
+```
+
+**Ask tambo:** "Add multi-select mode and bulk edit"
+
+---
+
+### 15. **Design Tokens Editor**
+
+Visual editor for global tokens
 
 ```typescript
-const animateA11yFix = (element: HTMLElement) => {
-  // Green pulse
-  const tl = gsap.timeline();
-  
-  tl.to(element, {
-    boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
-    duration: 0,
-  });
-  
-  tl.to(element, {
-    boxShadow: '0 0 0 20px rgba(16, 185, 129, 0)',
-    duration: 0.6,
-  });
-  
-  // Check mark overlay
-  const checkmark = createCheckmark();
-  element.appendChild(checkmark);
-  
-  gsap.from(checkmark, {
-    scale: 0,
-    rotation: -180,
-    duration: 0.4,
-    ease: 'back.out(2)',
-  });
-  
-  gsap.to(checkmark, {
-    opacity: 0,
-    duration: 0.3,
-    delay: 0.5,
-    onComplete: () => checkmark.remove(),
-  });
-};
+// src/components/inspector/TokenEditor.tsx
+
+export function TokenEditor() {
+  const tokens = useDesignSystemStore((s) => s.tokens);
+  const updateTokens = useDesignSystemStore((s) => s.updateTokens);
+  const snapshot = useDesignSystemStore((s) => s.snapshot);
+
+  const handleColorChange = (key: string, value: string) => {
+    snapshot();
+    updateTokens({
+      colors: { ...tokens.colors, [key]: value },
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      <h3 className="font-semibold">Design Tokens</h3>
+      
+      {Object.entries(tokens.colors).map(([key, value]) => (
+        <div key={key} className="flex items-center gap-3">
+          <input
+            type="color"
+            value={value}
+            onChange={(e) => handleColorChange(key, e.target.value)}
+            className="w-12 h-12 rounded-lg cursor-pointer"
+          />
+          <div className="flex-1">
+            <div className="font-medium text-sm">{key}</div>
+            <div className="text-xs text-gray-500">{value}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 ```
 
----
-
-## 🎯 Hackathon Judging Optimization
-
-### What Judges Look For
-
-1. **Innovation** (30%)
-   - ✅ First conversational design system
-   - ✅ AI mutates real components
-   - ✅ Accessibility-first approach
-
-2. **Technical Execution** (25%)
-   - ✅ Clean architecture
-   - ✅ TypeScript + type safety
-   - ✅ Real-time updates
-   - ✅ GSAP polish
-
-3. **Practical Value** (25%)
-   - ✅ Solves real dev pain
-   - ✅ Export to production code
-   - ✅ Integrates with existing tools
-
-4. **Presentation** (20%)
-   - ✅ Live demo works flawlessly
-   - ✅ Clear value proposition
-   - ✅ Memorable "wow moments"
+**Ask tambo:** "Add token editor with color picker and live preview"
 
 ---
 
-## 🎤 Perfect Pitch Template
+## 🎯 Implementation Priority
 
-```
-"Design systems are powerful but painful to customize.
+### Phase 1 (Core - Hour 1-3)
+- [x] Basic scaffold
+- [x] withInteractable HOC
+- [x] Zustand store
+- [x] 10 components
+- [x] Canvas
+- [ ] Inspector
+- [ ] Toolbar
 
-[SHOW ugly UI]
+### Phase 2 (Essential - Hour 4-5)
+- [ ] Undo/Redo
+- [ ] Theme switcher
+- [ ] A11y score
+- [ ] Export (Tailwind)
+- [ ] Keyboard shortcuts
 
-Developers spend hours in config files, designers feel
-powerless, and accessibility is an afterthought.
+### Phase 3 (Polish - Hour 6-7)
+- [ ] Command palette
+- [ ] Before/after mode
+- [ ] Animation presets
+- [ ] Variant explorer
+- [ ] Copy code
 
-[DEMO]
-
-Watch this: 'Make this accessible and modern'
-
-[UI transforms magically]
-
-That's our AI-powered design system playground.
-
-You talk to your UI. It updates itself. In real-time.
-
-[SHOW features]:
-- Conversational editing
-- Built-in accessibility
-- Export to any framework
-- Works with real React components
-
-[CLOSE]
-
-We're not replacing design tools.
-We're making design systems human.
-
-Questions?"
-```
-
----
-
-## 🏆 Win Conditions
-
-Your project wins if judges say:
-
-1. ✅ "I want to use this right now"
-2. ✅ "This solves a real problem"
-3. ✅ "The demo was incredible"
-4. ✅ "I've never seen this before"
-5. ✅ "The technical execution is solid"
-
----
-
-## 🚀 Final Checklist
-
-**Before Demo Day**:
-- [ ] Practice demo 10+ times
-- [ ] Test on event WiFi
-- [ ] Record backup video
-- [ ] Prepare for common questions
+### Phase 4 (Demo Ready - Hour 8)
+- [ ] Responsive preview
+- [ ] Health dashboard
 - [ ] Polish animations
-- [ ] Fix any visual bugs
-- [ ] Test accessibility features
-- [ ] Verify export functionality
-- [ ] Clear browser cache
-- [ ] Charge all devices
-
-**During Presentation**:
-- [ ] Start with problem statement
-- [ ] Show ugly before state
-- [ ] Demo AI transformation
-- [ ] Highlight accessibility
-- [ ] Show export feature
-- [ ] End with call to action
-- [ ] Smile and make eye contact
-- [ ] Handle questions confidently
-
-**After Demo**:
-- [ ] Deploy to production URL
-- [ ] Share demo video
-- [ ] Engage with judges
-- [ ] Network with other teams
-- [ ] Get feedback
-- [ ] Celebrate! 🎉
+- [ ] Bug fixes
+- [ ] Demo practice
 
 ---
 
-You have everything you need to build something incredible. Now go make it happen! 🚀
+## 💡 Tambo Workflow Tips
+
+**Instead of building everything manually:**
+
+```
+You: "Add 6 more components following the Button pattern"
+Tambo: [generates Badge, Switch, Checkbox, Select, Tooltip, Modal]
+
+You: "Make all components WCAG AA compliant"
+Tambo: [updates colors, sizes, focus states]
+
+You: "Add export to Tailwind config"
+Tambo: [creates export utility and modal]
+
+You: "Polish GSAP animations for smooth transitions"
+Tambo: [enhances withInteractable animations]
+```
+
+**This is 10x faster than coding manually!**
+
+---
+
+Good luck! 🚀
