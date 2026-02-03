@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { TopBar } from '@/components/layout/TopBar';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { CommandPalette } from '@/components/layout/CommandPalette';
@@ -43,6 +43,9 @@ export type PlaygroundContext = {
 };
 
 export function Layout() {
+  const location = useLocation();
+  const isWebsiteBuilder = location.pathname === '/tools/website-builder';
+
   const [selectedComponent, setSelectedComponent] =
     useState<ComponentId>('split-text');
   const [splitTextProps, setSplitTextProps] =
@@ -92,10 +95,12 @@ export function Layout() {
       />
       <TopBar />
       <div className="flex flex-1 min-h-0">
-        <Sidebar
-          selectedComponent={selectedComponent}
-          onSelectComponent={setSelectedComponent}
-        />
+        {!isWebsiteBuilder && (
+          <Sidebar
+            selectedComponent={selectedComponent}
+            onSelectComponent={setSelectedComponent}
+          />
+        )}
         <Outlet context={context} />
       </div>
     </div>

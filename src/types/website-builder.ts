@@ -1,17 +1,6 @@
-export type BuilderSectionType =
-  | 'header'
-  | 'smooth-scroll-hero'
-  | 'aurora-hero'
-  | 'faq';
+import type { ComponentId } from './components';
 
 export interface BuilderSection {
   id: string;
-  type: BuilderSectionType;
+  type: ComponentId;
 }
-
-export const BUILDER_SECTION_LABELS: Record<BuilderSectionType, string> = {
-  header: 'Header',
-  'smooth-scroll-hero': 'Smooth Scroll Hero',
-  'aurora-hero': 'Aurora Hero',
-  faq: 'FAQ',
-};

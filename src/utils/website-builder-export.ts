@@ -7,21 +7,50 @@ function generateAppTsx(sections: BuilderSection[]): string {
 
   for (const section of sections) {
     switch (section.type) {
-      case 'header':
-        importSet.add("import { Header } from './components/Header';");
-        elements.push(`<Header key="${section.id}" />`);
+      // Text Animations
+      case 'split-text':
+        importSet.add("import { SplitText } from './components/SplitText';");
+        elements.push(`      <div key="${section.id}" className="min-h-screen flex items-center justify-center p-8">`);
+        elements.push(`        <SplitText />`);
+        elements.push(`      </div>`);
         break;
+      case 'blur-text':
+        importSet.add("import { BlurText } from './components/BlurText';");
+        elements.push(`      <div key="${section.id}" className="min-h-screen flex items-center justify-center p-8">`);
+        elements.push(`        <BlurText />`);
+        elements.push(`      </div>`);
+        break;
+      case 'text-cursor':
+        importSet.add("import { TextCursor } from './components/TextCursor';");
+        elements.push(`      <div key="${section.id}" className="min-h-screen flex items-center justify-center p-8">`);
+        elements.push(`        <TextCursor />`);
+        elements.push(`      </div>`);
+        break;
+      // Backgrounds
+      case 'silk':
+      case 'floating-lines':
+      case 'light-pillar':
+        const bgName = section.type === 'silk' ? 'Silk' : section.type === 'floating-lines' ? 'FloatingLines' : 'LightPillar';
+        importSet.add(`import { ${bgName} } from './components/${bgName}';`);
+        elements.push(`      <div key="${section.id}" className="relative min-h-screen">`);
+        elements.push(`        <${bgName} />`);
+        elements.push(`        <div className="relative z-10 flex items-center justify-center h-screen">`);
+        elements.push(`          <h2 className="text-4xl font-bold text-white">${bgName}</h2>`);
+        elements.push(`        </div>`);
+        elements.push(`      </div>`);
+        break;
+      // Sections
       case 'smooth-scroll-hero':
         importSet.add("import { SmoothScrollHero } from './components/SmoothScrollHero';");
-        elements.push(`<SmoothScrollHero key="${section.id}" />`);
+        elements.push(`      <SmoothScrollHero key="${section.id}" />`);
         break;
       case 'aurora-hero':
         importSet.add("import { AuroraHero } from './components/AuroraHero';");
-        elements.push(`<AuroraHero key="${section.id}" />`);
+        elements.push(`      <AuroraHero key="${section.id}" />`);
         break;
       case 'faq':
         importSet.add("import { FAQ } from './components/FAQ';");
-        elements.push(`<FAQ key="${section.id}" />`);
+        elements.push(`      <FAQ key="${section.id}" />`);
         break;
       default:
         break;
@@ -34,7 +63,7 @@ function generateAppTsx(sections: BuilderSection[]): string {
 export default function App() {
   return (
     <div className="min-h-screen bg-slate-950">
-${elements.map((el) => '      ' + el).join('\n')}
+${elements.join('\n')}
     </div>
   );
 }
@@ -141,18 +170,145 @@ const POSTCSS_CONFIG = `export default {
 }
 `;
 
-const HEADER_SOURCE = `import React from 'react';
+// Text Animations
+const SPLIT_TEXT_SOURCE = `import { motion } from 'framer-motion';
 
-export function Header() {
+export function SplitText() {
+  const text = 'Beautiful animated text';
+  const characters = text.split('');
+  
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-slate-900/95 backdrop-blur border-b border-slate-700">
-      <span className="text-lg font-semibold text-white">Your Logo</span>
-      <nav className="flex items-center gap-6 text-sm text-slate-300">
-        <a href="#home" className="hover:text-white">Home</a>
-        <a href="#features" className="hover:text-white">Features</a>
-        <a href="#faq" className="hover:text-white">FAQ</a>
-      </nav>
-    </header>
+    <div className="flex flex-wrap justify-center">
+      {characters.map((char, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.05, duration: 0.5 }}
+          className="text-5xl font-bold text-white"
+        >
+          {char === ' ' ? '\u00A0' : char}
+        </motion.span>
+      ))}
+    </div>
+  );
+}
+`;
+
+const BLUR_TEXT_SOURCE = `import { motion } from 'framer-motion';
+
+export function BlurText() {
+  const text = 'Smooth blur effect';
+  const words = text.split(' ');
+  
+  return (
+    <div className="flex flex-wrap justify-center gap-2">
+      {words.map((word, i) => (
+        <motion.span
+          key={i}
+          initial={{ filter: 'blur(10px)', opacity: 0 }}
+          animate={{ filter: 'blur(0px)', opacity: 1 }}
+          transition={{ delay: i * 0.2, duration: 0.8 }}
+          className="text-5xl font-bold text-white"
+        >
+          {word}
+        </motion.span>
+      ))}
+    </div>
+  );
+}
+`;
+
+const TEXT_CURSOR_SOURCE = `import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+
+export function TextCursor() {
+  const [text, setText] = useState('');
+  const fullText = 'Type with cursor effect';
+  
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i <= fullText.length) {
+        setText(fullText.slice(0, i));
+        i++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+  
+  return (
+    <div className="flex items-center text-5xl font-bold text-white">
+      <span>{text}</span>
+      <motion.span
+        animate={{ opacity: [1, 0] }}
+        transition={{ repeat: Infinity, duration: 0.8 }}
+        className="ml-1 inline-block h-12 w-1 bg-white"
+      />
+    </div>
+  );
+}
+`;
+
+// Backgrounds
+const SILK_SOURCE = `export function Silk() {
+  return (
+    <div className="absolute inset-0 bg-gradient-to-br from-violet-950 via-slate-950 to-blue-950 opacity-50" />
+  );
+}
+`;
+
+const FLOATING_LINES_SOURCE = `import { motion } from 'framer-motion';
+
+export function FloatingLines() {
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {[...Array(20)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute h-px bg-gradient-to-r from-transparent via-violet-500 to-transparent"
+          style={{
+            top: \`\${Math.random() * 100}%\`,
+            left: 0,
+            width: '100%',
+            opacity: 0.2,
+          }}
+          animate={{
+            y: [-20, 20],
+            opacity: [0.1, 0.3, 0.1],
+          }}
+          transition={{
+            duration: 3 + Math.random() * 2,
+            repeat: Infinity,
+            delay: Math.random() * 2,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+`;
+
+const LIGHT_PILLAR_SOURCE = `import { motion } from 'framer-motion';
+
+export function LightPillar() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+      <motion.div
+        className="h-full w-64 bg-gradient-to-b from-transparent via-violet-500/30 to-transparent blur-3xl"
+        animate={{
+          x: [-100, 100],
+          opacity: [0.3, 0.6, 0.3],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          repeatType: 'reverse',
+        }}
+      />
+    </div>
   );
 }
 `;
@@ -264,10 +420,23 @@ export function SmoothScrollHero() {
 }
 `;
 
-function getSectionComponentSource(type: BuilderSection['type']): string {
+function getComponentSource(type: BuilderSection['type']): string {
   switch (type) {
-    case 'header':
-      return HEADER_SOURCE;
+    // Text Animations
+    case 'split-text':
+      return SPLIT_TEXT_SOURCE;
+    case 'blur-text':
+      return BLUR_TEXT_SOURCE;
+    case 'text-cursor':
+      return TEXT_CURSOR_SOURCE;
+    // Backgrounds
+    case 'silk':
+      return SILK_SOURCE;
+    case 'floating-lines':
+      return FLOATING_LINES_SOURCE;
+    case 'light-pillar':
+      return LIGHT_PILLAR_SOURCE;
+    // Sections
     case 'aurora-hero':
       return AURORA_HERO_SOURCE;
     case 'faq':
@@ -277,6 +446,21 @@ function getSectionComponentSource(type: BuilderSection['type']): string {
     default:
       return '';
   }
+}
+
+function getComponentFileName(type: BuilderSection['type']): string {
+  const map: Record<string, string> = {
+    'split-text': 'SplitText',
+    'blur-text': 'BlurText',
+    'text-cursor': 'TextCursor',
+    'silk': 'Silk',
+    'floating-lines': 'FloatingLines',
+    'light-pillar': 'LightPillar',
+    'smooth-scroll-hero': 'SmoothScrollHero',
+    'aurora-hero': 'AuroraHero',
+    'faq': 'FAQ',
+  };
+  return map[type] || type;
 }
 
 export async function downloadProjectZip(sections: BuilderSection[]): Promise<void> {
@@ -316,17 +500,13 @@ export async function downloadProjectZip(sections: BuilderSection[]): Promise<vo
 
   const componentsDir = zip.folder('src/components');
   if (componentsDir) {
-    const sectionTypesUsed = [...new Set(sections.map((s) => s.type))];
-    for (const type of sectionTypesUsed) {
-      const name =
-        type === 'header'
-          ? 'Header'
-          : type === 'faq'
-            ? 'FAQ'
-            : type === 'aurora-hero'
-              ? 'AuroraHero'
-              : 'SmoothScrollHero';
-      componentsDir.file(`${name}.tsx`, getSectionComponentSource(type));
+    const typesUsed = [...new Set(sections.map((s) => s.type))];
+    for (const type of typesUsed) {
+      const fileName = getComponentFileName(type);
+      const source = getComponentSource(type);
+      if (source) {
+        componentsDir.file(`${fileName}.tsx`, source);
+      }
     }
   }
 
