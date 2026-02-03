@@ -94,14 +94,16 @@ export function Layout() {
         onSelectComponent={setSelectedComponent}
       />
       <TopBar />
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-0 w-full overflow-hidden">
         {!isWebsiteBuilder && (
           <Sidebar
             selectedComponent={selectedComponent}
             onSelectComponent={setSelectedComponent}
           />
         )}
-        <Outlet context={context} />
+        <main className={isWebsiteBuilder ? 'flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden' : 'flex-1 min-h-0 min-w-0 overflow-auto'} style={{ width: isWebsiteBuilder ? '100%' : undefined }}>
+          <Outlet context={context} />
+        </main>
       </div>
     </div>
   );
