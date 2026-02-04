@@ -1,6 +1,6 @@
 # Flex
 
-Flex is a Vite + React playground for experimenting with React-Bits-inspired components, plus a simple page builder/export tool.
+Flex is a Vite + React playground for experimenting with React-Bits-inspired components, plus a simple page builder/export tool. It also includes optional Tambo-powered AI editing for supported components.
 
 ## What you can do
 
@@ -20,7 +20,7 @@ Flex is a Vite + React playground for experimenting with React-Bits-inspired com
 
 ### Install
 
-This repo uses `pnpm` (lockfile: `pnpm-lock.yaml`).
+This repo uses `pnpm` (lockfile: `pnpm-lock.yaml`), but `npm`/`yarn` should also work.
 
 ```bash
 pnpm install
@@ -50,6 +50,8 @@ pnpm preview
 ## Optional: Tambo integration
 
 The project includes `@tambo-ai/react` and a set of `Interactable*` wrappers in `src/components/react-bits/` that can be used for AI-driven edits.
+
+For how to wire up a thread/chat UI and skills, see [TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md) and [SKILLS_GUIDE.md](./SKILLS_GUIDE.md).
 
 To provide a Tambo API key locally:
 
