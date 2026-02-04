@@ -49,6 +49,81 @@ export function CanvasPreview() {
     };
   }
 
+  function getInnerLayoutStyle(props: Record<string, unknown>): CSSProperties {
+    const px = (v: unknown) =>
+      typeof v === 'number' && !Number.isNaN(v) ? v : 0;
+    return {
+      paddingTop: px(props.innerPaddingTop),
+      paddingRight: px(props.innerPaddingRight),
+      paddingBottom: px(props.innerPaddingBottom),
+      paddingLeft: px(props.innerPaddingLeft),
+      marginTop: px(props.innerMarginTop),
+      marginRight: px(props.innerMarginRight),
+      marginBottom: px(props.innerMarginBottom),
+      marginLeft: px(props.innerMarginLeft),
+    };
+  }
+
+  function getFigmaStyle(props: Record<string, unknown>): CSSProperties {
+    const num = (v: unknown, fallback: number): number =>
+      v !== undefined && v !== null && typeof v === 'number' && !Number.isNaN(v) ? v : fallback;
+    const bool = (v: unknown, fallback: boolean): boolean =>
+      typeof v === 'boolean' ? v : fallback;
+    const str = (v: unknown, fallback: string): string =>
+      v !== undefined && v !== null ? String(v) : fallback;
+    const style: CSSProperties = {};
+    const x = num(props.positionX, 0);
+    const y = num(props.positionY, 0);
+    const rot = num(props.rotation, 0);
+    const transforms: string[] = [];
+    if (x !== 0 || y !== 0) transforms.push(`translate(${x}px, ${y}px)`);
+    if (rot !== 0) transforms.push(`rotate(${rot}deg)`);
+    if (transforms.length) style.transform = transforms.join(' ');
+
+    const w = num(props.width, 0);
+    const h = num(props.height, 0);
+    if (bool(props.fillWidth, false)) style.width = '100%';
+    else if (w > 0) style.width = w;
+    if (bool(props.fillHeight, false)) style.minHeight = '100%';
+    else if (h > 0) style.height = h;
+
+    if (bool(props.clipContent, false)) style.overflow = 'hidden';
+
+    const opacityVal = num(props.opacity, 100);
+    if (opacityVal < 100) style.opacity = opacityVal / 100;
+
+    const bg = str(props.backgroundColor, '').trim();
+    if (bg && bool(props.fillVisible, true)) {
+      const fillOp = num(props.fillOpacity, 100) / 100;
+      const rgb = hexToRgb(bg);
+      style.backgroundColor = rgb && fillOp < 1 ? `rgba(${rgb}, ${fillOp})` : bg;
+    }
+
+    const strokeW = num(props.strokeWidth, 0);
+    if (strokeW > 0) {
+      style.borderWidth = strokeW;
+      style.borderStyle = 'solid';
+      style.borderColor = str(props.strokeColor, '#000000');
+    }
+
+    const justifyContent = str(props.justifyContent, 'flex-start');
+    const alignItems = str(props.alignItems, 'flex-start');
+    if (justifyContent || alignItems) {
+      style.display = 'flex';
+      style.flexDirection = 'column';
+      style.justifyContent = justifyContent as CSSProperties['justifyContent'];
+      style.alignItems = alignItems as CSSProperties['alignItems'];
+    }
+
+    return style;
+  }
+
+  function hexToRgb(hex: string): string | null {
+    const m = hex.replace(/^#/, '').match(/^(..)(..)(..)$/);
+    if (!m) return null;
+    return `${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}`;
+  }
+
   if (visibleSections.length === 0) {
     return (
       <div
@@ -73,7 +148,10 @@ export function CanvasPreview() {
           <div
             key={section.id}
             className="relative"
-            style={getLayoutStyle(section.props as Record<string, unknown>)}
+            style={{
+              ...getLayoutStyle(section.props as Record<string, unknown>),
+              ...getFigmaStyle(section.props as Record<string, unknown>),
+            }}
             onClick={(e) => {
               e.stopPropagation();
               handleSectionClick(section.id);
@@ -111,7 +189,10 @@ export function CanvasPreview() {
             )}
 
             {section.type === 'split-text' && (
-              <div className="min-h-screen flex items-center justify-center p-8">
+              <div
+                className="min-h-screen flex items-center justify-center"
+                style={getInnerLayoutStyle(section.props as Record<string, unknown>)}
+              >
                 <InteractableSplitText
                   {...{
                     ...DEFAULT_SPLIT_TEXT_PROPS,
@@ -121,7 +202,10 @@ export function CanvasPreview() {
               </div>
             )}
             {section.type === 'blur-text' && (
-              <div className="min-h-screen flex items-center justify-center p-8">
+              <div
+                className="min-h-screen flex items-center justify-center"
+                style={getInnerLayoutStyle(section.props as Record<string, unknown>)}
+              >
                 <InteractableBlurText
                   {...{
                     ...DEFAULT_BLUR_TEXT_PROPS,
@@ -131,7 +215,10 @@ export function CanvasPreview() {
               </div>
             )}
             {section.type === 'text-cursor' && (
-              <div className="min-h-screen flex items-center justify-center p-8">
+              <div
+                className="min-h-screen flex items-center justify-center"
+                style={getInnerLayoutStyle(section.props as Record<string, unknown>)}
+              >
                 <InteractableTextCursor
                   {...{
                     ...DEFAULT_TEXT_CURSOR_PROPS,
@@ -186,10 +273,14 @@ export function CanvasPreview() {
               <AuroraHero
                 title={section.props?.title != null && section.props.title !== '' ? String(section.props.title) : undefined}
                 subtitle={section.props?.subtitle != null && section.props.subtitle !== '' ? String(section.props.subtitle) : undefined}
+                innerStyle={getInnerLayoutStyle(section.props as Record<string, unknown>)}
               />
             )}
             {section.type === 'faq' && (
-              <FAQ title={section.props?.title != null && section.props.title !== '' ? String(section.props.title) : undefined} />
+              <FAQ
+                title={section.props?.title != null && section.props.title !== '' ? String(section.props.title) : undefined}
+                innerStyle={getInnerLayoutStyle(section.props as Record<string, unknown>)}
+              />
             )}
           </div>
         );

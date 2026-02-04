@@ -27,7 +27,7 @@ const COMPONENT_LABELS: Record<ComponentId, string> = {
   faq: 'FAQ',
 };
 
-/** Figma-style layout props: padding and margin (px). Applied to every section. */
+/** Figma-style layout props: padding and margin (px). Applied to section wrapper. */
 export const DEFAULT_LAYOUT_PROPS: Record<string, number> = {
   paddingTop: 0,
   paddingRight: 0,
@@ -39,36 +39,83 @@ export const DEFAULT_LAYOUT_PROPS: Record<string, number> = {
   marginLeft: 0,
 };
 
+/** Inner (content) layout: padding/margin inside the component. For sections that support it. */
+export const DEFAULT_INNER_LAYOUT_PROPS: Record<string, number> = {
+  innerPaddingTop: 0,
+  innerPaddingRight: 0,
+  innerPaddingBottom: 0,
+  innerPaddingLeft: 0,
+  innerMarginTop: 0,
+  innerMarginRight: 0,
+  innerMarginBottom: 0,
+  innerMarginLeft: 0,
+};
+
+/** Section types that support editing inner padding/margin (content area inside component). */
+export const INNER_LAYOUT_TYPES: ComponentId[] = [
+  'split-text',
+  'blur-text',
+  'text-cursor',
+  'aurora-hero',
+  'faq',
+];
+
+/** Figma-style: position (px), rotation (deg), dimensions, appearance, fill, stroke. */
+export const DEFAULT_FIGMA_STYLE_PROPS: Record<string, unknown> = {
+  positionX: 0,
+  positionY: 0,
+  rotation: 0,
+  width: 0,
+  height: 0,
+  fillWidth: false,
+  fillHeight: false,
+  clipContent: false,
+  opacity: 100,
+  backgroundColor: '',
+  fillOpacity: 100,
+  fillVisible: true,
+  strokeWidth: 0,
+  strokeColor: '#000000',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start',
+};
+
 export function getDefaultPropsForType(
   type: ComponentId
 ): Record<string, unknown> {
   const layout = { ...DEFAULT_LAYOUT_PROPS };
+  const figmaStyle = { ...DEFAULT_FIGMA_STYLE_PROPS };
+  const innerLayout = INNER_LAYOUT_TYPES.includes(type)
+    ? { ...DEFAULT_INNER_LAYOUT_PROPS }
+    : {};
   switch (type) {
     case 'split-text':
-      return { ...DEFAULT_SPLIT_TEXT_PROPS, ...layout };
+      return { ...DEFAULT_SPLIT_TEXT_PROPS, ...layout, ...figmaStyle, ...innerLayout };
     case 'blur-text':
-      return { ...DEFAULT_BLUR_TEXT_PROPS, ...layout };
+      return { ...DEFAULT_BLUR_TEXT_PROPS, ...layout, ...figmaStyle, ...innerLayout };
     case 'text-cursor':
-      return { ...DEFAULT_TEXT_CURSOR_PROPS, ...layout };
+      return { ...DEFAULT_TEXT_CURSOR_PROPS, ...layout, ...figmaStyle, ...innerLayout };
     case 'silk':
-      return { ...DEFAULT_SILK_PROPS, ...layout };
+      return { ...DEFAULT_SILK_PROPS, ...layout, ...figmaStyle };
     case 'floating-lines':
-      return { ...DEFAULT_FLOATING_LINES_PROPS, ...layout };
+      return { ...DEFAULT_FLOATING_LINES_PROPS, ...layout, ...figmaStyle };
     case 'light-pillar':
-      return { ...DEFAULT_LIGHT_PILLAR_PROPS, ...layout };
+      return { ...DEFAULT_LIGHT_PILLAR_PROPS, ...layout, ...figmaStyle };
     case 'smooth-scroll-hero':
-      return { ...layout };
+      return { ...layout, ...figmaStyle };
     case 'aurora-hero':
       return {
         ...layout,
+        ...figmaStyle,
+        ...innerLayout,
         title: 'Decrease your SaaS churn by over 90%',
         subtitle:
           'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, et, distinctio eum impedit nihil ipsum modi.',
       };
     case 'faq':
-      return { ...layout, title: 'Frequently Asked Questions' };
+      return { ...layout, ...figmaStyle, ...innerLayout, title: 'Frequently Asked Questions' };
     default:
-      return { ...layout };
+      return { ...layout, ...figmaStyle };
   }
 }
 

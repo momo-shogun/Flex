@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -34,14 +35,17 @@ interface FAQProps {
   items?: FAQItem[];
   title?: string;
   className?: string;
+  /** Padding/margin for the inner content area (builder-editable). */
+  innerStyle?: CSSProperties;
 }
 
-export function FAQ({ items = DEFAULT_ITEMS, title = 'Frequently Asked Questions', className }: FAQProps) {
+export function FAQ({ items = DEFAULT_ITEMS, title = 'Frequently Asked Questions', className, innerStyle }: FAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
     <section
       className={cn('mx-auto max-w-2xl px-4 py-16 text-slate-100', className)}
+      style={innerStyle}
     >
       <h2 className="mb-10 text-2xl font-bold text-white md:text-3xl">
         {title}

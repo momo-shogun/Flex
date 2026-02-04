@@ -2,6 +2,7 @@ import { Stars } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { useEffect } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
+import type { CSSProperties } from 'react';
 import {
   useMotionTemplate,
   useMotionValue,
@@ -14,9 +15,11 @@ const COLORS_TOP = ['#13FFAA', '#1E67C6', '#CE84CF', '#DD335C'];
 interface AuroraHeroProps {
   title?: string;
   subtitle?: string;
+  /** Padding/margin for the inner content area (builder-editable). */
+  innerStyle?: CSSProperties;
 }
 
-export function AuroraHero({ title = 'Decrease your SaaS churn by over 90%', subtitle = 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, et, distinctio eum impedit nihil ipsum modi.' }: AuroraHeroProps) {
+export function AuroraHero({ title = 'Decrease your SaaS churn by over 90%', subtitle = 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, et, distinctio eum impedit nihil ipsum modi.', innerStyle }: AuroraHeroProps) {
   const color = useMotionValue(COLORS_TOP[0]);
 
   useEffect(() => {
@@ -39,7 +42,7 @@ export function AuroraHero({ title = 'Decrease your SaaS churn by over 90%', sub
       }}
       className="relative grid min-h-screen place-content-center overflow-hidden bg-gray-950 px-4 py-24 text-gray-200"
     >
-      <div className="relative z-10 flex flex-col items-center">
+      <div className="relative z-10 flex flex-col items-center" style={innerStyle}>
         <span className="mb-1.5 inline-block rounded-full bg-gray-600/50 px-3 py-1.5 text-sm">
           Beta Now Live!
         </span>
