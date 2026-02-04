@@ -11,7 +11,12 @@ import {
 
 const COLORS_TOP = ['#13FFAA', '#1E67C6', '#CE84CF', '#DD335C'];
 
-export function AuroraHero() {
+interface AuroraHeroProps {
+  title?: string;
+  subtitle?: string;
+}
+
+export function AuroraHero({ title = 'Decrease your SaaS churn by over 90%', subtitle = 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, et, distinctio eum impedit nihil ipsum modi.' }: AuroraHeroProps) {
   const color = useMotionValue(COLORS_TOP[0]);
 
   useEffect(() => {
@@ -39,11 +44,10 @@ export function AuroraHero() {
           Beta Now Live!
         </span>
         <h1 className="max-w-3xl bg-gradient-to-br from-white to-gray-400 bg-clip-text text-center text-3xl font-medium leading-tight text-transparent sm:text-5xl sm:leading-tight md:text-7xl md:leading-tight">
-          Decrease your SaaS churn by over 90%
+          {title}
         </h1>
         <p className="my-6 max-w-xl text-center text-base leading-relaxed md:text-lg md:leading-relaxed">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, et,
-          distinctio eum impedit nihil ipsum modi.
+          {subtitle}
         </p>
         <motion.button
           type="button"

@@ -32,10 +32,11 @@ const DEFAULT_ITEMS: FAQItem[] = [
 
 interface FAQProps {
   items?: FAQItem[];
+  title?: string;
   className?: string;
 }
 
-export function FAQ({ items = DEFAULT_ITEMS, className }: FAQProps) {
+export function FAQ({ items = DEFAULT_ITEMS, title = 'Frequently Asked Questions', className }: FAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
@@ -43,7 +44,7 @@ export function FAQ({ items = DEFAULT_ITEMS, className }: FAQProps) {
       className={cn('mx-auto max-w-2xl px-4 py-16 text-slate-100', className)}
     >
       <h2 className="mb-10 text-2xl font-bold text-white md:text-3xl">
-        Frequently Asked Questions
+        {title}
       </h2>
       <div className="space-y-2">
         {items.map((item, index) => {

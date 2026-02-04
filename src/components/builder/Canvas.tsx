@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useBuilder } from '@/contexts/BuilderContext';
-import { CanvasPreview } from './CanvasPreview';
+import { CanvasPreview } from '@/components/builder/CanvasPreview';
 import { cn } from '@/lib/utils';
 
 const deviceWidths = {
@@ -19,11 +19,11 @@ export function Canvas() {
   return (
     <div
       ref={containerRef}
-      className="h-full w-full overflow-auto p-6 flex justify-center"
+      className="h-full w-full min-h-0 overflow-auto p-6 flex justify-center items-start"
     >
       <div
         className={cn(
-          'bg-slate-900 rounded-lg shadow-xl overflow-hidden transition-all duration-300',
+          'bg-slate-900 rounded-lg shadow-xl overflow-hidden transition-all duration-300 flex-shrink-0',
           state.device !== 'desktop' && 'border',
           state.device !== 'desktop' && 'border-slate-700'
         )}

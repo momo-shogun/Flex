@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { useBuilder } from '@/contexts/BuilderContext';
 import { cn } from '@/lib/utils';
 import { SmoothScrollHero } from '@/components/sections/SmoothScrollHero';
@@ -33,6 +34,21 @@ export function CanvasPreview() {
 
   const visibleSections = state.sections.filter((s) => s.visible);
 
+  function getLayoutStyle(props: Record<string, unknown>): CSSProperties {
+    const px = (v: unknown) =>
+      typeof v === 'number' && !Number.isNaN(v) ? v : 0;
+    return {
+      paddingTop: px(props.paddingTop),
+      paddingRight: px(props.paddingRight),
+      paddingBottom: px(props.paddingBottom),
+      paddingLeft: px(props.paddingLeft),
+      marginTop: px(props.marginTop),
+      marginRight: px(props.marginRight),
+      marginBottom: px(props.marginBottom),
+      marginLeft: px(props.marginLeft),
+    };
+  }
+
   if (visibleSections.length === 0) {
     return (
       <div
@@ -57,6 +73,7 @@ export function CanvasPreview() {
           <div
             key={section.id}
             className="relative"
+            style={getLayoutStyle(section.props as Record<string, unknown>)}
             onClick={(e) => {
               e.stopPropagation();
               handleSectionClick(section.id);
@@ -165,8 +182,15 @@ export function CanvasPreview() {
             {section.type === 'smooth-scroll-hero' && (
               <SmoothScrollHero />
             )}
-            {section.type === 'aurora-hero' && <AuroraHero />}
-            {section.type === 'faq' && <FAQ />}
+            {section.type === 'aurora-hero' && (
+              <AuroraHero
+                title={section.props?.title != null && section.props.title !== '' ? String(section.props.title) : undefined}
+                subtitle={section.props?.subtitle != null && section.props.subtitle !== '' ? String(section.props.subtitle) : undefined}
+              />
+            )}
+            {section.type === 'faq' && (
+              <FAQ title={section.props?.title != null && section.props.title !== '' ? String(section.props.title) : undefined} />
+            )}
           </div>
         );
       })}

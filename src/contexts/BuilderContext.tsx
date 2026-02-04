@@ -27,28 +27,48 @@ const COMPONENT_LABELS: Record<ComponentId, string> = {
   faq: 'FAQ',
 };
 
+/** Figma-style layout props: padding and margin (px). Applied to every section. */
+export const DEFAULT_LAYOUT_PROPS: Record<string, number> = {
+  paddingTop: 0,
+  paddingRight: 0,
+  paddingBottom: 0,
+  paddingLeft: 0,
+  marginTop: 0,
+  marginRight: 0,
+  marginBottom: 0,
+  marginLeft: 0,
+};
+
 export function getDefaultPropsForType(
   type: ComponentId
 ): Record<string, unknown> {
+  const layout = { ...DEFAULT_LAYOUT_PROPS };
   switch (type) {
     case 'split-text':
-      return { ...DEFAULT_SPLIT_TEXT_PROPS };
+      return { ...DEFAULT_SPLIT_TEXT_PROPS, ...layout };
     case 'blur-text':
-      return { ...DEFAULT_BLUR_TEXT_PROPS };
+      return { ...DEFAULT_BLUR_TEXT_PROPS, ...layout };
     case 'text-cursor':
-      return { ...DEFAULT_TEXT_CURSOR_PROPS };
+      return { ...DEFAULT_TEXT_CURSOR_PROPS, ...layout };
     case 'silk':
-      return { ...DEFAULT_SILK_PROPS };
+      return { ...DEFAULT_SILK_PROPS, ...layout };
     case 'floating-lines':
-      return { ...DEFAULT_FLOATING_LINES_PROPS };
+      return { ...DEFAULT_FLOATING_LINES_PROPS, ...layout };
     case 'light-pillar':
-      return { ...DEFAULT_LIGHT_PILLAR_PROPS };
+      return { ...DEFAULT_LIGHT_PILLAR_PROPS, ...layout };
     case 'smooth-scroll-hero':
+      return { ...layout };
     case 'aurora-hero':
+      return {
+        ...layout,
+        title: 'Decrease your SaaS churn by over 90%',
+        subtitle:
+          'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, et, distinctio eum impedit nihil ipsum modi.',
+      };
     case 'faq':
-      return {};
+      return { ...layout, title: 'Frequently Asked Questions' };
     default:
-      return {};
+      return { ...layout };
   }
 }
 

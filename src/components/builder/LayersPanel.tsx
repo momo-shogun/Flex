@@ -47,11 +47,56 @@ const sectionIcons: Record<ComponentId, typeof Layout> = {
   faq: Layout,
 };
 
+const CATEGORY_KEYS = ['textAnimations', 'backgrounds', 'sections'] as const;
+type CategoryKey = (typeof CATEGORY_KEYS)[number];
+
+const defaultCategoriesOpen: Record<CategoryKey, boolean> = {
+  textAnimations: false,
+  backgrounds: false,
+  sections: false,
+};
+
+function CategoryRow({
+  label,
+  open,
+  onToggle,
+  children,
+}: {
+  label: string;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={onToggle}
+        className="w-full flex items-center gap-1.5 py-1.5 pr-2 rounded-md text-left text-xs font-medium hover:bg-slate-800/80 transition-colors"
+        style={{ color: 'hsl(var(--builder-text-muted))' }}
+      >
+        {open ? (
+          <ChevronDown className="h-3.5 w-3.5 flex-shrink-0" />
+        ) : (
+          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" />
+        )}
+        {label}
+      </button>
+      {open && <div className="space-y-1 mt-0.5">{children}</div>}
+    </div>
+  );
+}
+
 export function LayersPanel() {
   const { state, dispatch, addSection } = useBuilder();
   const [expandedPage, setExpandedPage] = useState(true);
+  const [categoriesOpen, setCategoriesOpen] = useState<Record<CategoryKey, boolean>>(defaultCategoriesOpen);
 
   const toggleExpand = () => setExpandedPage((p) => !p);
+
+  const toggleCategory = (key: CategoryKey) => {
+    setCategoriesOpen((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const handleSelect = (id: string) => {
     dispatch({ type: 'SELECT', id });
@@ -87,78 +132,66 @@ export function LayersPanel() {
           </span>
         </div>
         <div className="space-y-2">
-          <div>
-            <p
-              className="text-xs font-medium mb-1.5"
-              style={{ color: 'hsl(var(--builder-text-muted))' }}
-            >
-              Text Animations
-            </p>
-            <div className="space-y-1">
-              {TEXT_ANIMATIONS.map((comp) => (
-                <button
-                  key={comp.id}
-                  type="button"
-                  onClick={() => addSection(comp.id)}
-                  className="w-full flex items-center justify-between px-2 py-1.5 rounded-md text-left text-sm hover:bg-slate-800/80 transition-colors"
-                  style={{
-                    color: 'hsl(var(--builder-text-secondary))',
-                  }}
-                >
-                  {comp.label}
-                  <Plus className="h-3.5 w-3.5" />
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p
-              className="text-xs font-medium mb-1.5"
-              style={{ color: 'hsl(var(--builder-text-muted))' }}
-            >
-              Backgrounds
-            </p>
-            <div className="space-y-1">
-              {BACKGROUNDS.map((comp) => (
-                <button
-                  key={comp.id}
-                  type="button"
-                  onClick={() => addSection(comp.id)}
-                  className="w-full flex items-center justify-between px-2 py-1.5 rounded-md text-left text-sm hover:bg-slate-800/80 transition-colors"
-                  style={{
-                    color: 'hsl(var(--builder-text-secondary))',
-                  }}
-                >
-                  {comp.label}
-                  <Plus className="h-3.5 w-3.5" />
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p
-              className="text-xs font-medium mb-1.5"
-              style={{ color: 'hsl(var(--builder-text-muted))' }}
-            >
-              Sections
-            </p>
-            <div className="space-y-1">
-              {SECTIONS.map((comp) => (
-                <button
-                  key={comp.id}
-                  type="button"
-                  onClick={() => addSection(comp.id)}
-                  className="w-full flex items-center justify-between px-2 py-1.5 rounded-md text-left text-sm hover:bg-slate-800/80 transition-colors"
-                  style={{
-                    color: 'hsl(var(--builder-text-secondary))',
-                  }}
-                >
-                  {comp.label}
-                  <Plus className="h-3.5 w-3.5" />
-                </button>
-              ))}
-            </div>
-          </div>
+          <CategoryRow
+            label="Text Animations"
+            open={categoriesOpen.textAnimations}
+            onToggle={() => toggleCategory('textAnimations')}
+          >
+            {TEXT_ANIMATIONS.map((comp) => (
+              <button
+                key={comp.id}
+                type="button"
+                onClick={() => addSection(comp.id)}
+                className="w-full flex items-center justify-between px-2 py-1.5 rounded-md text-left text-sm hover:bg-slate-800/80 transition-colors"
+                style={{
+                  color: 'hsl(var(--builder-text-secondary))',
+                }}
+              >
+                {comp.label}
+                <Plus className="h-3.5 w-3.5" />
+              </button>
+            ))}
+          </CategoryRow>
+          <CategoryRow
+            label="Backgrounds"
+            open={categoriesOpen.backgrounds}
+            onToggle={() => toggleCategory('backgrounds')}
+          >
+            {BACKGROUNDS.map((comp) => (
+              <button
+                key={comp.id}
+                type="button"
+                onClick={() => addSection(comp.id)}
+                className="w-full flex items-center justify-between px-2 py-1.5 rounded-md text-left text-sm hover:bg-slate-800/80 transition-colors"
+                style={{
+                  color: 'hsl(var(--builder-text-secondary))',
+                }}
+              >
+                {comp.label}
+                <Plus className="h-3.5 w-3.5" />
+              </button>
+            ))}
+          </CategoryRow>
+          <CategoryRow
+            label="Sections"
+            open={categoriesOpen.sections}
+            onToggle={() => toggleCategory('sections')}
+          >
+            {SECTIONS.map((comp) => (
+              <button
+                key={comp.id}
+                type="button"
+                onClick={() => addSection(comp.id)}
+                className="w-full flex items-center justify-between px-2 py-1.5 rounded-md text-left text-sm hover:bg-slate-800/80 transition-colors"
+                style={{
+                  color: 'hsl(var(--builder-text-secondary))',
+                }}
+              >
+                {comp.label}
+                <Plus className="h-3.5 w-3.5" />
+              </button>
+            ))}
+          </CategoryRow>
         </div>
       </div>
 

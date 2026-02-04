@@ -172,15 +172,137 @@ export function InspectorPanel() {
           </TabsContent>
 
           <TabsContent value="layout" className="p-3 m-0">
-            <div
-              className="text-xs text-center py-8"
-              style={{ color: 'hsl(var(--builder-text-muted))' }}
-            >
-              Layout properties coming soon
-            </div>
+            <LayoutProperties props={props} onUpdate={updateProp} />
           </TabsContent>
         </ScrollArea>
       </Tabs>
+    </div>
+  );
+}
+
+function toPx(value: unknown): number {
+  if (typeof value === 'number' && !Number.isNaN(value)) return value;
+  return 0;
+}
+
+function LayoutProperties({
+  props,
+  onUpdate,
+}: {
+  props: Record<string, unknown>;
+  onUpdate: (key: string, value: unknown) => void;
+}) {
+  const labelClass = 'text-xs';
+  const inputClass = 'h-8 text-sm bg-slate-800 border-slate-600 w-14';
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label className={labelClass}>Padding (px)</Label>
+        <div className="grid grid-cols-4 gap-1.5 mt-1">
+          <div>
+            <span className="text-[10px] text-slate-500 block mb-0.5">T</span>
+            <Input
+              type="number"
+              value={toPx(props.paddingTop)}
+              onChange={(e) =>
+                onUpdate('paddingTop', e.target.value === '' ? 0 : Number(e.target.value))
+              }
+              className={inputClass}
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <span className="text-[10px] text-slate-500 block mb-0.5">R</span>
+            <Input
+              type="number"
+              value={toPx(props.paddingRight)}
+              onChange={(e) =>
+                onUpdate('paddingRight', e.target.value === '' ? 0 : Number(e.target.value))
+              }
+              className={inputClass}
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <span className="text-[10px] text-slate-500 block mb-0.5">B</span>
+            <Input
+              type="number"
+              value={toPx(props.paddingBottom)}
+              onChange={(e) =>
+                onUpdate('paddingBottom', e.target.value === '' ? 0 : Number(e.target.value))
+              }
+              className={inputClass}
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <span className="text-[10px] text-slate-500 block mb-0.5">L</span>
+            <Input
+              type="number"
+              value={toPx(props.paddingLeft)}
+              onChange={(e) =>
+                onUpdate('paddingLeft', e.target.value === '' ? 0 : Number(e.target.value))
+              }
+              className={inputClass}
+              placeholder="0"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <Label className={labelClass}>Margin (px)</Label>
+        <div className="grid grid-cols-4 gap-1.5 mt-1">
+          <div>
+            <span className="text-[10px] text-slate-500 block mb-0.5">T</span>
+            <Input
+              type="number"
+              value={toPx(props.marginTop)}
+              onChange={(e) =>
+                onUpdate('marginTop', e.target.value === '' ? 0 : Number(e.target.value))
+              }
+              className={inputClass}
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <span className="text-[10px] text-slate-500 block mb-0.5">R</span>
+            <Input
+              type="number"
+              value={toPx(props.marginRight)}
+              onChange={(e) =>
+                onUpdate('marginRight', e.target.value === '' ? 0 : Number(e.target.value))
+              }
+              className={inputClass}
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <span className="text-[10px] text-slate-500 block mb-0.5">B</span>
+            <Input
+              type="number"
+              value={toPx(props.marginBottom)}
+              onChange={(e) =>
+                onUpdate('marginBottom', e.target.value === '' ? 0 : Number(e.target.value))
+              }
+              className={inputClass}
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <span className="text-[10px] text-slate-500 block mb-0.5">L</span>
+            <Input
+              type="number"
+              value={toPx(props.marginLeft)}
+              onChange={(e) =>
+                onUpdate('marginLeft', e.target.value === '' ? 0 : Number(e.target.value))
+              }
+              className={inputClass}
+              placeholder="0"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -350,9 +472,44 @@ function ContentProperties({
         </>
       );
 
-    case 'smooth-scroll-hero':
     case 'aurora-hero':
+      return (
+        <>
+          <div className="space-y-1.5">
+            <Label className={labelClass}>Title</Label>
+            <Input
+              value={String(props.title ?? '')}
+              onChange={(e) => onUpdate('title', e.target.value)}
+              className={inputClass}
+              placeholder="Hero title"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className={labelClass}>Subtitle</Label>
+            <Input
+              value={String(props.subtitle ?? '')}
+              onChange={(e) => onUpdate('subtitle', e.target.value)}
+              className={inputClass}
+              placeholder="Hero subtitle"
+            />
+          </div>
+        </>
+      );
+
     case 'faq':
+      return (
+        <div className="space-y-1.5">
+          <Label className={labelClass}>Section title</Label>
+          <Input
+            value={String(props.title ?? '')}
+            onChange={(e) => onUpdate('title', e.target.value)}
+            className={inputClass}
+            placeholder="FAQ section title"
+          />
+        </div>
+      );
+
+    case 'smooth-scroll-hero':
     default:
       return (
         <div
