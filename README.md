@@ -4,6 +4,12 @@ Flex is a Vite + React playground for experimenting with React-Bits-inspired com
 
 Built with **React + TypeScript + Tailwind CSS**, and inspired by **[React-Bits](https://github.com/DavidHDev/react-bits)**.
 
+**Highlights**
+
+- Interactive playground for components (preview + prop controls + code view)
+- Simple website builder that exports a starter React project as a `.zip`
+- Optional Tambo-powered AI editing for supported components
+
 ## What you can do
 
 - **Component playground** (`/`)
@@ -12,7 +18,9 @@ Built with **React + TypeScript + Tailwind CSS**, and inspired by **[React-Bits]
 - **Website Builder** (`/tools/website-builder`)
   - Add sections/components from the left panel, edit their props in **Inspector**, and export a starter project as a `.zip`.
 
-## Included components
+The website builder/export flow currently supports the components listed below. For the latest status/roadmap, see [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md).
+
+## Currently implemented components
 
 - Text animations: `SplitText`, `BlurText`, `TextCursor`
 - Backgrounds: `Silk`, `FloatingLines`, `LightPillar`
@@ -34,6 +42,11 @@ pnpm install
 pnpm dev
 ```
 
+If you prefer `npm` or `yarn`:
+
+- Install: `npm install` or `yarn install`
+- Dev: `npm run dev` or `yarn dev`
+
 Then open `http://localhost:5173`.
 
 ### Useful commands
@@ -51,7 +64,7 @@ pnpm preview
 
 ## Optional: Tambo integration
 
-The project includes `@tambo-ai/react` and a set of `Interactable*` wrappers in `src/components/react-bits/` that can be used for AI-driven edits.
+The project includes `@tambo-ai/react` and a set of `Interactable*` wrappers in `src/components/react-bits/` that can be used for AI-driven edits. The wrappers expose targets for Tambo to modify, but you'll still need to add a thread/chat UI to send instructions.
 
 For how to wire up a thread/chat UI and skills, see [TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md) and [SKILLS_GUIDE.md](./SKILLS_GUIDE.md).
 
@@ -77,4 +90,4 @@ Contributions are welcome. If you'd like to propose changes (components, playgro
 
 ## License
 
-This repository does not currently include a `LICENSE` file.
+This repository does not currently include a `LICENSE` file, so licensing is not finalized. Please do not assume this code is approved for production or commercial use until a `LICENSE` is added.
