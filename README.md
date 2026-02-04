@@ -20,11 +20,11 @@ Built with **React + TypeScript + Tailwind CSS**, and inspired by **[React-Bits]
 - **Website Builder** (`/tools/website-builder`)
   - Add sections/components from the left panel, edit their props in **Inspector**, and export a starter project as a `.zip`.
 
-The website builder/export flow currently supports the components listed below. For the latest status/roadmap, see [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md).
-
 ## Currently implemented components
 
-Examples of components currently wired into both the playground and the website builder/export flow include (see [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for the authoritative list):
+See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for the authoritative list of components that are wired into the playground and website builder/export flow.
+
+Examples include:
 
 - Text animations: `SplitText`, `BlurText`, `TextCursor`
 - Backgrounds: `Silk`, `FloatingLines`, `LightPillar`
@@ -53,6 +53,8 @@ If you prefer `npm` or `yarn`:
 
 Then open `http://localhost:5173`.
 
+You should see the component playground with a preview pane and a Customize/Code panel.
+
 ### Useful commands
 
 ```bash
@@ -80,6 +82,8 @@ For how to wire up a thread/chat UI and skills, see [TAMBO_CONCEPTS.md](./TAMBO_
 
 Tambo-registered generative UI components live in `src/components/tambo/`.
 
+To see how Tambo is wired into the app shell, start from `src/main.tsx` (`TamboProvider`) and `src/config/tambo-components.ts`.
+
 To provide a Tambo API key locally:
 
 ```bash
@@ -102,4 +106,4 @@ Contributions are welcome. If you'd like to propose changes (components, playgro
 
 ## License
 
-Licensing is currently **undecided** (there is no `LICENSE` file). Until a license is added, do not assume you have the right to reuse or redistribute this code beyond local evaluation and contribution back to this repository.
+Licensing is currently under review (there is no `LICENSE` file). Earlier revisions of this README mentioned MIT, but no `LICENSE` file was added. Until a license is explicitly published in a `LICENSE` file, do not assume you have the right to reuse or redistribute this code beyond local evaluation and contribution back to this repository.
