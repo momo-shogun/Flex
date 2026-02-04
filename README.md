@@ -24,7 +24,7 @@ The website builder/export flow currently supports the components listed below. 
 
 ## Currently implemented components
 
-These components are currently wired into both the playground and the website builder/export flow.
+Examples of components currently wired into both the playground and the website builder/export flow include (see [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for the authoritative list):
 
 - Text animations: `SplitText`, `BlurText`, `TextCursor`
 - Backgrounds: `Silk`, `FloatingLines`, `LightPillar`
@@ -34,7 +34,7 @@ These components are currently wired into both the playground and the website bu
 
 ### Install
 
-This repo uses `pnpm` (lockfile: `pnpm-lock.yaml`), but `npm`/`yarn` should also work.
+This repo uses `pnpm` (lockfile: `pnpm-lock.yaml`) and is tested with `pnpm`. `npm`/`yarn` may work, but are not the primary supported path.
 
 ```bash
 pnpm install
@@ -102,4 +102,4 @@ Contributions are welcome. If you'd like to propose changes (components, playgro
 
 ## License
 
-This repository does not currently include a `LICENSE` file, so licensing is not finalized. Code is provided for evaluation and contribution only until a `LICENSE` is added.
+Licensing is currently **undecided** (there is no `LICENSE` file). Until a license is added, do not assume you have the right to reuse or redistribute this code beyond local evaluation and contribution back to this repository.
