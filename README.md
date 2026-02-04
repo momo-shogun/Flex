@@ -1,6 +1,6 @@
 # Flex
 
-Flex is a Vite + React playground for experimenting with React-Bits-inspired components, plus a simple page builder/export tool. It also includes optional Tambo-powered AI editing for supported components.
+Flex is a Vite + React design system playground for experimenting with React-Bits-inspired components, plus a simple page builder/export tool. It also includes optional Tambo-powered AI editing for supported components.
 
 Built with **React + TypeScript + Tailwind CSS**, and inspired by **[React-Bits](https://github.com/DavidHDev/react-bits)**.
 
@@ -10,7 +10,7 @@ Built with **React + TypeScript + Tailwind CSS**, and inspired by **[React-Bits]
 - Simple website builder that exports a starter React project as a `.zip`
 - Optional Tambo-powered AI editing for supported components
 
-**Status:** Early-stage playground; APIs and component list may change. See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) and [issue #1](https://github.com/momo-shogun/Flex/issues/1) for current work.
+**Status:** Early-stage playground; APIs and component list may change. See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for current work and planned features.
 
 ## What you can do
 
@@ -24,6 +24,8 @@ Built with **React + TypeScript + Tailwind CSS**, and inspired by **[React-Bits]
 
 See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for the authoritative list of components that are wired into the playground and website builder/export flow.
 
+The set is expected to grow over time (text animations, backgrounds, and page sections).
+
 Examples include:
 
 - Text animations: `SplitText`, `BlurText`, `TextCursor`
@@ -35,6 +37,8 @@ Examples include:
 ### Install
 
 This repo uses `pnpm` (lockfile: `pnpm-lock.yaml`) and is tested with `pnpm`. `npm`/`yarn` may work, but are not the primary supported path.
+
+If you don't have `pnpm` installed, see the [pnpm installation guide](https://pnpm.io/installation).
 
 ```bash
 pnpm install
@@ -106,4 +110,6 @@ Contributions are welcome. If you'd like to propose changes (components, playgro
 
 ## License
 
-Licensing is currently under review (there is no `LICENSE` file). Earlier revisions of this README mentioned MIT, but no `LICENSE` file was added. Until a license is explicitly published in a `LICENSE` file, do not assume you have the right to reuse or redistribute this code beyond local evaluation and contribution back to this repository.
+Licensing is currently under review (there is no `LICENSE` file). Earlier revisions of this README mentioned MIT, but no `LICENSE` file was added.
+
+Until a license is explicitly published in a `LICENSE` file, treat this repository as "all rights reserved" outside of local evaluation and contribution back to this repository.
