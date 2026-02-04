@@ -137,30 +137,37 @@ const initialState: PageState = {
 };
 
 function pageReducer(state: PageState, action: PageAction): PageState {
+  let nextState: PageState;
+
   switch (action.type) {
     case 'SELECT':
-      return {
+      nextState = {
         ...state,
         selectedId: action.id,
         selectedElementKey: null,
       };
+      break;
     case 'SELECT_ELEMENT':
-      return {
+      nextState = {
         ...state,
         selectedId: action.id,
         selectedElementKey: action.elementKey,
       };
+      break;
     case 'HOVER':
-      return { ...state, hoveredId: action.id };
+      nextState = { ...state, hoveredId: action.id };
+      break;
     case 'SET_DEVICE':
-      return { ...state, device: action.device };
+      nextState = { ...state, device: action.device };
+      break;
     case 'SET_ZOOM':
-      return {
+      nextState = {
         ...state,
         zoom: Math.min(200, Math.max(25, action.zoom)),
       };
+      break;
     case 'TOGGLE_VISIBILITY':
-      return {
+      nextState = {
         ...state,
         sections: state.sections.map((section) =>
           section.id === action.id
@@ -168,8 +175,9 @@ function pageReducer(state: PageState, action: PageAction): PageState {
             : section
         ),
       };
+      break;
     case 'UPDATE_PROPS':
-      return {
+      nextState = {
         ...state,
         sections: state.sections.map((section) =>
           section.id === action.id
@@ -177,8 +185,9 @@ function pageReducer(state: PageState, action: PageAction): PageState {
             : section
         ),
       };
+      break;
     case 'UPDATE_SECTION':
-      return {
+      nextState = {
         ...state,
         sections: state.sections.map((section) =>
           section.id === action.id
@@ -186,19 +195,22 @@ function pageReducer(state: PageState, action: PageAction): PageState {
             : section
         ),
       };
+      break;
     case 'REORDER': {
       const newSections = [...state.sections];
       const [removed] = newSections.splice(action.fromIndex, 1);
       newSections.splice(action.toIndex, 0, removed);
-      return { ...state, sections: newSections };
+      nextState = { ...state, sections: newSections };
+      break;
     }
     case 'ADD_SECTION':
-      return {
+      nextState = {
         ...state,
         sections: [...state.sections, action.section],
       };
+      break;
     case 'REMOVE_SECTION':
-      return {
+      nextState = {
         ...state,
         sections: state.sections.filter((s) => s.id !== action.id),
         selectedId: state.selectedId === action.id ? null : state.selectedId,
@@ -206,9 +218,16 @@ function pageReducer(state: PageState, action: PageAction): PageState {
           state.selectedId === action.id ? null : state.selectedElementKey,
         hoveredId: state.hoveredId === action.id ? null : state.hoveredId,
       };
+      break;
     default:
       return state;
   }
+
+  if (nextState.selectedId == null && nextState.selectedElementKey != null) {
+    return { ...nextState, selectedElementKey: null };
+  }
+
+  return nextState;
 }
 
 interface BuilderContextValue {

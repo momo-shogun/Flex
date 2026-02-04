@@ -13,7 +13,10 @@ export interface PageSection {
 export interface PageState {
   sections: PageSection[];
   selectedId: string | null;
-  /** Optional key for an element within the selected section (e.g. 'title'). */
+  /**
+   * Optional key for an element within the selected section (e.g. 'title').
+   * Invariant: when `selectedId` is null, this should also be null.
+   */
   selectedElementKey: string | null;
   hoveredId: string | null;
   device: DeviceType;

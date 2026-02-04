@@ -1,5 +1,55 @@
 import JSZip from 'jszip';
 import type { BuilderSection } from '@/types/website-builder';
+import { parseElementPositions } from './element-positions';
+
+const EXPORTABLE_PROP_KEYS = new Set([
+  'title',
+  'subtitle',
+  'items',
+  'paddingTop',
+  'paddingRight',
+  'paddingBottom',
+  'paddingLeft',
+  'marginTop',
+  'marginRight',
+  'marginBottom',
+  'marginLeft',
+  'positionX',
+  'positionY',
+  'rotation',
+  'innerPaddingTop',
+  'innerPaddingRight',
+  'innerPaddingBottom',
+  'innerPaddingLeft',
+  'innerMarginTop',
+  'innerMarginRight',
+  'innerMarginBottom',
+  'innerMarginLeft',
+  'elementPositions',
+]);
+
+export function sanitizeSectionPropsForExport(
+  props: Record<string, unknown> | undefined
+): Record<string, unknown> {
+  const safe: Record<string, unknown> = {};
+  const droppedKeys: string[] = [];
+  for (const [k, v] of Object.entries(props ?? {})) {
+    if (!EXPORTABLE_PROP_KEYS.has(k)) {
+      droppedKeys.push(k);
+      continue;
+    }
+    if (k === 'elementPositions') {
+      const parsed = parseElementPositions(v);
+      if (Object.keys(parsed).length) safe[k] = parsed;
+      continue;
+    }
+    safe[k] = v;
+  }
+  if (import.meta.env.DEV && droppedKeys.length) {
+    console.warn('[export] dropped section props:', droppedKeys);
+  }
+  return safe;
+}
 
 function generateAppTsx(sections: BuilderSection[]): string {
   const importSet = new Set<string>();
@@ -48,22 +98,6 @@ function generateAppTsx(sections: BuilderSection[]): string {
     return Object.values(style).some((v) => v !== 0) ? style : null;
   };
 
-  const getElementPositions = (props: Record<string, unknown> | undefined) => {
-    const raw = props?.elementPositions;
-    if (!raw || typeof raw !== 'object') return null;
-
-    const out: Record<string, { x: number; y: number }> = {};
-    for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
-      if (v && typeof v === 'object') {
-        const pos = v as Record<string, unknown>;
-        const x = num(pos.x, 0);
-        const y = num(pos.y, 0);
-        out[k] = { x, y };
-      }
-    }
-    return Object.keys(out).length ? out : null;
-  };
-
   for (const section of sections) {
     const props = section.props && typeof section.props === 'object'
       ? (section.props as Record<string, unknown>)
@@ -71,7 +105,10 @@ function generateAppTsx(sections: BuilderSection[]): string {
     const wrapperStyle = getWrapperStyle(props);
     const wrapperStyleAttr = ` style={${JSON.stringify(wrapperStyle)}}`;
     const innerStyle = getInnerStyle(props);
-    const elementPositions = getElementPositions(props);
+    const parsedElementPositions = parseElementPositions(props?.elementPositions);
+    const elementPositions = Object.keys(parsedElementPositions).length
+      ? parsedElementPositions
+      : null;
 
     switch (section.type) {
       // Text Animations
@@ -158,6 +195,23 @@ function generateAppTsx(sections: BuilderSection[]): string {
           const faqProps: string[] = [];
           if (typeof props?.title === 'string' && props.title.trim()) {
             faqProps.push(`title={${JSON.stringify(props.title)}}`);
+          }
+          if (Array.isArray(props?.items)) {
+            const items = props.items
+              .filter(
+                (item): item is { question: string; answer: string } =>
+                  !!item &&
+                  typeof item === 'object' &&
+                  typeof (item as { question?: unknown }).question === 'string' &&
+                  typeof (item as { answer?: unknown }).answer === 'string'
+              )
+              .map((item) => ({
+                question: item.question,
+                answer: item.answer,
+              }));
+            if (items.length) {
+              faqProps.push(`items={${JSON.stringify(items)}}`);
+            }
           }
           if (innerStyle) faqProps.push(`innerStyle={${JSON.stringify(innerStyle)}}`);
           if (elementPositions) {
@@ -531,23 +585,25 @@ function getElementStyle(
 
 export interface FAQProps {
   title?: string;
+  items?: { question: string; answer: string }[];
   innerStyle?: CSSProperties;
   elementPositions?: ElementPositions;
 }
 
 export function FAQ({
   title = 'Frequently Asked Questions',
+  items = DEFAULT_ITEMS,
   innerStyle,
   elementPositions,
 }: FAQProps) {
-  const [openIndex, setOpenIndex] = useState(null);
+  const [openIndex, setOpenIndex] = useState(0);
   return (
     <section className={cn('mx-auto max-w-2xl px-4 py-16 text-slate-100')} style={innerStyle}>
       <div className="w-fit" style={getElementStyle(elementPositions, 'title')}>
         <h2 className="mb-10 text-2xl font-bold text-white">{title}</h2>
       </div>
       <div className="space-y-2">
-        {DEFAULT_ITEMS.map((item, index) => {
+        {items.map((item, index) => {
           const isOpen = openIndex === index;
           return (
             <motion.div key={index} layout className="rounded-lg border border-slate-700 bg-slate-900/50 overflow-hidden">

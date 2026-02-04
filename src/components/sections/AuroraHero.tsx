@@ -1,6 +1,6 @@
 import { Stars } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { useEffect, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, type CSSProperties } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import {
   useMotionTemplate,
@@ -8,6 +8,8 @@ import {
   motion,
   animate,
 } from 'framer-motion';
+import { BuilderSelectable, getBuilderElementStyle } from './builder-selectable';
+import type { ElementPositions } from '@/utils/element-positions';
 
 const COLORS_TOP = ['#13FFAA', '#1E67C6', '#CE84CF', '#DD335C'];
 
@@ -17,7 +19,7 @@ interface AuroraHeroProps {
   /** Padding/margin for the inner content area (builder-editable). */
   innerStyle?: CSSProperties;
   /** Optional offsets for specific inner elements (builder-exported). */
-  elementPositions?: Record<string, { x: number; y: number } | undefined>;
+  elementPositions?: ElementPositions;
 
   /** Builder-only: which inner element is currently selected. */
   selectedElementKey?: string | null;
@@ -26,64 +28,6 @@ interface AuroraHeroProps {
     elementKey: string,
     e: React.PointerEvent<HTMLElement>
   ) => void;
-}
-
-function getElementStyle(
-  elementPositions: AuroraHeroProps['elementPositions'] | undefined,
-  elementKey: string
-): CSSProperties | undefined {
-  const pos = elementPositions?.[elementKey];
-  if (!pos) return undefined;
-  const x = typeof pos.x === 'number' && !Number.isNaN(pos.x) ? pos.x : 0;
-  const y = typeof pos.y === 'number' && !Number.isNaN(pos.y) ? pos.y : 0;
-  if (x === 0 && y === 0) return undefined;
-  return {
-    transform: `translate(${x}px, ${y}px)`,
-  };
-}
-
-function BuilderSelectable({
-  elementKey,
-  selected,
-  onPointerDown,
-  style,
-  className,
-  children,
-}: {
-  elementKey: string;
-  selected: boolean;
-  onPointerDown?: (elementKey: string, e: React.PointerEvent<HTMLElement>) => void;
-  style?: CSSProperties;
-  className?: string;
-  children: ReactNode;
-}) {
-  const isInteractive = typeof onPointerDown === 'function';
-  return (
-    <div
-      className={className}
-      style={{
-        ...style,
-        ...(selected
-          ? {
-              outline: '2px solid hsl(var(--builder-selection))',
-              outlineOffset: 6,
-            }
-          : undefined),
-        ...(isInteractive
-          ? {
-              cursor: 'grab',
-              touchAction: 'none',
-              userSelect: 'none',
-            }
-          : undefined),
-      }}
-      onPointerDown={isInteractive ? (e) => onPointerDown(elementKey, e) : undefined}
-      role={isInteractive ? 'button' : undefined}
-      tabIndex={isInteractive ? 0 : undefined}
-    >
-      {children}
-    </div>
-  );
 }
 
 export function AuroraHero({
@@ -121,7 +65,7 @@ export function AuroraHero({
           elementKey="badge"
           selected={selectedElementKey === 'badge'}
           onPointerDown={onElementPointerDown}
-          style={getElementStyle(elementPositions, 'badge')}
+          style={getBuilderElementStyle(elementPositions, 'badge')}
           className="w-fit"
         >
           <span className="mb-1.5 inline-block rounded-full bg-gray-600/50 px-3 py-1.5 text-sm">
@@ -133,7 +77,7 @@ export function AuroraHero({
           elementKey="title"
           selected={selectedElementKey === 'title'}
           onPointerDown={onElementPointerDown}
-          style={getElementStyle(elementPositions, 'title')}
+          style={getBuilderElementStyle(elementPositions, 'title')}
         >
           <h1 className="max-w-3xl bg-gradient-to-br from-white to-gray-400 bg-clip-text text-center text-3xl font-medium leading-tight text-transparent sm:text-5xl sm:leading-tight md:text-7xl md:leading-tight">
             {title}
@@ -144,7 +88,7 @@ export function AuroraHero({
           elementKey="subtitle"
           selected={selectedElementKey === 'subtitle'}
           onPointerDown={onElementPointerDown}
-          style={getElementStyle(elementPositions, 'subtitle')}
+          style={getBuilderElementStyle(elementPositions, 'subtitle')}
         >
           <p className="my-6 max-w-xl text-center text-base leading-relaxed md:text-lg md:leading-relaxed">
             {subtitle}
@@ -155,7 +99,7 @@ export function AuroraHero({
           elementKey="button"
           selected={selectedElementKey === 'button'}
           onPointerDown={onElementPointerDown}
-          style={getElementStyle(elementPositions, 'button')}
+          style={getBuilderElementStyle(elementPositions, 'button')}
           className="w-fit"
         >
           <motion.button

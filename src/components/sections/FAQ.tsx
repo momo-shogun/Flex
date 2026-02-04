@@ -1,6 +1,8 @@
 import { useState, type CSSProperties } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { BuilderSelectable, getBuilderElementStyle } from './builder-selectable';
+import type { ElementPositions } from '@/utils/element-positions';
 
 interface FAQItem {
   question: string;
@@ -37,7 +39,7 @@ interface FAQProps {
   /** Padding/margin for the inner content area (builder-editable). */
   innerStyle?: CSSProperties;
   /** Optional offsets for specific inner elements (builder-exported). */
-  elementPositions?: Record<string, { x: number; y: number } | undefined>;
+  elementPositions?: ElementPositions;
 
   /** Builder-only: which inner element is currently selected. */
   selectedElementKey?: string | null;
@@ -46,20 +48,6 @@ interface FAQProps {
     elementKey: string,
     e: React.PointerEvent<HTMLElement>
   ) => void;
-}
-
-function getElementStyle(
-  elementPositions: FAQProps['elementPositions'] | undefined,
-  elementKey: string
-): CSSProperties | undefined {
-  const pos = elementPositions?.[elementKey];
-  if (!pos) return undefined;
-  const x = typeof pos.x === 'number' && !Number.isNaN(pos.x) ? pos.x : 0;
-  const y = typeof pos.y === 'number' && !Number.isNaN(pos.y) ? pos.y : 0;
-  if (x === 0 && y === 0) return undefined;
-  return {
-    transform: `translate(${x}px, ${y}px)`,
-  };
 }
 
 export function FAQ({
@@ -78,32 +66,15 @@ export function FAQ({
       className={cn('mx-auto max-w-2xl px-4 py-16 text-slate-100', className)}
       style={innerStyle}
     >
-      <div
+      <BuilderSelectable
+        elementKey="title"
+        selected={selectedElementKey === 'title'}
+        onPointerDown={onElementPointerDown}
+        style={getBuilderElementStyle(elementPositions, 'title')}
         className="w-fit"
-        style={{
-          ...getElementStyle(elementPositions, 'title'),
-          ...(selectedElementKey === 'title'
-            ? {
-                outline: '2px solid hsl(var(--builder-selection))',
-                outlineOffset: 6,
-              }
-            : undefined),
-          ...(typeof onElementPointerDown === 'function'
-            ? { cursor: 'grab', touchAction: 'none', userSelect: 'none' }
-            : undefined),
-        }}
-        onPointerDown={
-          typeof onElementPointerDown === 'function'
-            ? (e) => onElementPointerDown('title', e)
-            : undefined
-        }
-        role={typeof onElementPointerDown === 'function' ? 'button' : undefined}
-        tabIndex={typeof onElementPointerDown === 'function' ? 0 : undefined}
       >
-        <h2 className="mb-10 text-2xl font-bold text-white md:text-3xl">
-          {title}
-        </h2>
-      </div>
+        <h2 className="mb-10 text-2xl font-bold text-white md:text-3xl">{title}</h2>
+      </BuilderSelectable>
       <div className="space-y-2">
         {items.map((item, index) => {
           const isOpen = openIndex === index;

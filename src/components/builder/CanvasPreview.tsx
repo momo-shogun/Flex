@@ -1,6 +1,11 @@
-import { useRef, type CSSProperties } from 'react';
+import { useEffect, useRef, type CSSProperties } from 'react';
 import { useBuilder } from '@/contexts/BuilderContext';
 import { cn } from '@/lib/utils';
+import {
+  parseElementPositions,
+  type ElementPosition,
+  type ElementPositions,
+} from '@/utils/element-positions';
 import { SmoothScrollHero } from '@/components/sections/SmoothScrollHero';
 import { AuroraHero } from '@/components/sections/AuroraHero';
 import { FAQ } from '@/components/sections/FAQ';
@@ -24,17 +29,29 @@ import type { SilkProps, FloatingLinesProps, LightPillarProps } from '@/types/co
 export function CanvasPreview() {
   const { state, dispatch } = useBuilder();
 
-  type ElementPosition = { x: number; y: number };
-  type ElementPositions = Record<string, ElementPosition | undefined>;
+  const sectionsRef = useRef(state.sections);
+  sectionsRef.current = state.sections;
 
   const dragRef = useRef<{
     sectionId: string;
     elementKey: string;
+    pointerId: number;
+    target: HTMLElement | null;
     startClientX: number;
     startClientY: number;
     startX: number;
     startY: number;
-    startPositions: ElementPositions;
+  } | null>(null);
+
+  const dragMoveListenerRef = useRef<((ev: PointerEvent) => void) | null>(null);
+  const dragEndListenerRef = useRef<((ev: PointerEvent) => void) | null>(null);
+  const dragRafRef = useRef<number | null>(null);
+  const pendingDragUpdateRef = useRef<{
+    sectionId: string;
+    elementKey: string;
+    pointerId: number;
+    x: number;
+    y: number;
   } | null>(null);
 
   const handleSectionClick = (id: string) => {
@@ -47,26 +64,46 @@ export function CanvasPreview() {
 
   const visibleSections = state.sections.filter((s) => s.visible);
 
-  const scale = state.zoom / 100;
+  // Keep in sync with the CSS transform scale applied to the canvas content.
+  const scale = Math.max(0.25, state.zoom / 100);
 
-  function getElementPositions(props: Record<string, unknown>): ElementPositions {
-    const raw = props.elementPositions;
-    if (!raw || typeof raw !== 'object') return {};
-    const positions = raw as Record<string, unknown>;
-    const out: ElementPositions = {};
-    for (const [k, v] of Object.entries(positions)) {
-      if (v && typeof v === 'object') {
-        const pos = v as Record<string, unknown>;
-        const x = typeof pos.x === 'number' && !Number.isNaN(pos.x) ? pos.x : 0;
-        const y = typeof pos.y === 'number' && !Number.isNaN(pos.y) ? pos.y : 0;
-        out[k] = { x, y };
+  const cleanupDrag = () => {
+    const drag = dragRef.current;
+    if (drag?.target && typeof drag.target.releasePointerCapture === 'function') {
+      try {
+        drag.target.releasePointerCapture(drag.pointerId);
+      } catch {
+        // Ignore release failures (e.g. capture already lost).
       }
     }
-    return out;
-  }
 
-  function getElementPosition(props: Record<string, unknown>, key: string): ElementPosition {
-    const positions = getElementPositions(props);
+    if (dragRafRef.current != null) {
+      cancelAnimationFrame(dragRafRef.current);
+      dragRafRef.current = null;
+    }
+    pendingDragUpdateRef.current = null;
+
+    const onMove = dragMoveListenerRef.current;
+    const onEnd = dragEndListenerRef.current;
+
+    if (onMove) window.removeEventListener('pointermove', onMove);
+    if (onEnd) {
+      window.removeEventListener('pointerup', onEnd);
+      window.removeEventListener('pointercancel', onEnd);
+    }
+
+    dragMoveListenerRef.current = null;
+    dragEndListenerRef.current = null;
+    dragRef.current = null;
+  };
+
+  useEffect(() => {
+    return () => {
+      cleanupDrag();
+    };
+  }, []);
+
+  function getElementPosition(positions: ElementPositions, key: string): ElementPosition {
     return positions[key] ?? { x: 0, y: 0 };
   }
 
@@ -76,57 +113,105 @@ export function CanvasPreview() {
     e: React.PointerEvent<HTMLElement>
   ) => {
     if (e.button !== 0) return;
+    if (dragRef.current) cleanupDrag();
+
+    const target = e.currentTarget as HTMLElement;
+    if (typeof target.setPointerCapture === 'function') {
+      target.setPointerCapture(e.pointerId);
+    }
 
     e.preventDefault();
     e.stopPropagation();
 
     dispatch({ type: 'SELECT_ELEMENT', id: sectionId, elementKey });
 
-    const section = state.sections.find((s) => s.id === sectionId);
+    const section = sectionsRef.current.find((s) => s.id === sectionId);
     if (!section) return;
     const sectionProps = section.props as Record<string, unknown>;
-    const start = getElementPosition(sectionProps, elementKey);
-    const startPositions = getElementPositions(sectionProps);
+    const startPositions = parseElementPositions(sectionProps.elementPositions);
+    const start = getElementPosition(startPositions, elementKey);
 
     dragRef.current = {
       sectionId,
       elementKey,
+      pointerId: e.pointerId,
+      target,
       startClientX: e.clientX,
       startClientY: e.clientY,
       startX: start.x,
       startY: start.y,
-      startPositions,
     };
 
     const onMove = (ev: PointerEvent) => {
       const drag = dragRef.current;
       if (!drag) return;
+      if (ev.pointerId !== drag.pointerId) return;
 
-      const dx = (ev.clientX - drag.startClientX) / (scale || 1);
-      const dy = (ev.clientY - drag.startClientY) / (scale || 1);
+      const latestSection = sectionsRef.current.find(
+        (s) => s.id === drag.sectionId && s.visible
+      );
+      if (!latestSection) {
+        cleanupDrag();
+        return;
+      }
+
+      const dx = (ev.clientX - drag.startClientX) / scale;
+      const dy = (ev.clientY - drag.startClientY) / scale;
       const nextX = Math.round(drag.startX + dx);
       const nextY = Math.round(drag.startY + dy);
 
-      dispatch({
-        type: 'UPDATE_PROPS',
-        id: drag.sectionId,
-        props: {
-          elementPositions: {
-            ...drag.startPositions,
-            [drag.elementKey]: { x: nextX, y: nextY },
-          },
-        },
-      });
+      pendingDragUpdateRef.current = {
+        sectionId: drag.sectionId,
+        elementKey: drag.elementKey,
+        pointerId: drag.pointerId,
+        x: nextX,
+        y: nextY,
+      };
+      if (dragRafRef.current == null) {
+        dragRafRef.current = requestAnimationFrame(() => {
+          dragRafRef.current = null;
+          const pending = pendingDragUpdateRef.current;
+          const drag = dragRef.current;
+          if (!pending || !drag) return;
+          if (pending.pointerId !== drag.pointerId) return;
+
+          const latestSection = sectionsRef.current.find(
+            (s) => s.id === pending.sectionId && s.visible
+          );
+          if (!latestSection) {
+            cleanupDrag();
+            return;
+          }
+
+          const latestProps = latestSection.props as Record<string, unknown>;
+          const latestPositions = parseElementPositions(latestProps.elementPositions);
+
+          dispatch({
+            type: 'UPDATE_PROPS',
+            id: pending.sectionId,
+            props: {
+              elementPositions: {
+                ...latestPositions,
+                [pending.elementKey]: { x: pending.x, y: pending.y },
+              },
+            },
+          });
+        });
+      }
     };
 
-    const onUp = () => {
-      dragRef.current = null;
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
+    const endDrag = (ev: PointerEvent) => {
+      const drag = dragRef.current;
+      if (!drag) return;
+      if (ev.pointerId !== drag.pointerId) return;
+      cleanupDrag();
     };
+    dragMoveListenerRef.current = onMove;
+    dragEndListenerRef.current = endDrag;
 
     window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
   };
 
   function getLayoutStyle(props: Record<string, unknown>): CSSProperties {
@@ -238,6 +323,7 @@ export function CanvasPreview() {
       className="min-h-screen bg-slate-950 relative"
       onPointerDown={(e) => {
         if (e.button !== 0) return;
+        if (e.target !== e.currentTarget) return;
         dispatch({ type: 'SELECT', id: null });
       }}
       role="presentation"
@@ -246,6 +332,9 @@ export function CanvasPreview() {
         const isSelected = state.selectedId === section.id;
         const isHovered = state.hoveredId === section.id;
         const selectedElementKey = isSelected ? state.selectedElementKey : null;
+        const elementPositions = parseElementPositions(
+          (section.props as Record<string, unknown>).elementPositions
+        );
 
         return (
           <div
@@ -257,6 +346,8 @@ export function CanvasPreview() {
             }}
             onPointerDown={(e) => {
               if (e.button !== 0) return;
+              const target = e.target as HTMLElement | null;
+              if (target?.closest('[data-builder-selectable="true"]')) return;
               e.stopPropagation();
               handleSectionClick(section.id);
             }}
@@ -378,7 +469,7 @@ export function CanvasPreview() {
                 title={section.props?.title != null && section.props.title !== '' ? String(section.props.title) : undefined}
                 subtitle={section.props?.subtitle != null && section.props.subtitle !== '' ? String(section.props.subtitle) : undefined}
                 innerStyle={getInnerLayoutStyle(section.props as Record<string, unknown>)}
-                elementPositions={getElementPositions(section.props as Record<string, unknown>)}
+                elementPositions={elementPositions}
                 selectedElementKey={selectedElementKey}
                 onElementPointerDown={(elementKey, e) =>
                   handleElementPointerDown(section.id, elementKey, e)
@@ -389,7 +480,7 @@ export function CanvasPreview() {
               <FAQ
                 title={section.props?.title != null && section.props.title !== '' ? String(section.props.title) : undefined}
                 innerStyle={getInnerLayoutStyle(section.props as Record<string, unknown>)}
-                elementPositions={getElementPositions(section.props as Record<string, unknown>)}
+                elementPositions={elementPositions}
                 selectedElementKey={selectedElementKey}
                 onElementPointerDown={(elementKey, e) =>
                   handleElementPointerDown(section.id, elementKey, e)
