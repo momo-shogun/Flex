@@ -1,6 +1,6 @@
 # Flex
 
-Flex is a Vite + React design system playground for experimenting with React-Bits-inspired components, plus a simple page builder/export tool. It also includes optional Tambo-powered AI editing for supported components.
+Flex is a Vite + React design system playground for experimenting with React-Bits-inspired components, plus a simple page-builder/export tool for generating starter React projects. It also includes optional Tambo-powered AI editing for supported components.
 
 Built with **React + TypeScript + Tailwind CSS**, and inspired by **[React-Bits](https://github.com/DavidHDev/react-bits)**.
 
@@ -10,7 +10,7 @@ Built with **React + TypeScript + Tailwind CSS**, and inspired by **[React-Bits]
 - Simple website builder that exports a starter React project as a `.zip`
 - Optional Tambo-powered AI editing for supported components
 
-**Status:** Early-stage playground; APIs and component list may change. See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for current work and planned features.
+**Status:** Early-stage / experimental; APIs, component names, and the website-builder flow may change without notice. See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for current work and planned features.
 
 ## What you can do
 
@@ -19,6 +19,7 @@ Built with **React + TypeScript + Tailwind CSS**, and inspired by **[React-Bits]
   - View the generated code in the **Code** tab.
 - **Website Builder** (`/tools/website-builder`)
   - Add sections/components from the left panel, edit their props in **Inspector**, and export a starter project as a `.zip`.
+  - Export generates a minimal Vite + React + Tailwind starter project using the sections you assemble.
 
 ## Currently implemented components
 
@@ -26,7 +27,7 @@ See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for the authoritative
 
 The set is expected to grow over time (text animations, backgrounds, and page sections).
 
-Examples include:
+Examples include (not exhaustive):
 
 - Text animations: `SplitText`, `BlurText`, `TextCursor`
 - Backgrounds: `Silk`, `FloatingLines`, `LightPillar`
@@ -82,6 +83,8 @@ If you prefer `npm` or `yarn`:
 
 The project includes `@tambo-ai/react` and a set of `Interactable*` wrappers in `src/components/react-bits/` that can be used for AI-driven edits. The wrappers expose targets for Tambo to modify, but you'll still need to add a thread/chat UI to send instructions.
 
+At a high level, `TamboProvider` wraps the app shell, generative UI components are registered in `src/config/tambo-components.ts`, and `Interactable*` wrappers mark specific React-Bits components as AI-editable targets.
+
 For how to wire up a thread/chat UI and skills, see [TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md) and [SKILLS_GUIDE.md](./SKILLS_GUIDE.md).
 
 Tambo-registered generative UI components live in `src/components/tambo/`.
@@ -110,6 +113,6 @@ Contributions are welcome. If you'd like to propose changes (components, playgro
 
 ## License
 
-Licensing is currently under review (there is no `LICENSE` file). Earlier revisions of this README mentioned MIT, but no `LICENSE` file was added.
+Licensing is currently under review (there is no `LICENSE` file). Earlier revisions of this README mentioned MIT, but no `LICENSE` file was ever added; that reference has been removed to avoid confusion.
 
 Until a license is explicitly published in a `LICENSE` file, treat this repository as "all rights reserved" outside of local evaluation and contribution back to this repository.
