@@ -23,8 +23,6 @@ const SECTION_ITEMS: { id: ComponentId; label: string }[] = [
   { id: 'faq', label: 'FAQ' },
 ];
 
-const ALL_ITEMS = [...TEXT_ANIMATION_ITEMS, ...BACKGROUND_ITEMS, ...SECTION_ITEMS];
-
 interface CommandPaletteProps {
   selectedComponent: ComponentId;
   onSelectComponent: (id: ComponentId) => void;
@@ -36,6 +34,22 @@ export function CommandPalette({
 }: CommandPaletteProps) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
+  const handleSelect = (value: string) => {
+    if (value === WEBSITE_BUILDER_VALUE) {
+      navigate('/tools/website-builder');
+      setOpen(false);
+      return;
+    }
+
+    const item = [...TEXT_ANIMATION_ITEMS, ...BACKGROUND_ITEMS, ...SECTION_ITEMS].find(
+      (i) => i.id === value
+    );
+    if (item) {
+      onSelectComponent(item.id);
+      setOpen(false);
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -71,19 +85,7 @@ export function CommandPalette({
       >
         <Command
           className="w-full rounded-lg border border-slate-700 bg-slate-900 shadow-2xl overflow-hidden"
-        onSelect={(value) => {
-          if (value === WEBSITE_BUILDER_VALUE) {
-            navigate('/tools/website-builder');
-            setOpen(false);
-            return;
-          }
-          const item = ALL_ITEMS.find((i) => i.id === value);
-          if (item) {
-            onSelectComponent(item.id);
-            setOpen(false);
-          }
-        }}
-      >
+        >
         <Command.Input
           placeholder="Search components..."
           className="w-full px-4 py-3 bg-transparent border-b border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-0 text-base"
@@ -101,6 +103,7 @@ export function CommandPalette({
               <Command.Item
                 key={item.id}
                 value={item.id}
+                onSelect={handleSelect}
                 className="flex items-center gap-2 px-3 py-2.5 rounded-md text-slate-200 cursor-pointer data-[selected=true]:bg-slate-700 data-[selected=true]:text-white"
               >
                 {item.label}
@@ -118,6 +121,7 @@ export function CommandPalette({
               <Command.Item
                 key={item.id}
                 value={item.id}
+                onSelect={handleSelect}
                 className="flex items-center gap-2 px-3 py-2.5 rounded-md text-slate-200 cursor-pointer data-[selected=true]:bg-slate-700 data-[selected=true]:text-white"
               >
                 {item.label}
@@ -135,6 +139,7 @@ export function CommandPalette({
               <Command.Item
                 key={item.id}
                 value={item.id}
+                onSelect={handleSelect}
                 className="flex items-center gap-2 px-3 py-2.5 rounded-md text-slate-200 cursor-pointer data-[selected=true]:bg-slate-700 data-[selected=true]:text-white"
               >
                 {item.label}
@@ -150,6 +155,7 @@ export function CommandPalette({
           >
             <Command.Item
               value={WEBSITE_BUILDER_VALUE}
+              onSelect={handleSelect}
               className="flex items-center gap-2 px-3 py-2.5 rounded-md text-slate-200 cursor-pointer data-[selected=true]:bg-slate-700 data-[selected=true]:text-white"
             >
               Website Builder

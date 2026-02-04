@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -37,9 +36,41 @@ interface FAQProps {
   className?: string;
   /** Padding/margin for the inner content area (builder-editable). */
   innerStyle?: CSSProperties;
+  /** Optional offsets for specific inner elements (builder-exported). */
+  elementPositions?: Record<string, { x: number; y: number } | undefined>;
+
+  /** Builder-only: which inner element is currently selected. */
+  selectedElementKey?: string | null;
+  /** Builder-only: pointer handler used to select/drag an inner element. */
+  onElementPointerDown?: (
+    elementKey: string,
+    e: React.PointerEvent<HTMLElement>
+  ) => void;
 }
 
-export function FAQ({ items = DEFAULT_ITEMS, title = 'Frequently Asked Questions', className, innerStyle }: FAQProps) {
+function getElementStyle(
+  elementPositions: FAQProps['elementPositions'] | undefined,
+  elementKey: string
+): CSSProperties | undefined {
+  const pos = elementPositions?.[elementKey];
+  if (!pos) return undefined;
+  const x = typeof pos.x === 'number' && !Number.isNaN(pos.x) ? pos.x : 0;
+  const y = typeof pos.y === 'number' && !Number.isNaN(pos.y) ? pos.y : 0;
+  if (x === 0 && y === 0) return undefined;
+  return {
+    transform: `translate(${x}px, ${y}px)`,
+  };
+}
+
+export function FAQ({
+  items = DEFAULT_ITEMS,
+  title = 'Frequently Asked Questions',
+  className,
+  innerStyle,
+  elementPositions,
+  selectedElementKey,
+  onElementPointerDown,
+}: FAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
@@ -47,9 +78,32 @@ export function FAQ({ items = DEFAULT_ITEMS, title = 'Frequently Asked Questions
       className={cn('mx-auto max-w-2xl px-4 py-16 text-slate-100', className)}
       style={innerStyle}
     >
-      <h2 className="mb-10 text-2xl font-bold text-white md:text-3xl">
-        {title}
-      </h2>
+      <div
+        className="w-fit"
+        style={{
+          ...getElementStyle(elementPositions, 'title'),
+          ...(selectedElementKey === 'title'
+            ? {
+                outline: '2px solid hsl(var(--builder-selection))',
+                outlineOffset: 6,
+              }
+            : undefined),
+          ...(typeof onElementPointerDown === 'function'
+            ? { cursor: 'grab', touchAction: 'none', userSelect: 'none' }
+            : undefined),
+        }}
+        onPointerDown={
+          typeof onElementPointerDown === 'function'
+            ? (e) => onElementPointerDown('title', e)
+            : undefined
+        }
+        role={typeof onElementPointerDown === 'function' ? 'button' : undefined}
+        tabIndex={typeof onElementPointerDown === 'function' ? 0 : undefined}
+      >
+        <h2 className="mb-10 text-2xl font-bold text-white md:text-3xl">
+          {title}
+        </h2>
+      </div>
       <div className="space-y-2">
         {items.map((item, index) => {
           const isOpen = openIndex === index;

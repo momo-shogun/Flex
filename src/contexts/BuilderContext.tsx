@@ -130,6 +130,7 @@ function generateId(): string {
 const initialState: PageState = {
   sections: [],
   selectedId: null,
+  selectedElementKey: null,
   hoveredId: null,
   device: 'desktop',
   zoom: 100,
@@ -138,7 +139,17 @@ const initialState: PageState = {
 function pageReducer(state: PageState, action: PageAction): PageState {
   switch (action.type) {
     case 'SELECT':
-      return { ...state, selectedId: action.id };
+      return {
+        ...state,
+        selectedId: action.id,
+        selectedElementKey: null,
+      };
+    case 'SELECT_ELEMENT':
+      return {
+        ...state,
+        selectedId: action.id,
+        selectedElementKey: action.elementKey,
+      };
     case 'HOVER':
       return { ...state, hoveredId: action.id };
     case 'SET_DEVICE':
@@ -191,6 +202,8 @@ function pageReducer(state: PageState, action: PageAction): PageState {
         ...state,
         sections: state.sections.filter((s) => s.id !== action.id),
         selectedId: state.selectedId === action.id ? null : state.selectedId,
+        selectedElementKey:
+          state.selectedId === action.id ? null : state.selectedElementKey,
         hoveredId: state.hoveredId === action.id ? null : state.hoveredId,
       };
     default:

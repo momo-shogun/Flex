@@ -47,7 +47,7 @@ export function BuilderHeader() {
     }
     try {
       await downloadProjectZip(
-        state.sections.map((s) => ({ id: s.id, type: s.type }))
+        state.sections.map((s) => ({ id: s.id, type: s.type, props: s.props }))
       );
       toast.success('Project downloaded.');
     } catch (err) {

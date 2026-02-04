@@ -47,8 +47,7 @@ const sectionIcons: Record<ComponentId, typeof Layout> = {
   faq: Layout,
 };
 
-const CATEGORY_KEYS = ['textAnimations', 'backgrounds', 'sections'] as const;
-type CategoryKey = (typeof CATEGORY_KEYS)[number];
+type CategoryKey = 'textAnimations' | 'backgrounds' | 'sections';
 
 const defaultCategoriesOpen: Record<CategoryKey, boolean> = {
   textAnimations: false,

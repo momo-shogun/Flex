@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useRef, type CSSProperties } from 'react';
 import { useBuilder } from '@/contexts/BuilderContext';
 import { cn } from '@/lib/utils';
 import { SmoothScrollHero } from '@/components/sections/SmoothScrollHero';
@@ -24,6 +24,19 @@ import type { SilkProps, FloatingLinesProps, LightPillarProps } from '@/types/co
 export function CanvasPreview() {
   const { state, dispatch } = useBuilder();
 
+  type ElementPosition = { x: number; y: number };
+  type ElementPositions = Record<string, ElementPosition | undefined>;
+
+  const dragRef = useRef<{
+    sectionId: string;
+    elementKey: string;
+    startClientX: number;
+    startClientY: number;
+    startX: number;
+    startY: number;
+    startPositions: ElementPositions;
+  } | null>(null);
+
   const handleSectionClick = (id: string) => {
     dispatch({ type: 'SELECT', id });
   };
@@ -33,6 +46,88 @@ export function CanvasPreview() {
   };
 
   const visibleSections = state.sections.filter((s) => s.visible);
+
+  const scale = state.zoom / 100;
+
+  function getElementPositions(props: Record<string, unknown>): ElementPositions {
+    const raw = props.elementPositions;
+    if (!raw || typeof raw !== 'object') return {};
+    const positions = raw as Record<string, unknown>;
+    const out: ElementPositions = {};
+    for (const [k, v] of Object.entries(positions)) {
+      if (v && typeof v === 'object') {
+        const pos = v as Record<string, unknown>;
+        const x = typeof pos.x === 'number' && !Number.isNaN(pos.x) ? pos.x : 0;
+        const y = typeof pos.y === 'number' && !Number.isNaN(pos.y) ? pos.y : 0;
+        out[k] = { x, y };
+      }
+    }
+    return out;
+  }
+
+  function getElementPosition(props: Record<string, unknown>, key: string): ElementPosition {
+    const positions = getElementPositions(props);
+    return positions[key] ?? { x: 0, y: 0 };
+  }
+
+  const handleElementPointerDown = (
+    sectionId: string,
+    elementKey: string,
+    e: React.PointerEvent<HTMLElement>
+  ) => {
+    if (e.button !== 0) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    dispatch({ type: 'SELECT_ELEMENT', id: sectionId, elementKey });
+
+    const section = state.sections.find((s) => s.id === sectionId);
+    if (!section) return;
+    const sectionProps = section.props as Record<string, unknown>;
+    const start = getElementPosition(sectionProps, elementKey);
+    const startPositions = getElementPositions(sectionProps);
+
+    dragRef.current = {
+      sectionId,
+      elementKey,
+      startClientX: e.clientX,
+      startClientY: e.clientY,
+      startX: start.x,
+      startY: start.y,
+      startPositions,
+    };
+
+    const onMove = (ev: PointerEvent) => {
+      const drag = dragRef.current;
+      if (!drag) return;
+
+      const dx = (ev.clientX - drag.startClientX) / (scale || 1);
+      const dy = (ev.clientY - drag.startClientY) / (scale || 1);
+      const nextX = Math.round(drag.startX + dx);
+      const nextY = Math.round(drag.startY + dy);
+
+      dispatch({
+        type: 'UPDATE_PROPS',
+        id: drag.sectionId,
+        props: {
+          elementPositions: {
+            ...drag.startPositions,
+            [drag.elementKey]: { x: nextX, y: nextY },
+          },
+        },
+      });
+    };
+
+    const onUp = () => {
+      dragRef.current = null;
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  };
 
   function getLayoutStyle(props: Record<string, unknown>): CSSProperties {
     const px = (v: unknown) =>
@@ -139,10 +234,18 @@ export function CanvasPreview() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 relative">
+    <div
+      className="min-h-screen bg-slate-950 relative"
+      onPointerDown={(e) => {
+        if (e.button !== 0) return;
+        dispatch({ type: 'SELECT', id: null });
+      }}
+      role="presentation"
+    >
       {visibleSections.map((section) => {
         const isSelected = state.selectedId === section.id;
         const isHovered = state.hoveredId === section.id;
+        const selectedElementKey = isSelected ? state.selectedElementKey : null;
 
         return (
           <div
@@ -152,7 +255,8 @@ export function CanvasPreview() {
               ...getLayoutStyle(section.props as Record<string, unknown>),
               ...getFigmaStyle(section.props as Record<string, unknown>),
             }}
-            onClick={(e) => {
+            onPointerDown={(e) => {
+              if (e.button !== 0) return;
               e.stopPropagation();
               handleSectionClick(section.id);
             }}
@@ -274,12 +378,22 @@ export function CanvasPreview() {
                 title={section.props?.title != null && section.props.title !== '' ? String(section.props.title) : undefined}
                 subtitle={section.props?.subtitle != null && section.props.subtitle !== '' ? String(section.props.subtitle) : undefined}
                 innerStyle={getInnerLayoutStyle(section.props as Record<string, unknown>)}
+                elementPositions={getElementPositions(section.props as Record<string, unknown>)}
+                selectedElementKey={selectedElementKey}
+                onElementPointerDown={(elementKey, e) =>
+                  handleElementPointerDown(section.id, elementKey, e)
+                }
               />
             )}
             {section.type === 'faq' && (
               <FAQ
                 title={section.props?.title != null && section.props.title !== '' ? String(section.props.title) : undefined}
                 innerStyle={getInnerLayoutStyle(section.props as Record<string, unknown>)}
+                elementPositions={getElementPositions(section.props as Record<string, unknown>)}
+                selectedElementKey={selectedElementKey}
+                onElementPointerDown={(elementKey, e) =>
+                  handleElementPointerDown(section.id, elementKey, e)
+                }
               />
             )}
           </div>
