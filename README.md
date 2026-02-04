@@ -2,6 +2,8 @@
 
 Flex is a Vite + React playground for experimenting with React-Bits-inspired components, plus a simple page builder/export tool. It also includes optional Tambo-powered AI editing for supported components.
 
+Built with **React + TypeScript + Tailwind CSS**, and inspired by **[React-Bits](https://github.com/DavidHDev/react-bits)**.
+
 ## What you can do
 
 - **Component playground** (`/`)
@@ -62,9 +64,17 @@ VITE_TAMBO_API_KEY=sk_...
 
 ## Additional docs
 
-- [GET_STARTED.md](./GET_STARTED.md)
-- [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md)
-- [REACT_BITS_INTEGRATION.md](./REACT_BITS_INTEGRATION.md)
-- [TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md)
-- [SKILLS_GUIDE.md](./SKILLS_GUIDE.md)
-- [PROJECT_IMPLEMENTATION_GUIDE.md](./PROJECT_IMPLEMENTATION_GUIDE.md)
+- [GET_STARTED.md](./GET_STARTED.md) - more detailed setup and usage steps
+- [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) - current implementation status and roadmap
+- [REACT_BITS_INTEGRATION.md](./REACT_BITS_INTEGRATION.md) - React-Bits component notes and integration details
+- [TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md) - concepts and patterns for Tambo integration
+- [SKILLS_GUIDE.md](./SKILLS_GUIDE.md) - defining and using AI skills
+- [PROJECT_IMPLEMENTATION_GUIDE.md](./PROJECT_IMPLEMENTATION_GUIDE.md) - broader project plan
+
+## Contributing
+
+Contributions are welcome. If you'd like to propose changes (components, playground UX, export, or Tambo integration), please open an issue or pull request.
+
+## License
+
+This repository does not currently include a `LICENSE` file.
