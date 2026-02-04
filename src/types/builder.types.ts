@@ -13,6 +13,11 @@ export interface PageSection {
 export interface PageState {
   sections: PageSection[];
   selectedId: string | null;
+  /**
+   * Optional key for an element within the selected section (e.g. 'title').
+   * Invariant: when `selectedId` is null, this should also be null.
+   */
+  selectedElementKey: string | null;
   hoveredId: string | null;
   device: DeviceType;
   zoom: number;
@@ -20,6 +25,7 @@ export interface PageState {
 
 export type PageAction =
   | { type: 'SELECT'; id: string | null }
+  | { type: 'SELECT_ELEMENT'; id: string; elementKey: string }
   | { type: 'HOVER'; id: string | null }
   | { type: 'SET_DEVICE'; device: DeviceType }
   | { type: 'SET_ZOOM'; zoom: number }

@@ -8,7 +8,6 @@ import {
   Mesh,
   ShaderMaterial,
   Vector3,
-  Vector2,
   Clock,
 } from 'three';
 

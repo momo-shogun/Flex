@@ -30,6 +30,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useBuilder } from '@/contexts/BuilderContext';
 import { INNER_LAYOUT_TYPES } from '@/contexts/BuilderContext';
+import { parseElementPositions, setElementPosition } from '@/utils/element-positions';
 import type { ComponentId } from '@/types/components';
 
 const borderCls = 'border-b';
@@ -96,6 +97,17 @@ function InspectSection({
   );
 }
 
+function getElementLabel(type: ComponentId, key: string): string {
+  if (type === 'aurora-hero') {
+    if (key === 'badge') return 'Badge';
+    if (key === 'title') return 'Title';
+    if (key === 'subtitle') return 'Subtitle';
+    if (key === 'button') return 'Button';
+  }
+  if (type === 'faq' && key === 'title') return 'Title';
+  return key;
+}
+
 export function InspectorPanel() {
   const { state, dispatch, selectedSection } = useBuilder();
 
@@ -152,6 +164,12 @@ export function InspectorPanel() {
 
   const props = selectedSection.props as Record<string, unknown>;
   const showInnerLayout = INNER_LAYOUT_TYPES.includes(selectedSection.type);
+  const selectedElementKey = state.selectedElementKey;
+  const elementPositions = parseElementPositions(props.elementPositions);
+  const selectedElementPosition =
+    selectedElementKey != null
+      ? elementPositions[selectedElementKey] ?? { x: 0, y: 0 }
+      : null;
 
   return (
     <div className="h-full flex flex-col min-w-0 bg-slate-900/50">
@@ -274,44 +292,106 @@ export function InspectorPanel() {
         <Separator className="bg-slate-700/80" />
         {/* Position */}
         <InspectSection title="Position">
-          <div className="grid grid-cols-3 gap-2">
-            <div className="space-y-1">
-              <Label className="text-[10px] text-slate-500">X</Label>
-              <Input
-                type="number"
-                value={toNum(props.positionX, 0)}
-                onChange={(e) => updateProp('positionX', Number(e.target.value) || 0)}
-                className={cn(inputClass, 'w-full')}
-                placeholder="0"
-              />
+          {selectedElementKey != null && selectedElementPosition ? (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-400">
+                  Element: {getElementLabel(selectedSection.type, selectedElementKey)}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs text-slate-300 hover:text-slate-100"
+                  onClick={() => dispatch({ type: 'SELECT', id: selectedSection.id })}
+                >
+                  Edit section
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <Label className="text-[10px] text-slate-500">X</Label>
+                  <Input
+                    type="number"
+                    value={toNum(selectedElementPosition.x, 0)}
+                    onChange={(e) => {
+                      const x = Number(e.target.value) || 0;
+                      updateProp(
+                        'elementPositions',
+                        setElementPosition(elementPositions, selectedElementKey, { x })
+                      );
+                    }}
+                    className={cn(inputClass, 'w-full')}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] text-slate-500">Y</Label>
+                  <Input
+                    type="number"
+                    value={toNum(selectedElementPosition.y, 0)}
+                    onChange={(e) => {
+                      const y = Number(e.target.value) || 0;
+                      updateProp(
+                        'elementPositions',
+                        setElementPosition(elementPositions, selectedElementKey, { y })
+                      );
+                    }}
+                    className={cn(inputClass, 'w-full')}
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] text-slate-500">R (section)</Label>
+                <Input
+                  type="number"
+                  value={toNum(props.rotation, 0)}
+                  onChange={(e) => updateProp('rotation', Number(e.target.value) || 0)}
+                  className={cn(inputClass, 'w-full')}
+                  placeholder="0°"
+                />
+              </div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] text-slate-500">Y</Label>
-              <Input
-                type="number"
-                value={toNum(props.positionY, 0)}
-                onChange={(e) => updateProp('positionY', Number(e.target.value) || 0)}
-                className={cn(inputClass, 'w-full')}
-                placeholder="0"
-              />
+          ) : (
+            <div className="grid grid-cols-3 gap-2">
+              <div className="space-y-1">
+                <Label className="text-[10px] text-slate-500">X</Label>
+                <Input
+                  type="number"
+                  value={toNum(props.positionX, 0)}
+                  onChange={(e) => updateProp('positionX', Number(e.target.value) || 0)}
+                  className={cn(inputClass, 'w-full')}
+                  placeholder="0"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] text-slate-500">Y</Label>
+                <Input
+                  type="number"
+                  value={toNum(props.positionY, 0)}
+                  onChange={(e) => updateProp('positionY', Number(e.target.value) || 0)}
+                  className={cn(inputClass, 'w-full')}
+                  placeholder="0"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] text-slate-500">R</Label>
+                <Input
+                  type="number"
+                  value={toNum(props.rotation, 0)}
+                  onChange={(e) => updateProp('rotation', Number(e.target.value) || 0)}
+                  className={cn(inputClass, 'w-full')}
+                  placeholder="0°"
+                />
+              </div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] text-slate-500">R</Label>
-              <Input
-                type="number"
-                value={toNum(props.rotation, 0)}
-                onChange={(e) => updateProp('rotation', Number(e.target.value) || 0)}
-                className={cn(inputClass, 'w-full')}
-                placeholder="0°"
-              />
-            </div>
-          </div>
+          )}
         </InspectSection>
 
         {/* Layout — padding & margin */}
         <InspectSection title="Layout">
           <LayoutProperties
-            type={selectedSection.type}
             props={props}
             onUpdate={updateProp}
             showInnerLayout={showInnerLayout}
@@ -492,18 +572,17 @@ export function InspectorPanel() {
 }
 
 function LayoutProperties({
-  type,
   props,
   onUpdate,
   showInnerLayout,
   compact = false,
 }: {
-  type: ComponentId;
   props: Record<string, unknown>;
   onUpdate: (key: string, value: unknown) => void;
   showInnerLayout: boolean;
   compact?: boolean;
 }) {
+  // This panel is intentionally generic; it doesn't vary by section type.
   const inputClassShort = 'h-8 text-sm bg-slate-800 border-slate-600 w-14';
 
   const padGrid = (

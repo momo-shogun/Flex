@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { BuilderSelectable, getBuilderElementStyle } from './builder-selectable';
+import type { ElementPositions } from '@/utils/element-positions';
 
 interface FAQItem {
   question: string;
@@ -37,9 +38,27 @@ interface FAQProps {
   className?: string;
   /** Padding/margin for the inner content area (builder-editable). */
   innerStyle?: CSSProperties;
+  /** Optional offsets for specific inner elements (builder-exported). */
+  elementPositions?: ElementPositions;
+
+  /** Builder-only: which inner element is currently selected. */
+  selectedElementKey?: string | null;
+  /** Builder-only: pointer handler used to select/drag an inner element. */
+  onElementPointerDown?: (
+    elementKey: string,
+    e: React.PointerEvent<HTMLElement>
+  ) => void;
 }
 
-export function FAQ({ items = DEFAULT_ITEMS, title = 'Frequently Asked Questions', className, innerStyle }: FAQProps) {
+export function FAQ({
+  items = DEFAULT_ITEMS,
+  title = 'Frequently Asked Questions',
+  className,
+  innerStyle,
+  elementPositions,
+  selectedElementKey,
+  onElementPointerDown,
+}: FAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
@@ -47,9 +66,15 @@ export function FAQ({ items = DEFAULT_ITEMS, title = 'Frequently Asked Questions
       className={cn('mx-auto max-w-2xl px-4 py-16 text-slate-100', className)}
       style={innerStyle}
     >
-      <h2 className="mb-10 text-2xl font-bold text-white md:text-3xl">
-        {title}
-      </h2>
+      <BuilderSelectable
+        elementKey="title"
+        selected={selectedElementKey === 'title'}
+        onPointerDown={onElementPointerDown}
+        style={getBuilderElementStyle(elementPositions, 'title')}
+        className="w-fit"
+      >
+        <h2 className="mb-10 text-2xl font-bold text-white md:text-3xl">{title}</h2>
+      </BuilderSelectable>
       <div className="space-y-2">
         {items.map((item, index) => {
           const isOpen = openIndex === index;

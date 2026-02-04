@@ -20,7 +20,10 @@ import {
 } from '@/components/ui/tooltip';
 import { useBuilder } from '@/contexts/BuilderContext';
 import type { DeviceType } from '@/types/builder.types';
-import { downloadProjectZip } from '@/utils/website-builder-export';
+import {
+  downloadProjectZip,
+  sanitizeSectionPropsForExport,
+} from '@/utils/website-builder-export';
 import { toast } from 'sonner';
 
 const devices: {
@@ -47,7 +50,11 @@ export function BuilderHeader() {
     }
     try {
       await downloadProjectZip(
-        state.sections.map((s) => ({ id: s.id, type: s.type }))
+        state.sections.map((s) => ({
+          id: s.id,
+          type: s.type,
+          props: sanitizeSectionPropsForExport(s.props),
+        }))
       );
       toast.success('Project downloaded.');
     } catch (err) {

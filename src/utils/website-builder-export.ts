@@ -1,28 +1,138 @@
 import JSZip from 'jszip';
 import type { BuilderSection } from '@/types/website-builder';
+import { parseElementPositions } from './element-positions';
+
+const EXPORTABLE_PROP_KEYS = new Set([
+  'title',
+  'subtitle',
+  'items',
+  'paddingTop',
+  'paddingRight',
+  'paddingBottom',
+  'paddingLeft',
+  'marginTop',
+  'marginRight',
+  'marginBottom',
+  'marginLeft',
+  'positionX',
+  'positionY',
+  'rotation',
+  'innerPaddingTop',
+  'innerPaddingRight',
+  'innerPaddingBottom',
+  'innerPaddingLeft',
+  'innerMarginTop',
+  'innerMarginRight',
+  'innerMarginBottom',
+  'innerMarginLeft',
+  'elementPositions',
+]);
+
+export function sanitizeSectionPropsForExport(
+  props: Record<string, unknown> | undefined
+): Record<string, unknown> {
+  const safe: Record<string, unknown> = {};
+  const droppedKeys: string[] = [];
+  for (const [k, v] of Object.entries(props ?? {})) {
+    if (!EXPORTABLE_PROP_KEYS.has(k)) {
+      droppedKeys.push(k);
+      continue;
+    }
+    if (k === 'elementPositions') {
+      const parsed = parseElementPositions(v);
+      if (Object.keys(parsed).length) safe[k] = parsed;
+      continue;
+    }
+    safe[k] = v;
+  }
+  if (import.meta.env.DEV && droppedKeys.length) {
+    console.warn('[export] dropped section props:', droppedKeys);
+  }
+  return safe;
+}
 
 function generateAppTsx(sections: BuilderSection[]): string {
   const importSet = new Set<string>();
   const elements: string[] = [];
 
+  const px = (v: unknown) => (typeof v === 'number' && !Number.isNaN(v) ? v : 0);
+  const num = (v: unknown, fallback: number) =>
+    typeof v === 'number' && !Number.isNaN(v) ? v : fallback;
+
+  const getWrapperStyle = (props: Record<string, unknown> | undefined) => {
+    if (!props) return {} as Record<string, string | number>;
+    const style: Record<string, string | number> = {
+      paddingTop: px(props.paddingTop),
+      paddingRight: px(props.paddingRight),
+      paddingBottom: px(props.paddingBottom),
+      paddingLeft: px(props.paddingLeft),
+      marginTop: px(props.marginTop),
+      marginRight: px(props.marginRight),
+      marginBottom: px(props.marginBottom),
+      marginLeft: px(props.marginLeft),
+    };
+
+    const x = num(props.positionX, 0);
+    const y = num(props.positionY, 0);
+    const rot = num(props.rotation, 0);
+    const transforms: string[] = [];
+    if (x !== 0 || y !== 0) transforms.push(`translate(${x}px, ${y}px)`);
+    if (rot !== 0) transforms.push(`rotate(${rot}deg)`);
+    if (transforms.length) style.transform = transforms.join(' ');
+
+    return style;
+  };
+
+  const getInnerStyle = (props: Record<string, unknown> | undefined) => {
+    if (!props) return null;
+    const style: Record<string, number> = {
+      paddingTop: px(props.innerPaddingTop),
+      paddingRight: px(props.innerPaddingRight),
+      paddingBottom: px(props.innerPaddingBottom),
+      paddingLeft: px(props.innerPaddingLeft),
+      marginTop: px(props.innerMarginTop),
+      marginRight: px(props.innerMarginRight),
+      marginBottom: px(props.innerMarginBottom),
+      marginLeft: px(props.innerMarginLeft),
+    };
+    return Object.values(style).some((v) => v !== 0) ? style : null;
+  };
+
   for (const section of sections) {
+    const props = section.props && typeof section.props === 'object'
+      ? (section.props as Record<string, unknown>)
+      : undefined;
+    const wrapperStyle = getWrapperStyle(props);
+    const wrapperStyleAttr = ` style={${JSON.stringify(wrapperStyle)}}`;
+    const innerStyle = getInnerStyle(props);
+    const parsedElementPositions = parseElementPositions(props?.elementPositions);
+    const elementPositions = Object.keys(parsedElementPositions).length
+      ? parsedElementPositions
+      : null;
+
     switch (section.type) {
       // Text Animations
       case 'split-text':
         importSet.add("import { SplitText } from './components/SplitText';");
-        elements.push(`      <div key="${section.id}" className="min-h-screen flex items-center justify-center p-8">`);
+        elements.push(
+          `      <div key="${section.id}" className="min-h-screen flex items-center justify-center p-8"${wrapperStyleAttr}>`
+        );
         elements.push(`        <SplitText />`);
         elements.push(`      </div>`);
         break;
       case 'blur-text':
         importSet.add("import { BlurText } from './components/BlurText';");
-        elements.push(`      <div key="${section.id}" className="min-h-screen flex items-center justify-center p-8">`);
+        elements.push(
+          `      <div key="${section.id}" className="min-h-screen flex items-center justify-center p-8"${wrapperStyleAttr}>`
+        );
         elements.push(`        <BlurText />`);
         elements.push(`      </div>`);
         break;
       case 'text-cursor':
         importSet.add("import { TextCursor } from './components/TextCursor';");
-        elements.push(`      <div key="${section.id}" className="min-h-screen flex items-center justify-center p-8">`);
+        elements.push(
+          `      <div key="${section.id}" className="min-h-screen flex items-center justify-center p-8"${wrapperStyleAttr}>`
+        );
         elements.push(`        <TextCursor />`);
         elements.push(`      </div>`);
         break;
@@ -30,28 +140,91 @@ function generateAppTsx(sections: BuilderSection[]): string {
       case 'silk':
       case 'floating-lines':
       case 'light-pillar':
-        const bgName = section.type === 'silk' ? 'Silk' : section.type === 'floating-lines' ? 'FloatingLines' : 'LightPillar';
-        importSet.add(`import { ${bgName} } from './components/${bgName}';`);
-        elements.push(`      <div key="${section.id}" className="relative min-h-screen">`);
-        elements.push(`        <${bgName} />`);
-        elements.push(`        <div className="relative z-10 flex items-center justify-center h-screen">`);
-        elements.push(`          <h2 className="text-4xl font-bold text-white">${bgName}</h2>`);
-        elements.push(`        </div>`);
-        elements.push(`      </div>`);
-        break;
+        {
+          const bgName =
+            section.type === 'silk'
+              ? 'Silk'
+              : section.type === 'floating-lines'
+                ? 'FloatingLines'
+                : 'LightPillar';
+          importSet.add(`import { ${bgName} } from './components/${bgName}';`);
+          elements.push(
+            `      <div key="${section.id}" className="relative min-h-screen"${wrapperStyleAttr}>`
+          );
+          elements.push(`        <${bgName} />`);
+          elements.push(
+            `        <div className="relative z-10 flex items-center justify-center h-screen">`
+          );
+          elements.push(`          <h2 className="text-4xl font-bold text-white">${bgName}</h2>`);
+          elements.push(`        </div>`);
+          elements.push(`      </div>`);
+          break;
+        }
       // Sections
       case 'smooth-scroll-hero':
         importSet.add("import { SmoothScrollHero } from './components/SmoothScrollHero';");
-        elements.push(`      <SmoothScrollHero key="${section.id}" />`);
+        elements.push(`      <div key="${section.id}"${wrapperStyleAttr}>`);
+        elements.push(`        <SmoothScrollHero />`);
+        elements.push(`      </div>`);
         break;
       case 'aurora-hero':
-        importSet.add("import { AuroraHero } from './components/AuroraHero';");
-        elements.push(`      <AuroraHero key="${section.id}" />`);
-        break;
+        {
+          importSet.add("import { AuroraHero } from './components/AuroraHero';");
+          const heroProps: string[] = [];
+          if (typeof props?.title === 'string' && props.title.trim()) {
+            heroProps.push(`title={${JSON.stringify(props.title)}}`);
+          }
+          if (typeof props?.subtitle === 'string' && props.subtitle.trim()) {
+            heroProps.push(`subtitle={${JSON.stringify(props.subtitle)}}`);
+          }
+          if (innerStyle) heroProps.push(`innerStyle={${JSON.stringify(innerStyle)}}`);
+          if (elementPositions) {
+            heroProps.push(`elementPositions={${JSON.stringify(elementPositions)}}`);
+          }
+
+          elements.push(`      <div key="${section.id}"${wrapperStyleAttr}>`);
+          elements.push(
+            `        <AuroraHero${heroProps.length ? ` ${heroProps.join(' ')}` : ''} />`
+          );
+          elements.push(`      </div>`);
+          break;
+        }
       case 'faq':
-        importSet.add("import { FAQ } from './components/FAQ';");
-        elements.push(`      <FAQ key="${section.id}" />`);
-        break;
+        {
+          importSet.add("import { FAQ } from './components/FAQ';");
+          const faqProps: string[] = [];
+          if (typeof props?.title === 'string' && props.title.trim()) {
+            faqProps.push(`title={${JSON.stringify(props.title)}}`);
+          }
+          if (Array.isArray(props?.items)) {
+            const items = props.items
+              .filter(
+                (item): item is { question: string; answer: string } =>
+                  !!item &&
+                  typeof item === 'object' &&
+                  typeof (item as { question?: unknown }).question === 'string' &&
+                  typeof (item as { answer?: unknown }).answer === 'string'
+              )
+              .map((item) => ({
+                question: item.question,
+                answer: item.answer,
+              }));
+            if (items.length) {
+              faqProps.push(`items={${JSON.stringify(items)}}`);
+            }
+          }
+          if (innerStyle) faqProps.push(`innerStyle={${JSON.stringify(innerStyle)}}`);
+          if (elementPositions) {
+            faqProps.push(`elementPositions={${JSON.stringify(elementPositions)}}`);
+          }
+
+          elements.push(`      <div key="${section.id}"${wrapperStyleAttr}>`);
+          elements.push(
+            `        <FAQ${faqProps.length ? ` ${faqProps.join(' ')}` : ''} />`
+          );
+          elements.push(`      </div>`);
+          break;
+        }
       default:
         break;
     }
@@ -94,6 +267,7 @@ async function getPackageJson(): Promise<string> {
       devDependencies: {
         '@vitejs/plugin-react': '^4.3.4',
         vite: '^5.4.11',
+        '@types/three': '^0.182.0',
         tailwindcss: '^3.4.17',
         postcss: '^8.4.49',
         autoprefixer: '^10.4.20',
@@ -315,13 +489,40 @@ export function LightPillar() {
 
 const AURORA_HERO_SOURCE = `import { Stars } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { useEffect } from 'react';
+import { useEffect, type CSSProperties } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import { useMotionTemplate, useMotionValue, motion, animate } from 'framer-motion';
 
 const COLORS_TOP = ['#13FFAA', '#1E67C6', '#CE84CF', '#DD335C'];
 
-export function AuroraHero() {
+type ElementPosition = { x: number; y: number };
+type ElementPositions = Record<string, ElementPosition | undefined>;
+
+function getElementStyle(
+  elementPositions: ElementPositions | undefined,
+  elementKey: string
+): CSSProperties | undefined {
+  const pos = elementPositions?.[elementKey];
+  if (!pos) return undefined;
+  const x = typeof pos.x === 'number' && !Number.isNaN(pos.x) ? pos.x : 0;
+  const y = typeof pos.y === 'number' && !Number.isNaN(pos.y) ? pos.y : 0;
+  if (x === 0 && y === 0) return undefined;
+  return { transform: 'translate(' + x + 'px, ' + y + 'px)' };
+}
+
+export interface AuroraHeroProps {
+  title?: string;
+  subtitle?: string;
+  innerStyle?: CSSProperties;
+  elementPositions?: ElementPositions;
+}
+
+export function AuroraHero({
+  title = 'Decrease your SaaS churn by over 90%',
+  subtitle = 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, et, distinctio eum impedit nihil ipsum modi.',
+  innerStyle,
+  elementPositions,
+}: AuroraHeroProps) {
   const color = useMotionValue(COLORS_TOP[0]);
   useEffect(() => {
     animate(color, COLORS_TOP, { ease: 'easeInOut', duration: 10, repeat: Infinity, repeatType: 'mirror' });
@@ -331,16 +532,24 @@ export function AuroraHero() {
   const boxShadow = useMotionTemplate\`0px 4px 24px \${color}\`;
   return (
     <motion.section style={{ backgroundImage }} className="relative grid min-h-screen place-content-center overflow-hidden bg-gray-950 px-4 py-24 text-gray-200">
-      <div className="relative z-10 flex flex-col items-center">
-        <span className="mb-1.5 inline-block rounded-full bg-gray-600/50 px-3 py-1.5 text-sm">Beta Now Live!</span>
-        <h1 className="max-w-3xl bg-gradient-to-br from-white to-gray-400 bg-clip-text text-center text-3xl font-medium leading-tight text-transparent sm:text-5xl md:text-7xl">
-          Decrease your SaaS churn by over 90%
-        </h1>
-        <p className="my-6 max-w-xl text-center text-base text-gray-400">Lorem ipsum, dolor sit amet consectetur adipisicing elit.</p>
-        <motion.button type="button" style={{ border, boxShadow }} whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}
-          className="flex w-fit items-center gap-1.5 rounded-full bg-gray-950/10 px-4 py-2 text-gray-50 hover:bg-gray-950/50">
-          Start free trial <FiArrowRight className="group-hover:-rotate-45" />
-        </motion.button>
+      <div className="relative z-10 flex flex-col items-center" style={innerStyle}>
+        <div className="w-fit" style={getElementStyle(elementPositions, 'badge')}>
+          <span className="mb-1.5 inline-block rounded-full bg-gray-600/50 px-3 py-1.5 text-sm">Beta Now Live!</span>
+        </div>
+        <div style={getElementStyle(elementPositions, 'title')}>
+          <h1 className="max-w-3xl bg-gradient-to-br from-white to-gray-400 bg-clip-text text-center text-3xl font-medium leading-tight text-transparent sm:text-5xl md:text-7xl">
+            {title}
+          </h1>
+        </div>
+        <div style={getElementStyle(elementPositions, 'subtitle')}>
+          <p className="my-6 max-w-xl text-center text-base text-gray-400">{subtitle}</p>
+        </div>
+        <div className="w-fit" style={getElementStyle(elementPositions, 'button')}>
+          <motion.button type="button" style={{ border, boxShadow }} whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}
+            className="flex w-fit items-center gap-1.5 rounded-full bg-gray-950/10 px-4 py-2 text-gray-50 hover:bg-gray-950/50">
+            Start free trial <FiArrowRight className="group-hover:-rotate-45" />
+          </motion.button>
+        </div>
       </div>
       <div className="absolute inset-0 z-0"><Canvas><Stars radius={50} count={2500} factor={4} fade speed={2} /></Canvas></div>
     </motion.section>
@@ -348,7 +557,7 @@ export function AuroraHero() {
 }
 `;
 
-const FAQ_SOURCE = `import { useState } from 'react';
+const FAQ_SOURCE = `import { useState, type CSSProperties } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DEFAULT_ITEMS = [
@@ -359,13 +568,42 @@ const DEFAULT_ITEMS = [
 
 function cn(...c) { return c.filter(Boolean).join(' '); }
 
-export function FAQ() {
-  const [openIndex, setOpenIndex] = useState(null);
+type ElementPosition = { x: number; y: number };
+type ElementPositions = Record<string, ElementPosition | undefined>;
+
+function getElementStyle(
+  elementPositions: ElementPositions | undefined,
+  elementKey: string
+): CSSProperties | undefined {
+  const pos = elementPositions?.[elementKey];
+  if (!pos) return undefined;
+  const x = typeof pos.x === 'number' && !Number.isNaN(pos.x) ? pos.x : 0;
+  const y = typeof pos.y === 'number' && !Number.isNaN(pos.y) ? pos.y : 0;
+  if (x === 0 && y === 0) return undefined;
+  return { transform: 'translate(' + x + 'px, ' + y + 'px)' };
+}
+
+export interface FAQProps {
+  title?: string;
+  items?: { question: string; answer: string }[];
+  innerStyle?: CSSProperties;
+  elementPositions?: ElementPositions;
+}
+
+export function FAQ({
+  title = 'Frequently Asked Questions',
+  items = DEFAULT_ITEMS,
+  innerStyle,
+  elementPositions,
+}: FAQProps) {
+  const [openIndex, setOpenIndex] = useState(0);
   return (
-    <section className={cn('mx-auto max-w-2xl px-4 py-16 text-slate-100')}>
-      <h2 className="mb-10 text-2xl font-bold text-white">Frequently Asked Questions</h2>
+    <section className={cn('mx-auto max-w-2xl px-4 py-16 text-slate-100')} style={innerStyle}>
+      <div className="w-fit" style={getElementStyle(elementPositions, 'title')}>
+        <h2 className="mb-10 text-2xl font-bold text-white">{title}</h2>
+      </div>
       <div className="space-y-2">
-        {DEFAULT_ITEMS.map((item, index) => {
+        {items.map((item, index) => {
           const isOpen = openIndex === index;
           return (
             <motion.div key={index} layout className="rounded-lg border border-slate-700 bg-slate-900/50 overflow-hidden">
