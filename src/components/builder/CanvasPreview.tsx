@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useEffect } from 'react';
 import { useBuilder } from '@/contexts/BuilderContext';
 import { cn } from '@/lib/utils';
 import { SmoothScrollHero } from '@/components/sections/SmoothScrollHero';
@@ -31,6 +32,16 @@ export function CanvasPreview() {
   const handleSectionHover = (id: string | null) => {
     dispatch({ type: 'HOVER', id });
   };
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && state.selectedElementKey != null && state.selectedId) {
+        dispatch({ type: 'SELECT', id: state.selectedId });
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [dispatch, state.selectedId, state.selectedElementKey]);
 
   const visibleSections = state.sections.filter((s) => s.visible);
 
@@ -124,6 +135,17 @@ export function CanvasPreview() {
     return `${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}`;
   }
 
+  function getElementPositions(props: Record<string, unknown>): Partial<Record<'title' | 'subtitle' | 'button', { x: number; y: number }>> {
+    const raw = props.elementPositions as Partial<Record<string, { x: number; y: number }>> | undefined;
+    if (!raw || typeof raw !== 'object') return {};
+    const out: Partial<Record<'title' | 'subtitle' | 'button', { x: number; y: number }>> = {};
+    for (const k of ['title', 'subtitle', 'button'] as const) {
+      const v = raw[k];
+      if (v && typeof v.x === 'number' && typeof v.y === 'number') out[k] = { x: v.x, y: v.y };
+    }
+    return out;
+  }
+
   if (visibleSections.length === 0) {
     return (
       <div
@@ -142,6 +164,8 @@ export function CanvasPreview() {
     <div className="min-h-screen bg-slate-950 relative">
       {visibleSections.map((section) => {
         const isSelected = state.selectedId === section.id;
+        const isElementSelected = isSelected && state.selectedElementKey != null;
+        const isSectionSelected = isSelected && state.selectedElementKey == null;
         const isHovered = state.hoveredId === section.id;
 
         return (
@@ -159,16 +183,16 @@ export function CanvasPreview() {
             onMouseEnter={() => handleSectionHover(section.id)}
             onMouseLeave={() => handleSectionHover(null)}
           >
-            {(isSelected || isHovered) && (
+            {(isSectionSelected || isHovered) && (
               <div
                 className={cn(
                   'absolute inset-0 pointer-events-none z-50 border-2 transition-colors',
-                  isSelected
+                  isSectionSelected
                     ? 'border-[hsl(var(--builder-selection))]'
                     : 'border-[hsl(var(--builder-selection))]/50 border-dashed'
                 )}
                 style={
-                  isSelected
+                  isSectionSelected
                     ? {
                         backgroundColor: 'hsl(var(--builder-selection) / 0.05)',
                       }
@@ -178,12 +202,15 @@ export function CanvasPreview() {
                 <div
                   className={cn(
                     'absolute -top-6 left-2 px-2 py-0.5 text-xs font-medium rounded',
-                    isSelected
+                    isSectionSelected
                       ? 'bg-[hsl(var(--builder-selection))] text-white'
                       : 'bg-[hsl(var(--builder-selection))]/80 text-white'
                   )}
                 >
                   {section.label}
+                  {isElementSelected && state.selectedElementKey && (
+                    <span className="ml-1.5 opacity-90"> › {state.selectedElementKey}</span>
+                  )}
                 </div>
               </div>
             )}
@@ -274,6 +301,22 @@ export function CanvasPreview() {
                 title={section.props?.title != null && section.props.title !== '' ? String(section.props.title) : undefined}
                 subtitle={section.props?.subtitle != null && section.props.subtitle !== '' ? String(section.props.subtitle) : undefined}
                 innerStyle={getInnerLayoutStyle(section.props as Record<string, unknown>)}
+                builderMode
+                elementPositions={getElementPositions(section.props)}
+                selectedElementKey={isSelected ? (state.selectedElementKey as 'title' | 'subtitle' | 'button') ?? null : null}
+                onSelectElement={(key) => dispatch({ type: 'SELECT_ELEMENT', sectionId: section.id, elementKey: key })}
+                onUpdateElementPosition={(key, x, y) =>
+                  dispatch({
+                    type: 'UPDATE_PROPS',
+                    id: section.id,
+                    props: {
+                      elementPositions: {
+                        ...getElementPositions(section.props),
+                        [key]: { x, y },
+                      },
+                    },
+                  })
+                }
               />
             )}
             {section.type === 'faq' && (

@@ -46,7 +46,7 @@ export function CustomizePanel({
   onLightPillarPropsChange,
 }: CustomizePanelProps) {
   return (
-    <aside className="w-80 flex-shrink-0 bg-slate-900 border-l border-slate-700 overflow-y-auto">
+    <aside className="w-80 flex-shrink-0 min-h-0 bg-slate-900 border-l border-slate-700 overflow-y-auto">
       <div className="p-6">
         <h2 className="text-lg font-bold text-white mb-4">Customize</h2>
 

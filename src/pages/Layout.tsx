@@ -40,6 +40,8 @@ export type PlaygroundContext = {
   handleRefresh: () => void;
   showDemoContent: boolean;
   setShowDemoContent: (value: boolean) => void;
+  isTamboMode: boolean;
+  setIsTamboMode: (value: boolean) => void;
 };
 
 export function Layout() {
@@ -61,6 +63,7 @@ export function Layout() {
     useState<LightPillarProps>(DEFAULT_LIGHT_PILLAR_PROPS);
   const [previewKey, setPreviewKey] = useState(0);
   const [showDemoContent, setShowDemoContent] = useState(true);
+  const [isTamboMode, setIsTamboMode] = useState(false);
 
   const handleRefresh = useCallback(() => {
     setPreviewKey((k) => k + 1);
@@ -85,6 +88,8 @@ export function Layout() {
     handleRefresh,
     showDemoContent,
     setShowDemoContent,
+    isTamboMode,
+    setIsTamboMode,
   };
 
   return (
@@ -93,7 +98,10 @@ export function Layout() {
         selectedComponent={selectedComponent}
         onSelectComponent={setSelectedComponent}
       />
-      <TopBar />
+      <TopBar
+        isTamboMode={isTamboMode}
+        onToggleTamboMode={() => setIsTamboMode((prev) => !prev)}
+      />
       <div className="flex flex-1 min-h-0 w-full overflow-hidden">
         {!isWebsiteBuilder && (
           <Sidebar
@@ -101,7 +109,10 @@ export function Layout() {
             onSelectComponent={setSelectedComponent}
           />
         )}
-        <main className={isWebsiteBuilder ? 'flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden' : 'flex-1 min-h-0 min-w-0 overflow-auto'} style={{ width: isWebsiteBuilder ? '100%' : undefined }}>
+        <main
+          className="flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden"
+          style={{ width: isWebsiteBuilder ? '100%' : undefined }}
+        >
           <Outlet context={context} />
         </main>
       </div>

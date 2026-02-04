@@ -111,6 +111,7 @@ export function getDefaultPropsForType(
         title: 'Decrease your SaaS churn by over 90%',
         subtitle:
           'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, et, distinctio eum impedit nihil ipsum modi.',
+        elementPositions: { title: { x: 0, y: 0 }, subtitle: { x: 0, y: 0 }, button: { x: 0, y: 0 } },
       };
     case 'faq':
       return { ...layout, ...figmaStyle, ...innerLayout, title: 'Frequently Asked Questions' };
@@ -130,7 +131,9 @@ function generateId(): string {
 const initialState: PageState = {
   sections: [],
   selectedId: null,
+  selectedElementKey: null,
   hoveredId: null,
+  hoveredElementKey: null,
   device: 'desktop',
   zoom: 100,
 };
@@ -191,7 +194,9 @@ function pageReducer(state: PageState, action: PageAction): PageState {
         ...state,
         sections: state.sections.filter((s) => s.id !== action.id),
         selectedId: state.selectedId === action.id ? null : state.selectedId,
+        selectedElementKey: state.selectedId === action.id ? null : state.selectedElementKey,
         hoveredId: state.hoveredId === action.id ? null : state.hoveredId,
+        hoveredElementKey: state.hoveredId === action.id ? null : state.hoveredElementKey,
       };
     default:
       return state;

@@ -119,6 +119,22 @@ export function InspectorPanel() {
     }
   };
 
+  const updateElementPosition = (elementKey: string, x: number, y: number) => {
+    if (!selectedSection) return;
+    const current = (selectedSection.props.elementPositions as Record<string, { x: number; y: number }>) ?? {};
+    dispatch({
+      type: 'UPDATE_PROPS',
+      id: selectedSection.id,
+      props: {
+        elementPositions: { ...current, [elementKey]: { x, y } },
+      },
+    });
+  };
+
+  const selectSectionOnly = () => {
+    if (selectedSection) dispatch({ type: 'SELECT', id: selectedSection.id });
+  };
+
   if (!selectedSection) {
     return (
       <div className="h-full flex flex-col">
@@ -152,6 +168,10 @@ export function InspectorPanel() {
 
   const props = selectedSection.props as Record<string, unknown>;
   const showInnerLayout = INNER_LAYOUT_TYPES.includes(selectedSection.type);
+  const selectedElementKey = state.selectedElementKey;
+  const elementPositions = (props.elementPositions as Record<string, { x: number; y: number }>) ?? {};
+  const selectedElementPos = selectedElementKey ? elementPositions[selectedElementKey] ?? { x: 0, y: 0 } : null;
+  const supportsElementSelection = selectedSection.type === 'aurora-hero';
 
   return (
     <div className="h-full flex flex-col min-w-0 bg-slate-900/50">
@@ -188,7 +208,23 @@ export function InspectorPanel() {
               >
                 {selectedSection.type}
               </span>
+              {supportsElementSelection && selectedElementKey && (
+                <span className="text-[10px] px-2 py-1 rounded bg-[hsl(var(--builder-selection))]/20 border border-[hsl(var(--builder-selection))] text-[hsl(var(--builder-selection))]">
+                  Element: {selectedElementKey}
+                </span>
+              )}
             </div>
+            {supportsElementSelection && selectedElementKey && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs text-slate-400 hover:text-white"
+                onClick={selectSectionOnly}
+              >
+                Select section instead
+              </Button>
+            )}
             <div className="flex items-center justify-between">
               <Label htmlFor="inspector-visible" className="text-xs text-slate-400">
                 Visible
@@ -201,6 +237,46 @@ export function InspectorPanel() {
             </div>
           </div>
           <Separator className="bg-slate-700/80" />
+
+          {supportsElementSelection && selectedElementKey && selectedElementPos && (
+            <InspectSection title="Element position" defaultOpen>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <Label className="text-[10px] text-slate-500">X</Label>
+                  <Input
+                    type="number"
+                    value={selectedElementPos.x}
+                    onChange={(e) =>
+                      updateElementPosition(
+                        selectedElementKey,
+                        Number(e.target.value) || 0,
+                        selectedElementPos.y
+                      )
+                    }
+                    className={cn(inputClass, 'w-full')}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] text-slate-500">Y</Label>
+                  <Input
+                    type="number"
+                    value={selectedElementPos.y}
+                    onChange={(e) =>
+                      updateElementPosition(
+                        selectedElementKey,
+                        selectedElementPos.x,
+                        Number(e.target.value) || 0
+                      )
+                    }
+                    className={cn(inputClass, 'w-full')}
+                  />
+                </div>
+              </div>
+              <p className="text-[10px] text-slate-500 mt-1.5">
+                Drag the element on canvas or edit here. Position is relative to section.
+              </p>
+            </InspectSection>
+          )}
 
         {/* Content */}
         <InspectSection title="Content" defaultOpen>

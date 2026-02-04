@@ -10,17 +10,25 @@ export interface PageSection {
   props: Record<string, unknown>;
 }
 
+/** Key of a selectable inner element within a section (e.g. 'title', 'subtitle', 'button'). */
+export type ElementKey = string;
+
 export interface PageState {
   sections: PageSection[];
   selectedId: string | null;
+  /** When set, an inner element is selected; 'section' or null = whole section selected. */
+  selectedElementKey: ElementKey | null;
   hoveredId: string | null;
+  hoveredElementKey: ElementKey | null;
   device: DeviceType;
   zoom: number;
 }
 
 export type PageAction =
   | { type: 'SELECT'; id: string | null }
+  | { type: 'SELECT_ELEMENT'; sectionId: string; elementKey: ElementKey | null }
   | { type: 'HOVER'; id: string | null }
+  | { type: 'HOVER_ELEMENT'; sectionId: string | null; elementKey: ElementKey | null }
   | { type: 'SET_DEVICE'; device: DeviceType }
   | { type: 'SET_ZOOM'; zoom: number }
   | { type: 'TOGGLE_VISIBILITY'; id: string }
