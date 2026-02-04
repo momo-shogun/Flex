@@ -1,243 +1,118 @@
-# 🎨 Flex - AI-Powered Design System Playground
+# Flex
 
-**Beautiful React components inspired by [React-Bits](https://github.com/DavidHDev/react-bits), enhanced with AI modification capabilities using Tambo SDK.**
+Flex is a Vite + React design system playground for experimenting with React-Bits-inspired components, plus a simple page-builder/export tool for generating starter React projects. It also includes optional Tambo-powered AI editing for supported components.
 
----
+Built with **React + TypeScript + Tailwind CSS**, and inspired by **[React-Bits](https://github.com/DavidHDev/react-bits)**.
 
-## ✨ What is Flex?
+**Highlights**
 
-Flex is an interactive design system playground where:
-- 🎭 **Browse beautiful React-Bits components** — Text animations, backgrounds, interactive effects
-- ✏️ **Click to edit in real-time** — Select any component and modify its properties
-- 🤖 **Use AI to enhance** — Ask Tambo to modify components ("make it faster", "change color to blue")
-- 📦 **Export your designs** — Download as React code, Tailwind config, or design tokens
+- Interactive playground for components (preview + prop controls + code view)
+- Simple website builder that exports a starter React project as a `.zip`
+- Optional Tambo-powered AI editing for supported components
 
----
+**Status:** Early-stage / experimental; APIs, component names, and the website-builder flow may change without notice. See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for current work and planned features.
 
-## 🚀 Quick Start
+## What you can do
 
-### 1. Install Dependencies
+- **Component playground** (`/`)
+  - Preview components and tweak props in the right-side **Customize** panel.
+  - View the generated code in the **Code** tab.
+- **Website Builder** (`/tools/website-builder`)
+  - Add sections/components from the left panel, edit their props in **Inspector**, and export a starter project as a `.zip`.
+  - Export generates a minimal Vite + React + Tailwind starter project using the sections you assemble.
+
+## Currently implemented components
+
+See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for the authoritative list of components that are wired into the playground and website builder/export flow.
+
+The set is expected to grow over time (text animations, backgrounds, and page sections).
+
+Examples include (not exhaustive):
+
+- Text animations: `SplitText`, `BlurText`, `TextCursor`
+- Backgrounds: `Silk`, `FloatingLines`, `LightPillar`
+- Sections: `SmoothScrollHero`, `AuroraHero`, `FAQ`
+
+## Quick start
+
+### Install
+
+This repo uses `pnpm` (lockfile: `pnpm-lock.yaml`) and is tested with `pnpm`. `npm`/`yarn` may work, but are not the primary supported path.
+
+If you don't have `pnpm` installed, see the [pnpm installation guide](https://pnpm.io/installation).
 
 ```bash
-cd /Users/apple/Desktop/pp/hakathon/Flex
-
-# Using npm
-npm install
-
-# Or using pnpm
 pnpm install
-
-# Or using yarn
-yarn install
 ```
 
-### 2. Start Dev Server
+### Run the dev server
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
 pnpm dev
-
-# yarn
-yarn dev
 ```
 
-### 3. Open Browser
+If you prefer `npm` or `yarn`:
 
-Navigate to **http://localhost:5173**
+- Install: `npm install` or `yarn install`
+- Dev: `npm run dev` or `yarn dev`
 
-You should see 3 beautiful text animation components working!
+Then open `http://localhost:5173`.
 
-### 4. Next Steps
+You should see the component playground with a preview pane and a Customize/Code panel.
 
-- Check **[IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md)** for what's been built
-- Read **[TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md)** for Phase 2 (AI features)
-- Follow **[GET_STARTED.md](./GET_STARTED.md)** for detailed guide
-
----
-
-## 🎯 Current Status
-
-### Phase 1: React-Bits Text Animations ✅ COMPLETE!
-
-**Implemented:**
-- ✅ Complete Vite + React + TypeScript setup
-- ✅ Tailwind CSS configured
-- ✅ SplitText component (character/word reveal)
-- ✅ TextCursor component (typewriter effect)
-- ✅ BlurText component (blur fade-in)
-- ✅ Demo showcase with all 3 components
-- ✅ Production-ready code
-
-### Phase 2: Tambo Integration 🔄 IN PROGRESS
-
-**Done:**
-- ✅ Tambo SDK (`@tambo-ai/react` + `zod`) added
-- ✅ Interactable wrappers (InteractableSplitText, InteractableTextCursor, InteractableBlurText)
-- ✅ TamboProvider + generative components in `main.tsx`
-- ✅ Preview uses Interactable components (AI can target `preview-split-text`, `preview-text-cursor`, `preview-blur-text`)
-
-**To enable AI:** Set `VITE_TAMBO_API_KEY` in `.env` (get key from [tambo.co/dashboard](https://tambo.co/dashboard)). Then add a chat/thread UI (e.g. `useTamboThread`, `useTamboThreadInput`) to talk to Tambo and modify components.
-
----
-
-## 📚 Documentation
-
-### Complete Guide (Read in Order)
-
-1. **[README.md](./README.md)** — Project overview (you are here)
-2. **[IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md)** ⭐ — What's built & next steps
-3. **[GET_STARTED.md](./GET_STARTED.md)** — Setup guide (already done!)
-4. **[REACT_BITS_INTEGRATION.md](./REACT_BITS_INTEGRATION.md)** — Component documentation
-5. **[TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md)** — Generative & Interactable (Phase 2)
-6. **[SKILLS_GUIDE.md](./SKILLS_GUIDE.md)** — AI Skills (Phase 2)
-7. **[PROJECT_IMPLEMENTATION_GUIDE.md](./PROJECT_IMPLEMENTATION_GUIDE.md)** — Complete roadmap
-
----
-
-## 🎨 Component Library
-
-### Phase 1: Text Animations (Week 1)
-
-From [React-Bits Text Animations](https://github.com/DavidHDev/react-bits/tree/main/src/content/TextAnimations):
-
-- **SplitText** — Character/word reveal animation
-- **TextCursor** — Typewriter effect with blinking cursor
-- **BlurText** — Blur fade-in reveal effect
-
-### Phase 2: Extended Animations (Week 2)
-
-- RevealText — Slide reveal animation
-- GlitchText — Glitch/distortion effect
-- WaveText — Wave motion effect
-- RotateText — 3D rotation effect
-- ScrambleText — Random character scramble
-
-### Phase 3: Backgrounds & Effects (Week 3)
-
-- MeshGradient — Animated gradient background
-- ParticleField — Interactive particles
-- WaveBackground — Animated wave patterns
-- RippleEffect — Click ripple interaction
-- ShineAnimation — Hover shine overlay
-
----
-
-## 🤖 Tambo AI Integration
-
-Modify any component using natural language:
-
-```tsx
-// User clicks a component, then asks:
-"Make the animation faster"
-"Change text color to blue"
-"Add a gradient effect"
-"Animate by words instead of characters"
-
-// Tambo SDK generates modified version instantly
-```
-
----
-
-## 🛠️ Tech Stack
-
-### Core
-- **React 18** + TypeScript
-- **Vite** — Fast build tool
-- **Tailwind CSS** — Utility-first styling
-
-### Animations
-- **Framer Motion** — Smooth React animations
-- **GSAP** — Advanced animation timeline (optional)
-
-### State & AI
-- **Zustand** — Lightweight state management
-- **Tambo SDK** — AI component generation & modification
-- **MCP Tools** — External tool integrations (Figma, GitHub)
-
----
-
-## 📖 Inspiration
-
-This project is inspired by:
-- **[React-Bits](https://github.com/DavidHDev/react-bits)** — 110+ animated React components
-- **[Shadcn UI](https://ui.shadcn.com)** — Component architecture patterns
-- **[Radix UI](https://www.radix-ui.com)** — Accessibility standards
-
----
-
-## 🎯 Roadmap
-
-### Week 1: Foundation
-- [x] Project documentation
-- [ ] Initialize Vite + React + TS
-- [ ] Implement 3 React-Bits text animations
-- [ ] Create demo showcase page
-- [ ] Setup Zustand store
-
-### Week 2: Interactivity
-- [ ] Add interactable HOC wrapper
-- [ ] Implement Inspector panel (prop editing)
-- [ ] Add Toolbar (undo/redo, theme toggle)
-- [ ] Integrate Tambo SDK
-- [ ] Add 5 more text animations
-
-### Week 3: Advanced Features
-- [ ] MCP tool integrations (Figma, GitHub)
-- [ ] Component modification with AI
-- [ ] Background effects
-- [ ] Export functionality
-- [ ] Command palette (Cmd+K)
-
-### Week 4: Polish
-- [ ] Accessibility improvements
-- [ ] Performance optimization
-- [ ] Comprehensive testing
-- [ ] Demo video preparation
-
----
-
-## 🤝 Contributing
-
-This is a hackathon project, but contributions are welcome!
-
-1. Fork the repository
-2. Create your feature branch
-3. Follow React-Bits component patterns
-4. Ensure accessibility (WCAG AA)
-5. Submit a pull request
-
----
-
-## 📄 License
-
-MIT License - Free to use, modify, and distribute
-
----
-
-## 🙏 Acknowledgments
-
-- **[DavidHDev](https://github.com/DavidHDev)** for the amazing React-Bits library
-- **Tambo SDK** for AI-powered features
-- **React community** for incredible tools and libraries
-
----
-
-## 📞 Contact
-
-Questions? Issues? Suggestions?
-
-Open an issue or reach out!
-
----
-
-**Start building:**
+### Useful commands
 
 ```bash
-cd /Users/apple/Desktop/pp/hakathon/Flex
-cat GET_STARTED.md
+# Production build
+pnpm build
+
+# Lint
+pnpm lint
+
+# Preview a production build
+pnpm preview
 ```
 
-**Happy coding! 🚀**
+If you prefer `npm` or `yarn`:
+
+- Build: `npm run build` or `yarn build`
+- Lint: `npm run lint` or `yarn lint`
+- Preview: `npm run preview` or `yarn preview`
+
+## Optional: Tambo integration
+
+The project includes `@tambo-ai/react` and a set of `Interactable*` wrappers in `src/components/react-bits/` that can be used for AI-driven edits. The wrappers expose targets for Tambo to modify, but you'll still need to add a thread/chat UI to send instructions.
+
+At a high level, `TamboProvider` wraps the app shell, generative UI components are registered in `src/config/tambo-components.ts`, and `Interactable*` wrappers mark specific React-Bits components as AI-editable targets.
+
+For how to wire up a thread/chat UI and skills, see [TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md) and [SKILLS_GUIDE.md](./SKILLS_GUIDE.md).
+
+Tambo-registered generative UI components live in `src/components/tambo/`.
+
+To see how Tambo is wired into the app shell, start from `src/main.tsx` (`TamboProvider`) and `src/config/tambo-components.ts`.
+
+To provide a Tambo API key locally:
+
+```bash
+# .env.local
+VITE_TAMBO_API_KEY=sk_...
+```
+
+## Additional docs
+
+- [GET_STARTED.md](./GET_STARTED.md) - more detailed setup and usage steps
+- [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) - current implementation status and roadmap
+- [REACT_BITS_INTEGRATION.md](./REACT_BITS_INTEGRATION.md) - React-Bits component notes and integration details
+- [TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md) - concepts and patterns for Tambo integration
+- [SKILLS_GUIDE.md](./SKILLS_GUIDE.md) - defining and using AI skills
+- [PROJECT_IMPLEMENTATION_GUIDE.md](./PROJECT_IMPLEMENTATION_GUIDE.md) - broader project plan
+
+## Contributing
+
+Contributions are welcome. If you'd like to propose changes (components, playground UX, export, or Tambo integration), please open an issue or pull request.
+
+## License
+
+Licensing is currently under review (there is no `LICENSE` file). Earlier revisions of this README mentioned MIT, but no `LICENSE` file was ever added; that reference has been removed to avoid confusion.
+
+Until a license is explicitly published in a `LICENSE` file, treat this repository as "all rights reserved" outside of local evaluation and contribution back to this repository.
