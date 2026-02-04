@@ -693,4 +693,14 @@ pnpm dev
 
 ---
 
+## 🔧 Troubleshooting: 403 Forbidden
+
+Agar Tambo chat mein **`{"message":"Forbidden resource","error":"Forbidden","statusCode":403}`** aaye:
+
+1. **API key check**: `.env` mein `VITE_TAMBO_API_KEY` sahi hai (Tambo dashboard se copy karo). Badlav ke baad dev server **restart** karo (`npm run dev`).
+2. **User Authentication**: Agar project mein "User Authentication" on hai, to backend bina `userToken` ke request reject kar sakta hai. **Fix**: Tambo dashboard → Settings → User Authentication → disable karo (dev ke liye), ya app mein auth implement karke `TamboProvider` ko `userToken` pass karo.
+3. **Key invalid/expired**: Dashboard se nayi API key banao aur `.env` update karo.
+
+---
+
 **Ready to implement! Generative aur Interactable components se Flex ko powerful banao! 🎨🤖**

@@ -68,8 +68,25 @@ export function useComponentChatHistory(componentId: ComponentId) {
   const addMessage = useCallback(
     (role: 'user' | 'assistant', content: string, id?: string) => {
       const messageId = id || `${Date.now()}-${Math.random()}`;
-      // Check if message already exists
-      if (messages.some((m) => m.id === messageId)) return;
+      // Check if message already exists - if yes, update it (for streaming)
+      const existingIndex = messages.findIndex((m) => m.id === messageId);
+      if (existingIndex >= 0) {
+        // Update existing message (streaming update)
+        const updated = [...messages];
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          content,
+          timestamp: Date.now(), // Update timestamp on content change
+        };
+        setMessages(updated);
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(updated));
+        } catch {
+          // ignore storage errors
+        }
+        return;
+      }
+      // Add new message
       const newMessage: ChatMessage = {
         id: messageId,
         role,

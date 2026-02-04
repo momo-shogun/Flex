@@ -45,12 +45,10 @@ export function TamboModePanel({
 
   // Track previous props to detect Tambo updates
   const prevPropsRef = useRef({ splitTextProps, blurTextProps, textCursorProps });
-  const lastMessageIdRef = useRef<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
-  const syncedThreadIdsRef = useRef<Set<string>>(new Set());
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -98,27 +96,47 @@ export function TamboModePanel({
   }, [selectedComponent, addContextAttachment, clearContextAttachments]);
 
   // Sync Tambo thread messages with localStorage (per-component history).
-  // Use a ref so we never add the same thread message twice (effect can run before state updates).
+  // Handle streaming: update messages as they arrive (thread.messages updates during streaming).
   useEffect(() => {
     if (!thread) return;
     thread.messages.forEach((msg) => {
-      if (syncedThreadIdsRef.current.has(msg.id)) return;
-      const parts = Array.isArray(msg.content) ? msg.content : [msg.content];
-      const fullText = parts
-        .map((p: unknown) => {
-          if (p == null) return '';
-          if (typeof p === 'string') return p;
-          const o = p as Record<string, unknown>;
-          if (typeof o.text === 'string') return o.text;
-          if (typeof o.content === 'string') return o.content;
-          if (o.type === 'text' && typeof o.text === 'string') return o.text;
-          return '';
-        })
-        .filter(Boolean)
-        .join('');
-      if (fullText.trim()) {
-        syncedThreadIdsRef.current.add(msg.id);
-        addMessage(msg.role, fullText.trim(), msg.id);
+      // Extract text content from message (handle various formats including streaming)
+      const extractText = (content: unknown): string => {
+        if (content == null) return '';
+        if (typeof content === 'string') return content;
+        if (Array.isArray(content)) {
+          return content
+            .map((item) => extractText(item))
+            .filter(Boolean)
+            .join('');
+        }
+        if (typeof content === 'object') {
+          const obj = content as Record<string, unknown>;
+          // Try common text fields
+          if (typeof obj.text === 'string') return obj.text;
+          if (typeof obj.content === 'string') return obj.content;
+          // Recursively extract from nested objects
+          if (obj.type === 'text' && typeof obj.text === 'string') return obj.text;
+          // Handle nested content arrays
+          if (Array.isArray(obj.content)) {
+            return extractText(obj.content);
+          }
+          // Try to find any string value
+          for (const key in obj) {
+            const value = obj[key];
+            if (typeof value === 'string' && value.trim()) {
+              return value;
+            }
+          }
+        }
+        return '';
+      };
+
+      const fullText = extractText(msg.content).trim();
+      if (fullText && (msg.role === 'user' || msg.role === 'assistant')) {
+        // addMessage will update existing messages (for streaming) or add new ones
+        // Only sync user and assistant messages (skip system/tool messages)
+        addMessage(msg.role, fullText, msg.id);
       }
     });
   }, [thread, addMessage]);
@@ -139,11 +157,11 @@ export function TamboModePanel({
         // Save current props as last update
         let propsToSave: Record<string, unknown> = {};
         if (selectedComponent === 'split-text') {
-          propsToSave = splitTextProps;
+          propsToSave = { ...splitTextProps };
         } else if (selectedComponent === 'blur-text') {
-          propsToSave = blurTextProps;
+          propsToSave = { ...blurTextProps };
         } else if (selectedComponent === 'text-cursor') {
-          propsToSave = textCursorProps;
+          propsToSave = { ...textCursorProps };
         }
         saveLastUpdate(propsToSave);
       }
@@ -269,8 +287,18 @@ export function TamboModePanel({
           )}
 
           {error && (
-            <div className="text-[10px] text-red-400">
-              {error.message ?? 'Something went wrong while sending the message.'}
+            <div className="rounded-md border border-red-900/60 bg-red-950/40 px-3 py-2 text-[11px] text-red-300">
+              {String(error.message || '').toLowerCase().includes('forbidden') ||
+              (error as { statusCode?: number }).statusCode === 403 ? (
+                <>
+                  <strong className="text-red-200">403 Forbidden</strong>
+                  <p className="mt-1 text-red-300/90">
+                    Tambo API ne request reject kar di. Check karo: (1) <code className="rounded bg-red-900/50 px-1">.env</code> mein <code className="rounded bg-red-900/50 px-1">VITE_TAMBO_API_KEY</code> sahi hai aur app restart kiya, (2) Dashboard mein project ke liye User Authentication off hai ya phir <code className="rounded bg-red-900/50 px-1">userToken</code> pass kar rahe ho.
+                  </p>
+                </>
+              ) : (
+                error.message ?? 'Something went wrong while sending the message.'
+              )}
             </div>
           )}
         </div>

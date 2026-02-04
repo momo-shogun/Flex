@@ -8,6 +8,13 @@ import { TamboProvider } from '@tambo-ai/react'
 
 const tamboApiKey = import.meta.env.VITE_TAMBO_API_KEY as string | undefined
 
+// Warn if API key is missing (helps catch .env misconfiguration)
+if (!tamboApiKey && import.meta.env.DEV) {
+  console.warn(
+    '⚠️ VITE_TAMBO_API_KEY missing! Check .env file. Tambo features will not work.'
+  )
+}
+
 // Suppress Tambo SDK "Overwriting tool ..." console noise (tool re-registration on
 // component/route changes). Real errors still show.
 const originalError = console.error
