@@ -225,6 +225,7 @@ export function CanvasPreview() {
                     ...DEFAULT_SPLIT_TEXT_PROPS,
                     ...(section.props as Partial<SplitTextProps>),
                   }}
+                  id={section.id}
                 />
               </div>
             )}
@@ -238,6 +239,7 @@ export function CanvasPreview() {
                     ...DEFAULT_BLUR_TEXT_PROPS,
                     ...(section.props as Partial<BlurTextProps>),
                   }}
+                  id={section.id}
                 />
               </div>
             )}
@@ -251,6 +253,7 @@ export function CanvasPreview() {
                     ...DEFAULT_TEXT_CURSOR_PROPS,
                     ...(section.props as Partial<TextCursorProps>),
                   }}
+                  id={section.id}
                 />
               </div>
             )}

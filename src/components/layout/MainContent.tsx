@@ -7,7 +7,7 @@ import { FloatingLines } from '../react-bits/backgrounds/FloatingLines';
 import { LightPillar } from '../react-bits/backgrounds/LightPillar';
 import { SmoothScrollHero } from '../sections/SmoothScrollHero';
 import { AuroraHero } from '../sections/AuroraHero';
-import { FAQ } from '../sections/FAQ';
+import { InteractableFAQ, DEFAULT_FAQ_PROPS } from '../sections/InteractableFAQ';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -138,7 +138,13 @@ export function MainContent({
       case 'aurora-hero':
         return <AuroraHero key="aurora-hero" />;
       case 'faq':
-        return <FAQ key="faq" />;
+        return (
+          <InteractableFAQ
+            key="faq"
+            title={DEFAULT_FAQ_PROPS.title}
+            items={DEFAULT_FAQ_PROPS.items}
+          />
+        );
       default:
         return null;
     }

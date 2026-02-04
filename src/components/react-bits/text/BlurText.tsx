@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 export interface BlurTextProps {
-  text: string;
+  text?: string;
   delay?: number;
   duration?: number;
   animateBy?: 'characters' | 'words';
@@ -11,16 +11,17 @@ export interface BlurTextProps {
 }
 
 export function BlurText({
-  text,
+  text = '',
   delay = 0,
   duration = 0.8,
   animateBy = 'characters',
   blurAmount = 10,
   className = ''
 }: BlurTextProps) {
-  const items = animateBy === 'characters' 
-    ? text.split('')
-    : text.split(' ');
+  const safeText = text ?? '';
+  const items = animateBy === 'characters'
+    ? safeText.split('')
+    : safeText.split(' ');
 
   const container = {
     hidden: { opacity: 0 },

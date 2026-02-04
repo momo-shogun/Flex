@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export interface TextCursorProps {
-  text: string;
+  text?: string;
   speed?: number;
   delay?: number;
   cursor?: string;
@@ -11,7 +11,7 @@ export interface TextCursorProps {
 }
 
 export function TextCursor({
-  text,
+  text = '',
   speed = 50,
   delay = 0,
   cursor = '|',
@@ -19,6 +19,7 @@ export function TextCursor({
   className = '',
   onComplete
 }: TextCursorProps) {
+  const safeText = text ?? '';
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCursor, setShowCursor] = useState(true);
@@ -40,17 +41,17 @@ export function TextCursor({
   useEffect(() => {
     if (!started) return;
 
-    if (currentIndex < text.length) {
+    if (currentIndex < safeText.length) {
       const timeout = setTimeout(() => {
-        setDisplayedText(prev => prev + text[currentIndex]);
+        setDisplayedText(prev => prev + safeText[currentIndex]);
         setCurrentIndex(prev => prev + 1);
       }, speed);
 
       return () => clearTimeout(timeout);
-    } else if (onComplete && currentIndex === text.length) {
+    } else if (onComplete && currentIndex === safeText.length) {
       onComplete();
     }
-  }, [currentIndex, text, speed, started, onComplete]);
+  }, [currentIndex, safeText, speed, started, onComplete]);
 
   // Cursor blinking
   useEffect(() => {

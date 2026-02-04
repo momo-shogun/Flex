@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 export interface SplitTextProps {
-  text: string;
+  text?: string;
   delay?: number;
   duration?: number;
   animateBy?: 'characters' | 'words';
@@ -10,15 +10,16 @@ export interface SplitTextProps {
 }
 
 export function SplitText({
-  text,
+  text = '',
   delay = 0,
   duration = 0.5,
   animateBy = 'characters',
   className = ''
 }: SplitTextProps) {
-  const items = animateBy === 'characters' 
-    ? text.split('')
-    : text.split(' ');
+  const safeText = text ?? '';
+  const items = animateBy === 'characters'
+    ? safeText.split('')
+    : safeText.split(' ');
 
   const container = {
     hidden: { opacity: 0 },

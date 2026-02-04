@@ -25,7 +25,21 @@ export function ComponentPlaygroundPage() {
         />
       </div>
       {ctx.isTamboMode ? (
-        <TamboModePanel />
+        <TamboModePanel
+          selectedComponent={ctx.selectedComponent}
+          splitTextProps={ctx.splitTextProps}
+          blurTextProps={ctx.blurTextProps}
+          textCursorProps={ctx.textCursorProps}
+          onSplitTextPropsChange={(updates) =>
+            ctx.setSplitTextProps((prev) => ({ ...prev, ...updates }))
+          }
+          onBlurTextPropsChange={(updates) =>
+            ctx.setBlurTextProps((prev) => ({ ...prev, ...updates }))
+          }
+          onTextCursorPropsChange={(updates) =>
+            ctx.setTextCursorProps((prev) => ({ ...prev, ...updates }))
+          }
+        />
       ) : (
         <CustomizePanel
           selectedComponent={ctx.selectedComponent}

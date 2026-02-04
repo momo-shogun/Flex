@@ -3,12 +3,14 @@ import type { CSSProperties } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-interface FAQItem {
+export interface FAQItem {
   question: string;
   answer: string;
 }
 
-const DEFAULT_ITEMS: FAQItem[] = [
+export const DEFAULT_FAQ_TITLE = 'Frequently Asked Questions';
+
+export const DEFAULT_ITEMS: FAQItem[] = [
   {
     question: 'How do I get started?',
     answer:
@@ -44,7 +46,7 @@ export function FAQ({ items = DEFAULT_ITEMS, title = 'Frequently Asked Questions
 
   return (
     <section
-      className={cn('mx-auto max-w-2xl px-4 py-16 text-slate-100', className)}
+      className={cn('mx-auto max-w-2xl min-w-0 px-4 py-16 text-slate-100', className)}
       style={innerStyle}
     >
       <h2 className="mb-10 text-2xl font-bold text-white md:text-3xl">
@@ -56,18 +58,18 @@ export function FAQ({ items = DEFAULT_ITEMS, title = 'Frequently Asked Questions
           return (
             <motion.div
               key={index}
-              layout
-              className="rounded-lg border border-slate-700 bg-slate-900/50 overflow-hidden"
+              layout="position"
+              className="rounded-lg border border-slate-700 bg-slate-900/50 overflow-hidden w-full"
             >
               <button
                 type="button"
                 onClick={() => setOpenIndex(isOpen ? null : index)}
-                className="flex w-full items-center justify-between px-4 py-4 text-left text-sm font-medium text-white hover:bg-slate-800/50 transition-colors"
+                className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left text-sm font-medium text-white hover:bg-slate-800/50 transition-colors"
               >
-                <span>{item.question}</span>
+                <span className="min-w-0 flex-1 break-words">{item.question}</span>
                 <motion.span
                   animate={{ rotate: isOpen ? 180 : 0 }}
-                  className="text-slate-400"
+                  className="text-slate-400 flex-shrink-0"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
