@@ -336,7 +336,29 @@ export function CanvasPreview() {
               </div>
             )}
             {section.type === 'smooth-scroll-hero' && (
-              <SmoothScrollHero />
+              <div className="relative w-full">
+                <SmoothScrollHero />
+                {(section.props?.text || section.props?.subtitle) && (
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-4">
+                    <div className="pointer-events-auto max-w-3xl text-center space-y-3">
+                      {section.props?.text && String(section.props.text).trim() !== '' && (
+                        <InteractableSplitText
+                          {...{
+                            ...DEFAULT_SPLIT_TEXT_PROPS,
+                            ...(section.props as Partial<SplitTextProps>),
+                          }}
+                          id={section.id}
+                        />
+                      )}
+                      {section.props?.subtitle && String(section.props.subtitle).trim() !== '' && (
+                        <p className="text-base text-slate-100/90">
+                          {String(section.props.subtitle)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
             {section.type === 'aurora-hero' && (
               <AuroraHero

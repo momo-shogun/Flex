@@ -770,6 +770,30 @@ function ContentProperties({
         </div>
       );
 
+    case 'smooth-scroll-hero':
+      return (
+        <div className="space-y-4">
+          <div>
+            <Label className={labelClass}>Title (overlay text)</Label>
+            <Input
+              value={String(props.text ?? '')}
+              onChange={(e) => onUpdate('text', e.target.value)}
+              className={inputClassFull}
+              placeholder="Hero overlay title (optional)"
+            />
+          </div>
+          <div>
+            <Label className={labelClass}>Subtitle / description</Label>
+            <Input
+              value={String(props.subtitle ?? '')}
+              onChange={(e) => onUpdate('subtitle', e.target.value)}
+              className={inputClassFull}
+              placeholder="Optional description below title"
+            />
+          </div>
+        </div>
+      );
+
     case 'aurora-hero':
       return (
         <div className="space-y-2">
