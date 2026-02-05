@@ -120,5 +120,110 @@ export function createBuilderTools(
     },
   });
 
-  return [addBuilderSection, updateBuilderSection, listBuilderSections];
+  const mergeBuilderSections = defineTool({
+    name: 'merge_builder_sections',
+    description:
+      'Merge two sections into one composite section. Takes two section IDs, analyzes their types and props, and creates a merged component that combines both. Returns the new merged section ID and removes the original two sections.',
+    inputSchema: z.object({
+      sectionId1: z.string(),
+      sectionId2: z.string(),
+      mergedType: componentIdSchema.optional(),
+      mergedProps: sectionPropsObjectSchema.optional(),
+    }),
+    outputSchema: z.string(),
+    tool: async ({ sectionId1, sectionId2, mergedType, mergedProps }) => {
+      const actions = builderActionsRef.current;
+      if (!actions) {
+        return 'Website builder is not open. Open the website builder page first.';
+      }
+      const section1 = actions.getSection(sectionId1);
+      const section2 = actions.getSection(sectionId2);
+      if (!section1 || !section2) {
+        return `One or both sections not found: ${sectionId1}, ${sectionId2}. Use list_builder_sections to see existing sections.`;
+      }
+
+      // Determine merged type, preferring known composites even if mergedType was provided
+      const types = [section1.type, section2.type] as ComponentId[];
+      let finalType: ComponentId;
+      const hasSilk = types.includes('silk');
+      const hasTextAnimation =
+        types.includes('split-text') || types.includes('blur-text') || types.includes('text-cursor');
+      const hasAuroraHero = types.includes('aurora-hero');
+
+      if (hasSilk && hasTextAnimation) {
+        // Always use silk-hero-splittext when merging Silk + any text animation
+        finalType = 'silk-hero-splittext';
+      } else if (hasAuroraHero && (types.includes('split-text') || types.includes('blur-text'))) {
+        // Aurora hero + text animation -> aurora-hero-splittext
+        finalType = 'aurora-hero-splittext';
+      } else if (mergedType) {
+        // Otherwise, respect caller's mergedType if provided
+        finalType = mergedType;
+      } else {
+        // Fallback: keep first section type
+        finalType = section1.type;
+      }
+
+      // Merge props (for known composites, merge smartly)
+      let mergedPropsFinal: Record<string, unknown>;
+      if (mergedProps) {
+        mergedPropsFinal = mergedProps as Record<string, unknown>;
+      } else if (finalType === 'silk-hero-splittext') {
+        const silkSection = section1.type === 'silk' ? section1 : section2;
+        const textSection = section1.type === 'silk' ? section2 : section1;
+        mergedPropsFinal = {
+          // Silk background props first
+          ...silkSection.props,
+          // Text animation props override where needed (text, delay, duration, animateBy, className, etc.)
+          ...textSection.props,
+        };
+      } else if (finalType === 'aurora-hero-splittext') {
+        const auroraSection = section1.type === 'aurora-hero' ? section1 : section2;
+        const textSection = section1.type === 'aurora-hero' ? section2 : section1;
+        mergedPropsFinal = {
+          // Aurora hero layout/positions first
+          ...auroraSection.props,
+          // Text animation props override text-related fields
+          ...textSection.props,
+        };
+      } else {
+        // Generic merge: later section props override earlier
+        mergedPropsFinal = {
+          ...section1.props,
+          ...section2.props,
+        };
+      }
+
+      // Get index of first section to insert merged section at that position
+      const index1 = actions.state.sections.findIndex((s) => s.id === sectionId1);
+      const index2 = actions.state.sections.findIndex((s) => s.id === sectionId2);
+      const insertIndex = Math.min(index1, index2);
+
+      // Create merged section first
+      const mergedId = `section-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+      const mergedLabel = `Merged: ${section1.label} + ${section2.label}`;
+      const mergedSection = {
+        id: mergedId,
+        type: finalType,
+        label: mergedLabel,
+        visible: true,
+        props: mergedPropsFinal,
+      };
+
+      // Remove both sections and insert merged at insertIndex
+      const newSections = [...actions.state.sections];
+      newSections.splice(Math.max(index1, index2), 1);
+      newSections.splice(Math.min(index1, index2), 1);
+      newSections.splice(insertIndex, 0, mergedSection);
+
+      // Update state: remove both, then add merged
+      actions.dispatch({ type: 'REMOVE_SECTION', id: sectionId1 });
+      actions.dispatch({ type: 'REMOVE_SECTION', id: sectionId2 });
+      actions.dispatch({ type: 'ADD_SECTION', section: mergedSection });
+
+      return `Merged sections "${section1.label}" and "${section2.label}" into "${finalType}" with id ${mergedId}.`;
+    },
+  });
+
+  return [addBuilderSection, updateBuilderSection, listBuilderSections, mergeBuilderSections];
 }

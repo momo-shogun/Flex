@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   useTamboThread,
   useTamboThreadInput,
@@ -6,6 +6,15 @@ import {
 } from '@tambo-ai/react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
 
 const BUILDER_CONTEXT =
   'Editing the website builder canvas. Use add_builder_section to add sections and update_builder_section to change props. For a hero WITH split text animation, add exactly ONE composite: use aurora-hero-splittext for "aurora hero with split text" (title animates inside the Aurora Hero section); use silk-hero-splittext for "silk hero with split text". Never add aurora-hero and split-text as two separate sections when the user wants one hero with animated title. Use list_builder_sections to see existing sections.';
@@ -15,6 +24,9 @@ export function BuilderTamboChat() {
   const { value, setValue, submit, isPending, error } = useTamboThreadInput();
   const { addContextAttachment, clearContextAttachments } = useTamboContextAttachment();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [devDialogOpen, setDevDialogOpen] = useState(false);
+  const [devMessage, setDevMessage] = useState<string | null>(null);
+  const isDev = import.meta.env.MODE === 'development';
 
   useEffect(() => {
     clearContextAttachments();
@@ -29,6 +41,19 @@ export function BuilderTamboChat() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [thread?.messages?.length]);
+
+  // In development, capture latest assistant message and show in a dialog
+  useEffect(() => {
+    if (!isDev || !thread?.messages?.length) return;
+    const lastAssistant = [...thread.messages]
+      .reverse()
+      .find((m) => m.role === 'assistant');
+    if (!lastAssistant) return;
+    const text = getMessageText(lastAssistant.content);
+    if (!text.trim()) return;
+    setDevMessage(text);
+    setDevDialogOpen(true);
+  }, [isDev, thread?.messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,6 +147,31 @@ export function BuilderTamboChat() {
           {isPending ? 'Sending…' : 'Send'}
         </Button>
       </form>
+
+      {isDev && devMessage && (
+        <Dialog open={devDialogOpen} onOpenChange={setDevDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Tambo response (dev)</DialogTitle>
+              <DialogDescription>
+                Latest assistant message for debugging. This dialog only appears in development mode.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-2 max-h-64 overflow-auto rounded-md bg-slate-900/80 border border-slate-700 px-3 py-2">
+              <pre className="whitespace-pre-wrap break-words text-xs text-slate-100">
+                {devMessage}
+              </pre>
+            </div>
+            <DialogFooter className="mt-3">
+              <DialogClose asChild>
+                <Button size="sm" className="ml-auto bg-slate-700 hover:bg-slate-600">
+                  Close
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

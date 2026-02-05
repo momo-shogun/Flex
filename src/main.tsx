@@ -5,6 +5,7 @@ import { tamboComponents } from './config/tambo-components'
 import './index.css'
 import App from './App'
 import { TamboProvider } from '@tambo-ai/react'
+import { getBuilderStateForTambo } from '@/lib/tambo-builder-context'
 
 const tamboApiKey = import.meta.env.VITE_TAMBO_API_KEY as string | undefined
 
@@ -25,7 +26,13 @@ console.error = (...args: unknown[]) => {
 }
 
 createRoot(document.getElementById('root')!).render(
-  <TamboProvider apiKey={tamboApiKey ?? ''} components={tamboComponents}>
+  <TamboProvider
+    apiKey={tamboApiKey ?? ''}
+    components={tamboComponents}
+    contextHelpers={{
+      builderState: () => getBuilderStateForTambo(),
+    }}
+  >
     <BrowserRouter>
       <App />
       <Toaster />

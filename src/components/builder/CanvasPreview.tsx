@@ -250,12 +250,27 @@ export function CanvasPreview() {
                     ...(section.props as Partial<SilkProps>),
                   }}
                 />
-                <div className="relative z-10 flex items-center justify-center h-screen">
-                  <h2 className="text-4xl font-bold text-white">
-                    {section.props?.title != null && String(section.props.title).trim() !== ''
-                      ? String(section.props.title)
-                      : 'Silk Background'}
-                  </h2>
+                <div className="relative z-10 flex flex-col items-center justify-center h-screen gap-4 px-4">
+                  {section.props?.text != null && String(section.props.text).trim() !== '' ? (
+                    <InteractableSplitText
+                      {...{
+                        ...DEFAULT_SPLIT_TEXT_PROPS,
+                        ...(section.props as Partial<SplitTextProps>),
+                      }}
+                      id={section.id}
+                    />
+                  ) : (
+                    <h2 className="text-4xl font-bold text-white">
+                      {section.props?.title != null && String(section.props.title).trim() !== ''
+                        ? String(section.props.title)
+                        : 'Silk Background'}
+                    </h2>
+                  )}
+                  {section.props?.subtitle && String(section.props.subtitle).trim() !== '' && (
+                    <p className="max-w-2xl text-center text-base text-slate-200/90">
+                      {String(section.props.subtitle)}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
@@ -268,7 +283,7 @@ export function CanvasPreview() {
                   }}
                 />
                 <div
-                  className="relative z-10 flex items-center justify-center h-screen"
+                  className="relative z-10 flex flex-col items-center justify-center h-screen gap-4"
                   style={getInnerLayoutStyle(section.props as Record<string, unknown>)}
                 >
                   <InteractableSplitText
@@ -278,6 +293,11 @@ export function CanvasPreview() {
                     }}
                     id={section.id}
                   />
+                  {section.props?.subtitle && String(section.props.subtitle).trim() !== '' && (
+                    <p className="max-w-2xl text-center text-base text-slate-200/90">
+                      {String(section.props.subtitle)}
+                    </p>
+                  )}
                 </div>
               </div>
             )}

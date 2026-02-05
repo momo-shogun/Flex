@@ -10,12 +10,15 @@ import {
   Plus,
   Trash2,
   Grid3X3,
+  Merge,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useBuilder } from '@/contexts/BuilderContext';
+import { useTamboThreadInput, useTamboContextAttachment } from '@tambo-ai/react';
 import { cn } from '@/lib/utils';
 import type { ComponentId } from '@/types/components';
+import { toast } from 'sonner';
 
 const TEXT_ANIMATIONS: { id: ComponentId; label: string }[] = [
   { id: 'split-text', label: 'Split Text' },
@@ -97,8 +100,11 @@ function CategoryRow({
 
 export function LayersPanel() {
   const { state, dispatch, addSection } = useBuilder();
+  const { setValue, submit } = useTamboThreadInput();
+  const { addContextAttachment } = useTamboContextAttachment();
   const [expandedPage, setExpandedPage] = useState(true);
   const [categoriesOpen, setCategoriesOpen] = useState<Record<CategoryKey, boolean>>(defaultCategoriesOpen);
+  const [mergingIds, setMergingIds] = useState<Set<string>>(new Set());
 
   const toggleExpand = () => setExpandedPage((p) => !p);
 
@@ -118,6 +124,56 @@ export function LayersPanel() {
   const handleRemove = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     dispatch({ type: 'REMOVE_SECTION', id });
+  };
+
+  const handleFocusInAi = (e: React.MouseEvent, sectionId: string) => {
+    e.stopPropagation();
+    const section = state.sections.find((s) => s.id === sectionId);
+    if (!section) return;
+    addContextAttachment({
+      context: JSON.stringify(section, null, 2),
+      displayName: section.label || section.id,
+      type: 'builder-section',
+    });
+    toast.success(`Staged "${section.label || section.id}" for AI`);
+  };
+
+  const handleMerge = async (e: React.MouseEvent, sectionId1: string, sectionId2: string) => {
+    e.stopPropagation();
+    const key = `${sectionId1}-${sectionId2}`;
+    if (mergingIds.has(key)) return;
+    setMergingIds((prev) => new Set(prev).add(key));
+    try {
+      const section1 = state.sections.find((s) => s.id === sectionId1);
+      const section2 = state.sections.find((s) => s.id === sectionId2);
+      if (!section1 || !section2) {
+        toast.error('One or both sections not found.');
+        return;
+      }
+
+      // Send merge request to Tambo via thread
+      const prompt = `Merge these two components into one composite section using merge_builder_sections tool:
+- Section 1: "${section1.label}" (id: ${sectionId1}, type: ${section1.type})
+- Section 2: "${section2.label}" (id: ${sectionId2}, type: ${section2.type})
+
+Call merge_builder_sections with sectionId1="${sectionId1}" and sectionId2="${sectionId2}". Choose an appropriate mergedType based on the component types (e.g. silk-hero-splittext if silk + split-text, aurora-hero-splittext if aurora-hero + split-text) and merge their props intelligently.`;
+
+      toast.info('Merging components via AI...');
+      setValue(prompt);
+      // Use a small delay to ensure value is set, then submit
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      await submit({ streamResponse: true });
+      toast.success('Merge request sent. Check AI Chat for result.');
+    } catch (error) {
+      console.error('Merge error:', error);
+      toast.error('Failed to merge components.');
+    } finally {
+      setMergingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
+    }
   };
 
   return (
@@ -291,50 +347,53 @@ export function LayersPanel() {
                   className="ml-3 border-l pl-2 mt-1 space-y-0.5"
                   style={{ borderColor: 'hsl(var(--builder-divider))' }}
                 >
-                  {state.sections.map((section) => {
+                  {state.sections.map((section, index) => {
                     const Icon = sectionIcons[section.type] ?? Layout;
                     const isSelected = state.selectedId === section.id;
                     const isHovered = state.hoveredId === section.id;
+                    const nextSection = state.sections[index + 1];
+                    const mergeKey = `${section.id}-${nextSection?.id || ''}`;
+                    const isMerging = mergingIds.has(mergeKey);
 
                     return (
-                      <div
-                        key={section.id}
-                        className={cn(
-                          'group flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer transition-colors',
-                          isSelected && 'bg-[hsl(var(--builder-selection-light))]',
-                          !isSelected && isHovered && 'bg-[hsl(var(--builder-hover))]',
-                          !isSelected && !isHovered && 'hover:bg-[hsl(var(--builder-hover))]'
-                        )}
-                        onClick={() => handleSelect(section.id)}
-                        onMouseEnter={() =>
-                          dispatch({ type: 'HOVER', id: section.id })
-                        }
-                        onMouseLeave={() => dispatch({ type: 'HOVER', id: null })}
-                      >
-                        <Icon
+                      <div key={section.id} className="space-y-0.5">
+                        <div
                           className={cn(
-                            'h-4 w-4 flex-shrink-0',
-                            isSelected
-                              ? 'text-[hsl(var(--builder-selection))]'
-                              : 'text-[hsl(var(--builder-text-secondary))]'
+                            'group flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer transition-colors',
+                            isSelected && 'bg-[hsl(var(--builder-selection-light))]',
+                            !isSelected && isHovered && 'bg-[hsl(var(--builder-hover))]',
+                            !isSelected && !isHovered && 'hover:bg-[hsl(var(--builder-hover))]'
                           )}
-                        />
-                        <span
-                          className={cn(
-                            'text-sm truncate flex-1',
-                            isSelected
-                              ? 'font-medium'
-                              : '',
-                            !section.visible && 'opacity-50'
-                          )}
-                          style={{
-                            color: isSelected
-                              ? 'hsl(var(--builder-selection))'
-                              : 'hsl(var(--builder-text-secondary))',
-                          }}
+                          onClick={() => handleSelect(section.id)}
+                          onMouseEnter={() =>
+                            dispatch({ type: 'HOVER', id: section.id })
+                          }
+                          onMouseLeave={() => dispatch({ type: 'HOVER', id: null })}
                         >
-                          {section.label}
-                        </span>
+                          <Icon
+                            className={cn(
+                              'h-4 w-4 flex-shrink-0',
+                              isSelected
+                                ? 'text-[hsl(var(--builder-selection))]'
+                                : 'text-[hsl(var(--builder-text-secondary))]'
+                            )}
+                          />
+                          <span
+                            className={cn(
+                              'text-sm truncate flex-1',
+                              isSelected
+                                ? 'font-medium'
+                                : '',
+                              !section.visible && 'opacity-50'
+                            )}
+                            style={{
+                              color: isSelected
+                                ? 'hsl(var(--builder-selection))'
+                                : 'hsl(var(--builder-text-secondary))',
+                            }}
+                          >
+                            {section.label}
+                          </span>
 
                         <Button
                           variant="ghost"
@@ -355,11 +414,43 @@ export function LayersPanel() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 text-red-400 hover:text-red-300"
-                          onClick={(e) => handleRemove(e, section.id)}
+                          className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 text-[hsl(var(--builder-selection))]"
+                          onClick={(e) => handleFocusInAi(e, section.id)}
+                          title="Stage this section for AI"
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Grid3X3 className="h-3 w-3" />
                         </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 text-red-400 hover:text-red-300"
+                            onClick={(e) => handleRemove(e, section.id)}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        {nextSection && (
+                          <div className="relative h-0 overflow-visible z-10">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className={cn(
+                                'absolute right-0 top-0 -translate-y-1/2',
+                                'h-7 w-7 p-0 rounded-full shrink-0 shadow-lg transition-all duration-200',
+                                'border-2 bg-slate-800 border-[hsl(var(--builder-selection))]/60',
+                                'text-[hsl(var(--builder-selection))]',
+                                'hover:scale-110 hover:bg-[hsl(var(--builder-selection))]/25 hover:border-[hsl(var(--builder-selection))]',
+                                'hover:shadow-lg active:scale-95',
+                                isMerging && 'animate-pulse scale-110 bg-[hsl(var(--builder-selection))]/25 border-[hsl(var(--builder-selection))]'
+                              )}
+                              onClick={(e) => handleMerge(e, section.id, nextSection.id)}
+                              disabled={isMerging}
+                              title={`Merge "${section.label}" and "${nextSection.label}"`}
+                            >
+                              <Merge className="h-3.5 w-3.5" strokeWidth={2.5} />
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     );
                   })}

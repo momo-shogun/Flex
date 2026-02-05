@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useReducer,
-  useEffect,
-  useRef,
-  type ReactNode,
-} from 'react';
+import { createContext, useContext, useReducer, useEffect, useRef, type ReactNode } from 'react';
 import type { ComponentId } from '@/types/components';
 import {
   DEFAULT_SPLIT_TEXT_PROPS,
@@ -16,6 +9,7 @@ import {
   DEFAULT_LIGHT_PILLAR_PROPS,
 } from '@/types/components';
 import type { PageState, PageAction, PageSection } from '@/types/builder.types';
+import { setBuilderStateForTambo } from '@/lib/tambo-builder-context';
 
 const COMPONENT_LABELS: Record<ComponentId, string> = {
   'split-text': 'Split Text',
@@ -311,6 +305,7 @@ export function BuilderProvider({ children }: { children: ReactNode }) {
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    // Persist for reloads
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     saveTimeoutRef.current = setTimeout(() => {
       saveTimeoutRef.current = null;
@@ -319,6 +314,11 @@ export function BuilderProvider({ children }: { children: ReactNode }) {
     return () => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     };
+  }, [state]);
+
+  // Make latest builder state available to Tambo context helpers
+  useEffect(() => {
+    setBuilderStateForTambo(state);
   }, [state]);
 
   const getSection = (id: string) =>

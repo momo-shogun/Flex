@@ -151,6 +151,8 @@ export function InspectorPanel() {
     );
   }
 
+  const isDev = import.meta.env.MODE === 'development';
+
   const props = selectedSection.props as Record<string, unknown>;
   const showInnerLayout = INNER_LAYOUT_TYPES.includes(selectedSection.type);
 
@@ -394,6 +396,17 @@ export function InspectorPanel() {
             />
           </div>
         </InspectSection>
+
+        {/* Dev-only raw props view for debugging AI updates */}
+        {isDev && (
+          <InspectSection title="Raw props (dev only)">
+            <div className="max-h-40 overflow-auto rounded-md bg-slate-900/80 border border-slate-700 px-2 py-1.5">
+              <pre className="text-[10px] leading-snug text-slate-200 whitespace-pre-wrap break-words">
+                {JSON.stringify(props, null, 2)}
+              </pre>
+            </div>
+          </InspectSection>
+        )}
 
         {/* Fill */}
         <InspectSection
@@ -662,10 +675,19 @@ function ContentProperties({
           <div>
             <Label className={labelClass}>Title (display text on canvas)</Label>
             <Input
-              value={String(props.title ?? 'Silk Background')}
-              onChange={(e) => onUpdate('title', e.target.value)}
+              value={String(props.text ?? 'Silk Background')}
+              onChange={(e) => onUpdate('text', e.target.value)}
               className={inputClassFull}
               placeholder="e.g. Silk Background"
+            />
+          </div>
+          <div>
+            <Label className={labelClass}>Subtitle / description</Label>
+            <Input
+              value={String(props.subtitle ?? '')}
+              onChange={(e) => onUpdate('subtitle', e.target.value)}
+              className={inputClassFull}
+              placeholder="Optional description below title"
             />
           </div>
           <div>
