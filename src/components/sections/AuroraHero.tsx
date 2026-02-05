@@ -23,6 +23,8 @@ export interface ElementPosition {
 interface AuroraHeroProps {
   title?: string;
   subtitle?: string;
+  /** When set, render this as the hero title instead of plain title (e.g. Split Text animation). */
+  renderTitle?: React.ReactNode;
   /** Padding/margin for the inner content area (builder-editable). */
   innerStyle?: CSSProperties;
   /** Builder: positions for title, subtitle, button (translate in px). */
@@ -40,6 +42,7 @@ interface AuroraHeroProps {
 export function AuroraHero({
   title = 'Decrease your SaaS churn by over 90%',
   subtitle = 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, et, distinctio eum impedit nihil ipsum modi.',
+  renderTitle,
   innerStyle,
   elementPositions = {},
   selectedElementKey = null,
@@ -142,9 +145,11 @@ export function AuroraHero({
         </span>
         {wrap(
           'title',
-          <h1 className="max-w-3xl bg-gradient-to-br from-white to-gray-400 bg-clip-text text-center text-3xl font-medium leading-tight text-transparent sm:text-5xl sm:leading-tight md:text-7xl md:leading-tight">
-            {title}
-          </h1>
+          renderTitle ?? (
+            <h1 className="max-w-3xl bg-gradient-to-br from-white to-gray-400 bg-clip-text text-center text-3xl font-medium leading-tight text-transparent sm:text-5xl sm:leading-tight md:text-7xl md:leading-tight">
+              {title}
+            </h1>
+          )
         )}
         {wrap(
           'subtitle',

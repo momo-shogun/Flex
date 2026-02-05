@@ -2,6 +2,8 @@ import {
   createContext,
   useContext,
   useReducer,
+  useEffect,
+  useRef,
   type ReactNode,
 } from 'react';
 import type { ComponentId } from '@/types/components';
@@ -25,6 +27,8 @@ const COMPONENT_LABELS: Record<ComponentId, string> = {
   'smooth-scroll-hero': 'Smooth Scroll Hero',
   'aurora-hero': 'Aurora Hero',
   faq: 'FAQ',
+  'silk-hero-splittext': 'Silk Hero + Split Text',
+  'aurora-hero-splittext': 'Aurora Hero + Split Text',
 };
 
 /** Figma-style layout props: padding and margin (px). Applied to section wrapper. */
@@ -58,6 +62,8 @@ export const INNER_LAYOUT_TYPES: ComponentId[] = [
   'text-cursor',
   'aurora-hero',
   'faq',
+  'silk-hero-splittext',
+  'aurora-hero-splittext',
 ];
 
 /** Figma-style: position (px), rotation (deg), dimensions, appearance, fill, stroke. */
@@ -96,11 +102,11 @@ export function getDefaultPropsForType(
     case 'text-cursor':
       return { ...DEFAULT_TEXT_CURSOR_PROPS, ...layout, ...figmaStyle, ...innerLayout };
     case 'silk':
-      return { ...DEFAULT_SILK_PROPS, ...layout, ...figmaStyle };
+      return { ...DEFAULT_SILK_PROPS, ...layout, ...figmaStyle, title: 'Silk Background' };
     case 'floating-lines':
-      return { ...DEFAULT_FLOATING_LINES_PROPS, ...layout, ...figmaStyle };
+      return { ...DEFAULT_FLOATING_LINES_PROPS, ...layout, ...figmaStyle, title: 'Floating Lines' };
     case 'light-pillar':
-      return { ...DEFAULT_LIGHT_PILLAR_PROPS, ...layout, ...figmaStyle };
+      return { ...DEFAULT_LIGHT_PILLAR_PROPS, ...layout, ...figmaStyle, title: 'Light Pillar' };
     case 'smooth-scroll-hero':
       return { ...layout, ...figmaStyle };
     case 'aurora-hero':
@@ -115,6 +121,26 @@ export function getDefaultPropsForType(
       };
     case 'faq':
       return { ...layout, ...figmaStyle, ...innerLayout, title: 'Frequently Asked Questions' };
+    case 'silk-hero-splittext':
+      return {
+        ...DEFAULT_SILK_PROPS,
+        ...DEFAULT_SPLIT_TEXT_PROPS,
+        ...layout,
+        ...figmaStyle,
+        ...innerLayout,
+      };
+    case 'aurora-hero-splittext':
+      return {
+        ...layout,
+        ...figmaStyle,
+        ...innerLayout,
+        ...DEFAULT_SPLIT_TEXT_PROPS,
+        text: 'Build with clarity. Launch with confidence.',
+        title: '',
+        subtitle:
+          'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, et, distinctio eum impedit nihil ipsum modi.',
+        elementPositions: { title: { x: 0, y: 0 }, subtitle: { x: 0, y: 0 }, button: { x: 0, y: 0 } },
+      };
     default:
       return { ...layout, ...figmaStyle };
   }
@@ -126,6 +152,69 @@ export function getDefaultLabelForType(type: ComponentId): string {
 
 function generateId(): string {
   return `section-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+const BUILDER_STORAGE_KEY = 'flex-website-builder-state';
+const VALID_SECTION_TYPES = new Set<ComponentId>(Object.keys(COMPONENT_LABELS) as ComponentId[]);
+
+function isValidSection(s: unknown): s is PageSection {
+  if (!s || typeof s !== 'object') return false;
+  const o = s as Record<string, unknown>;
+  return (
+    typeof o.id === 'string' &&
+    VALID_SECTION_TYPES.has(o.type as ComponentId) &&
+    typeof o.label === 'string' &&
+    typeof o.visible === 'boolean' &&
+    o.props != null &&
+    typeof o.props === 'object'
+  );
+}
+
+function loadStateFromStorage(initial: PageState): PageState {
+  try {
+    const raw = localStorage.getItem(BUILDER_STORAGE_KEY);
+    if (!raw) return initial;
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== 'object') return initial;
+    const o = parsed as Record<string, unknown>;
+    const sections = Array.isArray(o.sections)
+      ? (o.sections as unknown[]).filter(isValidSection)
+      : initial.sections;
+    return {
+      sections,
+      selectedId: typeof o.selectedId === 'string' || o.selectedId === null ? o.selectedId : initial.selectedId,
+      selectedElementKey:
+        typeof o.selectedElementKey === 'string' || o.selectedElementKey === null
+          ? o.selectedElementKey
+          : initial.selectedElementKey,
+      hoveredId: typeof o.hoveredId === 'string' || o.hoveredId === null ? o.hoveredId : initial.hoveredId,
+      hoveredElementKey:
+        typeof o.hoveredElementKey === 'string' || o.hoveredElementKey === null
+          ? o.hoveredElementKey
+          : initial.hoveredElementKey,
+      device:
+        o.device === 'desktop' || o.device === 'tablet' || o.device === 'mobile' ? o.device : initial.device,
+      zoom: typeof o.zoom === 'number' && o.zoom >= 25 && o.zoom <= 200 ? o.zoom : initial.zoom,
+    };
+  } catch {
+    return initial;
+  }
+}
+
+function saveStateToStorage(state: PageState): void {
+  try {
+    localStorage.setItem(BUILDER_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // ignore quota or parse errors
+  }
+}
+
+export function clearBuilderStorage(): void {
+  try {
+    localStorage.removeItem(BUILDER_STORAGE_KEY);
+  } catch {
+    // ignore
+  }
 }
 
 const initialState: PageState = {
@@ -198,6 +287,8 @@ function pageReducer(state: PageState, action: PageAction): PageState {
         hoveredId: state.hoveredId === action.id ? null : state.hoveredId,
         hoveredElementKey: state.hoveredId === action.id ? null : state.hoveredElementKey,
       };
+    case 'RESET':
+      return { ...initialState };
     default:
       return state;
   }
@@ -208,13 +299,27 @@ interface BuilderContextValue {
   dispatch: React.Dispatch<PageAction>;
   getSection: (id: string) => PageSection | undefined;
   selectedSection: PageSection | undefined;
-  addSection: (type: ComponentId) => void;
+  addSection: (type: ComponentId) => string;
 }
 
 const BuilderContext = createContext<BuilderContextValue | null>(null);
 
+const PERSIST_DEBOUNCE_MS = 400;
+
 export function BuilderProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(pageReducer, initialState);
+  const [state, dispatch] = useReducer(pageReducer, initialState, loadStateFromStorage);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current = setTimeout(() => {
+      saveTimeoutRef.current = null;
+      saveStateToStorage(state);
+    }, PERSIST_DEBOUNCE_MS);
+    return () => {
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    };
+  }, [state]);
 
   const getSection = (id: string) =>
     state.sections.find((s) => s.id === id);
@@ -222,7 +327,7 @@ export function BuilderProvider({ children }: { children: ReactNode }) {
     ? getSection(state.selectedId)
     : undefined;
 
-  const addSection = (type: ComponentId) => {
+  const addSection = (type: ComponentId): string => {
     const id = generateId();
     const label = getDefaultLabelForType(type);
     const props = getDefaultPropsForType(type);
@@ -230,6 +335,7 @@ export function BuilderProvider({ children }: { children: ReactNode }) {
       type: 'ADD_SECTION',
       section: { id, type, label, visible: true, props },
     });
+    return id;
   };
 
   return (

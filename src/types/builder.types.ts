@@ -36,4 +36,5 @@ export type PageAction =
   | { type: 'UPDATE_SECTION'; id: string; updates: Partial<PageSection> }
   | { type: 'REORDER'; fromIndex: number; toIndex: number }
   | { type: 'ADD_SECTION'; section: PageSection }
-  | { type: 'REMOVE_SECTION'; id: string };
+  | { type: 'REMOVE_SECTION'; id: string }
+  | { type: 'RESET' };

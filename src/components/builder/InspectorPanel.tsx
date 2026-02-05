@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ColorPickerField } from '@/components/ui/color-picker-field';
 import { Switch } from '@/components/ui/switch';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
@@ -119,22 +120,6 @@ export function InspectorPanel() {
     }
   };
 
-  const updateElementPosition = (elementKey: string, x: number, y: number) => {
-    if (!selectedSection) return;
-    const current = (selectedSection.props.elementPositions as Record<string, { x: number; y: number }>) ?? {};
-    dispatch({
-      type: 'UPDATE_PROPS',
-      id: selectedSection.id,
-      props: {
-        elementPositions: { ...current, [elementKey]: { x, y } },
-      },
-    });
-  };
-
-  const selectSectionOnly = () => {
-    if (selectedSection) dispatch({ type: 'SELECT', id: selectedSection.id });
-  };
-
   if (!selectedSection) {
     return (
       <div className="h-full flex flex-col">
@@ -168,10 +153,6 @@ export function InspectorPanel() {
 
   const props = selectedSection.props as Record<string, unknown>;
   const showInnerLayout = INNER_LAYOUT_TYPES.includes(selectedSection.type);
-  const selectedElementKey = state.selectedElementKey;
-  const elementPositions = (props.elementPositions as Record<string, { x: number; y: number }>) ?? {};
-  const selectedElementPos = selectedElementKey ? elementPositions[selectedElementKey] ?? { x: 0, y: 0 } : null;
-  const supportsElementSelection = selectedSection.type === 'aurora-hero';
 
   return (
     <div className="h-full flex flex-col min-w-0 bg-slate-900/50">
@@ -195,36 +176,23 @@ export function InspectorPanel() {
               <Pencil className="h-3.5 w-3.5" />
               <span>Editing</span>
             </div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <Input
-                value={selectedSection.label}
-                onChange={(e) => updateSection('label', e.target.value)}
-                className={cn(inputClass, 'flex-1 min-w-0 font-medium')}
-                placeholder="Section name"
-              />
-              <span
-                className="text-[10px] uppercase tracking-wider px-2 py-1 rounded bg-slate-800 border border-slate-600"
-                style={mutedStyle}
-              >
-                {selectedSection.type}
-              </span>
-              {supportsElementSelection && selectedElementKey && (
-                <span className="text-[10px] px-2 py-1 rounded bg-[hsl(var(--builder-selection))]/20 border border-[hsl(var(--builder-selection))] text-[hsl(var(--builder-selection))]">
-                  Element: {selectedElementKey}
+            <div className="space-y-1.5">
+              <Label className="text-xs text-slate-400">Component title</Label>
+              <div className="flex items-center gap-2 flex-wrap">
+                <Input
+                  value={selectedSection.label}
+                  onChange={(e) => updateSection('label', e.target.value)}
+                  className={cn(inputClass, 'flex-1 min-w-0 font-medium')}
+                  placeholder="e.g. Hero, Footer"
+                />
+                <span
+                  className="text-[10px] uppercase tracking-wider px-2 py-1 rounded bg-slate-800 border border-slate-600"
+                  style={mutedStyle}
+                >
+                  {selectedSection.type}
                 </span>
-              )}
+              </div>
             </div>
-            {supportsElementSelection && selectedElementKey && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="h-7 text-xs text-slate-400 hover:text-white"
-                onClick={selectSectionOnly}
-              >
-                Select section instead
-              </Button>
-            )}
             <div className="flex items-center justify-between">
               <Label htmlFor="inspector-visible" className="text-xs text-slate-400">
                 Visible
@@ -237,46 +205,6 @@ export function InspectorPanel() {
             </div>
           </div>
           <Separator className="bg-slate-700/80" />
-
-          {supportsElementSelection && selectedElementKey && selectedElementPos && (
-            <InspectSection title="Element position" defaultOpen>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <Label className="text-[10px] text-slate-500">X</Label>
-                  <Input
-                    type="number"
-                    value={selectedElementPos.x}
-                    onChange={(e) =>
-                      updateElementPosition(
-                        selectedElementKey,
-                        Number(e.target.value) || 0,
-                        selectedElementPos.y
-                      )
-                    }
-                    className={cn(inputClass, 'w-full')}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-[10px] text-slate-500">Y</Label>
-                  <Input
-                    type="number"
-                    value={selectedElementPos.y}
-                    onChange={(e) =>
-                      updateElementPosition(
-                        selectedElementKey,
-                        selectedElementPos.x,
-                        Number(e.target.value) || 0
-                      )
-                    }
-                    className={cn(inputClass, 'w-full')}
-                  />
-                </div>
-              </div>
-              <p className="text-[10px] text-slate-500 mt-1.5">
-                Drag the element on canvas or edit here. Position is relative to section.
-              </p>
-            </InspectSection>
-          )}
 
         {/* Content */}
         <InspectSection title="Content" defaultOpen>
@@ -494,20 +422,12 @@ export function InspectorPanel() {
           }
         >
           <div className="space-y-2">
-            <div className="flex gap-2 items-center">
-              <div
-                className="w-8 h-8 rounded border shrink-0 border-slate-600"
-                style={{
-                  backgroundColor: toStr(props.backgroundColor, '') || 'transparent',
-                }}
-              />
-              <Input
-                value={toStr(props.backgroundColor, '')}
-                onChange={(e) => updateProp('backgroundColor', e.target.value)}
-                className={cn(inputClass, 'flex-1 font-mono text-xs')}
-                placeholder="#FFFFFF"
-              />
-            </div>
+            <ColorPickerField
+              value={toStr(props.backgroundColor, '')}
+              onChange={(hex) => updateProp('backgroundColor', hex)}
+              placeholder="#FFFFFF or empty for transparent"
+              inputClassName={inputClass}
+            />
             <div className="flex items-center gap-1">
               <Input
                 type="number"
@@ -547,18 +467,12 @@ export function InspectorPanel() {
                 className={cn(inputClass, 'flex-1')}
               />
             </div>
-            <div className="flex gap-2 items-center">
-              <div
-                className="w-6 h-6 rounded border border-slate-600 shrink-0"
-                style={{ backgroundColor: toStr(props.strokeColor, '#000000') }}
-              />
-              <Input
-                value={toStr(props.strokeColor, '#000000')}
-                onChange={(e) => updateProp('strokeColor', e.target.value)}
-                className={cn(inputClass, 'flex-1 font-mono text-xs')}
-                placeholder="#000000"
-              />
-            </div>
+            <ColorPickerField
+              value={toStr(props.strokeColor, '#000000')}
+              onChange={(hex) => updateProp('strokeColor', hex)}
+              placeholder="#000000"
+              inputClassName={inputClass}
+            />
           </div>
         </InspectSection>
         </ScrollArea>
@@ -746,6 +660,15 @@ function ContentProperties({
       return (
         <div className="space-y-2">
           <div>
+            <Label className={labelClass}>Title (display text on canvas)</Label>
+            <Input
+              value={String(props.title ?? 'Silk Background')}
+              onChange={(e) => onUpdate('title', e.target.value)}
+              className={inputClassFull}
+              placeholder="e.g. Silk Background"
+            />
+          </div>
+          <div>
             <Label className={labelClass}>Speed</Label>
             <Input
               type="number"
@@ -756,10 +679,11 @@ function ContentProperties({
           </div>
           <div>
             <Label className={labelClass}>Color</Label>
-            <Input
+            <ColorPickerField
               value={String(props.color ?? '#7B7481')}
-              onChange={(e) => onUpdate('color', e.target.value)}
-              className={inputClassFull}
+              onChange={(hex) => onUpdate('color', hex)}
+              placeholder="#7B7481"
+              className="mt-1"
             />
           </div>
         </div>
@@ -767,16 +691,27 @@ function ContentProperties({
 
     case 'floating-lines':
       return (
-        <div>
-          <Label className={labelClass}>Animation speed</Label>
-          <Input
-            type="number"
-            value={String(props.animationSpeed ?? 1)}
-            onChange={(e) =>
-              onUpdate('animationSpeed', Number(e.target.value) || 1)
-            }
-            className={inputClassFull}
-          />
+        <div className="space-y-2">
+          <div>
+            <Label className={labelClass}>Title (display text on canvas)</Label>
+            <Input
+              value={String(props.title ?? 'Floating Lines')}
+              onChange={(e) => onUpdate('title', e.target.value)}
+              className={inputClassFull}
+              placeholder="e.g. Floating Lines"
+            />
+          </div>
+          <div>
+            <Label className={labelClass}>Animation speed</Label>
+            <Input
+              type="number"
+              value={String(props.animationSpeed ?? 1)}
+              onChange={(e) =>
+                onUpdate('animationSpeed', Number(e.target.value) || 1)
+              }
+              className={inputClassFull}
+            />
+          </div>
         </div>
       );
 
@@ -784,19 +719,30 @@ function ContentProperties({
       return (
         <div className="space-y-2">
           <div>
-            <Label className={labelClass}>Top color</Label>
+            <Label className={labelClass}>Title (display text on canvas)</Label>
             <Input
-              value={String(props.topColor ?? '#5227FF')}
-              onChange={(e) => onUpdate('topColor', e.target.value)}
+              value={String(props.title ?? 'Light Pillar')}
+              onChange={(e) => onUpdate('title', e.target.value)}
               className={inputClassFull}
+              placeholder="e.g. Light Pillar"
+            />
+          </div>
+          <div>
+            <Label className={labelClass}>Top color</Label>
+            <ColorPickerField
+              value={String(props.topColor ?? '#5227FF')}
+              onChange={(hex) => onUpdate('topColor', hex)}
+              placeholder="#5227FF"
+              className="mt-1"
             />
           </div>
           <div>
             <Label className={labelClass}>Bottom color</Label>
-            <Input
+            <ColorPickerField
               value={String(props.bottomColor ?? '#FF9FFC')}
-              onChange={(e) => onUpdate('bottomColor', e.target.value)}
-              className={inputClassFull}
+              onChange={(hex) => onUpdate('bottomColor', hex)}
+              placeholder="#FF9FFC"
+              className="mt-1"
             />
           </div>
         </div>
@@ -826,6 +772,63 @@ function ContentProperties({
         </div>
       );
 
+    case 'aurora-hero-splittext':
+      return (
+        <div className="space-y-4">
+          <div>
+            <Label className={labelClass}>Hero title (split text)</Label>
+            <Input
+              value={String(props.text ?? '')}
+              onChange={(e) => onUpdate('text', e.target.value)}
+              className={inputClassFull}
+              placeholder="Animated hero title"
+            />
+          </div>
+          <div>
+            <Label className={labelClass}>Subtitle</Label>
+            <Input
+              value={String(props.subtitle ?? '')}
+              onChange={(e) => onUpdate('subtitle', e.target.value)}
+              className={inputClassFull}
+              placeholder="Hero subtitle"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <Label className={labelClass}>Delay</Label>
+              <Input
+                type="number"
+                value={String(props.delay ?? 0)}
+                onChange={(e) => onUpdate('delay', Number(e.target.value) || 0)}
+                className={inputClassFull}
+              />
+            </div>
+            <div>
+              <Label className={labelClass}>Duration</Label>
+              <Input
+                type="number"
+                value={String(props.duration ?? 0.5)}
+                onChange={(e) => onUpdate('duration', Number(e.target.value) || 0.5)}
+                className={inputClassFull}
+              />
+            </div>
+          </div>
+          <div>
+            <Label className={labelClass}>Animate by</Label>
+            <select
+              value={String(props.animateBy ?? 'characters')}
+              onChange={(e) =>
+                onUpdate('animateBy', e.target.value as 'characters' | 'words')
+              }
+              className={inputClassFull}
+            >
+              <option value="characters">Characters</option>
+              <option value="words">Words</option>
+            </select>
+          </div>
+        </div>
+      );
+
     case 'faq':
       return (
         <div>
@@ -836,6 +839,73 @@ function ContentProperties({
             className={inputClassFull}
             placeholder="FAQ section title"
           />
+        </div>
+      );
+
+    case 'silk-hero-splittext':
+      return (
+        <div className="space-y-4">
+          <div>
+            <Label className={labelClass}>Hero text</Label>
+            <Input
+              value={String(props.text ?? '')}
+              onChange={(e) => onUpdate('text', e.target.value)}
+              className={inputClassFull}
+              placeholder="Text"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <Label className={labelClass}>Delay</Label>
+              <Input
+                type="number"
+                value={String(props.delay ?? 0)}
+                onChange={(e) => onUpdate('delay', Number(e.target.value) || 0)}
+                className={inputClassFull}
+              />
+            </div>
+            <div>
+              <Label className={labelClass}>Duration</Label>
+              <Input
+                type="number"
+                value={String(props.duration ?? 0.5)}
+                onChange={(e) => onUpdate('duration', Number(e.target.value) || 0.5)}
+                className={inputClassFull}
+              />
+            </div>
+          </div>
+          <div>
+            <Label className={labelClass}>Animate by</Label>
+            <select
+              value={String(props.animateBy ?? 'characters')}
+              onChange={(e) =>
+                onUpdate('animateBy', e.target.value as 'characters' | 'words')
+              }
+              className={inputClassFull + ' rounded-md border px-3'}
+            >
+              <option value="characters">Characters</option>
+              <option value="words">Words</option>
+            </select>
+          </div>
+          <Separator className="bg-slate-700/80" />
+          <div>
+            <Label className={labelClass}>Silk speed</Label>
+            <Input
+              type="number"
+              value={String(props.speed ?? 5)}
+              onChange={(e) => onUpdate('speed', Number(e.target.value) || 5)}
+              className={inputClassFull}
+            />
+          </div>
+          <div>
+            <Label className={labelClass}>Silk color</Label>
+            <ColorPickerField
+              value={String(props.color ?? '#7B7481')}
+              onChange={(hex) => onUpdate('color', hex)}
+              placeholder="#7B7481"
+              className="mt-1"
+            />
+          </div>
         </div>
       );
 

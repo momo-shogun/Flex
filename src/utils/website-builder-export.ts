@@ -45,6 +45,7 @@ function generateAppTsx(sections: BuilderSection[]): string {
         elements.push(`      <SmoothScrollHero key="${section.id}" />`);
         break;
       case 'aurora-hero':
+      case 'aurora-hero-splittext':
         importSet.add("import { AuroraHero } from './components/AuroraHero';");
         elements.push(`      <AuroraHero key="${section.id}" />`);
         break;
@@ -438,6 +439,7 @@ function getComponentSource(type: BuilderSection['type']): string {
       return LIGHT_PILLAR_SOURCE;
     // Sections
     case 'aurora-hero':
+    case 'aurora-hero-splittext':
       return AURORA_HERO_SOURCE;
     case 'faq':
       return FAQ_SOURCE;
@@ -458,6 +460,7 @@ function getComponentFileName(type: BuilderSection['type']): string {
     'light-pillar': 'LightPillar',
     'smooth-scroll-hero': 'SmoothScrollHero',
     'aurora-hero': 'AuroraHero',
+    'aurora-hero-splittext': 'AuroraHero',
     'faq': 'FAQ',
   };
   return map[type] || type;

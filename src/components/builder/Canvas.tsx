@@ -19,19 +19,24 @@ export function Canvas() {
   return (
     <div
       ref={containerRef}
-      className="h-full w-full min-h-0 overflow-auto p-6 flex justify-center items-start"
+      className={cn(
+        'h-full w-full min-h-0 overflow-auto flex justify-center items-start',
+        state.device === 'desktop' ? 'py-6' : 'p-6'
+      )}
     >
       <div
         className={cn(
-          'bg-slate-900 rounded-lg shadow-xl overflow-hidden transition-all duration-300 flex-shrink-0',
+          'rounded-lg shadow-xl overflow-hidden transition-all duration-300 flex-shrink-0',
           state.device !== 'desktop' && 'border',
           state.device !== 'desktop' && 'border-slate-700'
         )}
         style={{
           width,
           maxWidth: state.device === 'desktop' ? '100%' : width,
+          minWidth: state.device === 'desktop' ? '100%' : undefined,
           transform: `scale(${scale})`,
           transformOrigin: 'top center',
+          backgroundColor: 'hsl(var(--builder-canvas-bg))',
         }}
       >
         {state.device !== 'desktop' && (

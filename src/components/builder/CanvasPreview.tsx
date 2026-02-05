@@ -135,17 +135,6 @@ export function CanvasPreview() {
     return `${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}`;
   }
 
-  function getElementPositions(props: Record<string, unknown>): Partial<Record<'title' | 'subtitle' | 'button', { x: number; y: number }>> {
-    const raw = props.elementPositions as Partial<Record<string, { x: number; y: number }>> | undefined;
-    if (!raw || typeof raw !== 'object') return {};
-    const out: Partial<Record<'title' | 'subtitle' | 'button', { x: number; y: number }>> = {};
-    for (const k of ['title', 'subtitle', 'button'] as const) {
-      const v = raw[k];
-      if (v && typeof v.x === 'number' && typeof v.y === 'number') out[k] = { x: v.x, y: v.y };
-    }
-    return out;
-  }
-
   if (visibleSections.length === 0) {
     return (
       <div
@@ -161,20 +150,19 @@ export function CanvasPreview() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 relative">
+    <div className="min-h-screen w-full bg-slate-950 relative">
       {visibleSections.map((section) => {
         const isSelected = state.selectedId === section.id;
-        const isElementSelected = isSelected && state.selectedElementKey != null;
-        const isSectionSelected = isSelected && state.selectedElementKey == null;
         const isHovered = state.hoveredId === section.id;
 
         return (
           <div
             key={section.id}
-            className="relative"
+            className="relative w-full"
             style={{
               ...getLayoutStyle(section.props as Record<string, unknown>),
               ...getFigmaStyle(section.props as Record<string, unknown>),
+              width: '100%',
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -183,16 +171,16 @@ export function CanvasPreview() {
             onMouseEnter={() => handleSectionHover(section.id)}
             onMouseLeave={() => handleSectionHover(null)}
           >
-            {(isSectionSelected || isHovered) && (
+            {(isSelected || isHovered) && (
               <div
                 className={cn(
                   'absolute inset-0 pointer-events-none z-50 border-2 transition-colors',
-                  isSectionSelected
+                  isSelected
                     ? 'border-[hsl(var(--builder-selection))]'
                     : 'border-[hsl(var(--builder-selection))]/50 border-dashed'
                 )}
                 style={
-                  isSectionSelected
+                  isSelected
                     ? {
                         backgroundColor: 'hsl(var(--builder-selection) / 0.05)',
                       }
@@ -202,15 +190,12 @@ export function CanvasPreview() {
                 <div
                   className={cn(
                     'absolute -top-6 left-2 px-2 py-0.5 text-xs font-medium rounded',
-                    isSectionSelected
+                    isSelected
                       ? 'bg-[hsl(var(--builder-selection))] text-white'
                       : 'bg-[hsl(var(--builder-selection))]/80 text-white'
                   )}
                 >
                   {section.label}
-                  {isElementSelected && state.selectedElementKey && (
-                    <span className="ml-1.5 opacity-90"> › {state.selectedElementKey}</span>
-                  )}
                 </div>
               </div>
             )}
@@ -258,7 +243,7 @@ export function CanvasPreview() {
               </div>
             )}
             {section.type === 'silk' && (
-              <div className="relative min-h-screen">
+              <div className="relative min-h-screen w-full">
                 <Silk
                   {...{
                     ...DEFAULT_SILK_PROPS,
@@ -266,12 +251,38 @@ export function CanvasPreview() {
                   }}
                 />
                 <div className="relative z-10 flex items-center justify-center h-screen">
-                  <h2 className="text-4xl font-bold text-white">Silk Background</h2>
+                  <h2 className="text-4xl font-bold text-white">
+                    {section.props?.title != null && String(section.props.title).trim() !== ''
+                      ? String(section.props.title)
+                      : 'Silk Background'}
+                  </h2>
+                </div>
+              </div>
+            )}
+            {section.type === 'silk-hero-splittext' && (
+              <div className="relative min-h-screen w-full">
+                <Silk
+                  {...{
+                    ...DEFAULT_SILK_PROPS,
+                    ...(section.props as Partial<SilkProps>),
+                  }}
+                />
+                <div
+                  className="relative z-10 flex items-center justify-center h-screen"
+                  style={getInnerLayoutStyle(section.props as Record<string, unknown>)}
+                >
+                  <InteractableSplitText
+                    {...{
+                      ...DEFAULT_SPLIT_TEXT_PROPS,
+                      ...(section.props as Partial<SplitTextProps>),
+                    }}
+                    id={section.id}
+                  />
                 </div>
               </div>
             )}
             {section.type === 'floating-lines' && (
-              <div className="relative min-h-screen">
+              <div className="relative min-h-screen w-full">
                 <FloatingLines
                   {...{
                     ...DEFAULT_FLOATING_LINES_PROPS,
@@ -279,12 +290,16 @@ export function CanvasPreview() {
                   }}
                 />
                 <div className="relative z-10 flex items-center justify-center h-screen">
-                  <h2 className="text-4xl font-bold text-white">Floating Lines</h2>
+                  <h2 className="text-4xl font-bold text-white">
+                    {section.props?.title != null && String(section.props.title).trim() !== ''
+                      ? String(section.props.title)
+                      : 'Floating Lines'}
+                  </h2>
                 </div>
               </div>
             )}
             {section.type === 'light-pillar' && (
-              <div className="relative min-h-screen">
+              <div className="relative min-h-screen w-full">
                 <LightPillar
                   {...{
                     ...DEFAULT_LIGHT_PILLAR_PROPS,
@@ -292,7 +307,11 @@ export function CanvasPreview() {
                   }}
                 />
                 <div className="relative z-10 flex items-center justify-center h-screen">
-                  <h2 className="text-4xl font-bold text-white">Light Pillar</h2>
+                  <h2 className="text-4xl font-bold text-white">
+                    {section.props?.title != null && String(section.props.title).trim() !== ''
+                      ? String(section.props.title)
+                      : 'Light Pillar'}
+                  </h2>
                 </div>
               </div>
             )}
@@ -304,22 +323,24 @@ export function CanvasPreview() {
                 title={section.props?.title != null && section.props.title !== '' ? String(section.props.title) : undefined}
                 subtitle={section.props?.subtitle != null && section.props.subtitle !== '' ? String(section.props.subtitle) : undefined}
                 innerStyle={getInnerLayoutStyle(section.props as Record<string, unknown>)}
-                builderMode
-                elementPositions={getElementPositions(section.props)}
-                selectedElementKey={isSelected ? (state.selectedElementKey as 'title' | 'subtitle' | 'button') ?? null : null}
-                onSelectElement={(key) => dispatch({ type: 'SELECT_ELEMENT', sectionId: section.id, elementKey: key })}
-                onUpdateElementPosition={(key, x, y) =>
-                  dispatch({
-                    type: 'UPDATE_PROPS',
-                    id: section.id,
-                    props: {
-                      elementPositions: {
-                        ...getElementPositions(section.props),
-                        [key]: { x, y },
-                      },
-                    },
-                  })
+              />
+            )}
+            {section.type === 'aurora-hero-splittext' && (
+              <AuroraHero
+                subtitle={section.props?.subtitle != null && section.props.subtitle !== '' ? String(section.props.subtitle) : undefined}
+                renderTitle={
+                  <InteractableSplitText
+                    {...{
+                      ...DEFAULT_SPLIT_TEXT_PROPS,
+                      ...(section.props as Partial<SplitTextProps>),
+                      className:
+                        (section.props?.className as string) ||
+                        'max-w-3xl bg-gradient-to-br from-white to-gray-400 bg-clip-text text-center text-3xl font-medium leading-tight text-transparent sm:text-5xl sm:leading-tight md:text-7xl md:leading-tight',
+                    }}
+                    id={section.id}
+                  />
                 }
+                innerStyle={getInnerLayoutStyle(section.props as Record<string, unknown>)}
               />
             )}
             {section.type === 'faq' && (

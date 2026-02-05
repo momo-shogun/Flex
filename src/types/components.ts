@@ -7,7 +7,9 @@ export type ComponentId =
   | 'light-pillar'
   | 'smooth-scroll-hero'
   | 'aurora-hero'
-  | 'faq';
+  | 'faq'
+  | 'silk-hero-splittext'
+  | 'aurora-hero-splittext';
 
 export const SECTION_IDS = ['smooth-scroll-hero', 'aurora-hero', 'faq'] as const;
 export type SectionId = (typeof SECTION_IDS)[number];

@@ -3,6 +3,8 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { TopBar } from '@/components/layout/TopBar';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { CommandPalette } from '@/components/layout/CommandPalette';
+import { BuilderActionsRefProvider } from '@/contexts/BuilderActionsRefContext';
+import { BuilderTamboToolRegistration } from '@/components/builder/BuilderTamboToolRegistration';
 import type {
   ComponentId,
   SplitTextProps,
@@ -93,8 +95,10 @@ export function Layout() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-slate-950 text-slate-100">
-      <CommandPalette
+    <BuilderActionsRefProvider>
+      <BuilderTamboToolRegistration />
+      <div className="flex flex-col h-screen bg-slate-950 text-slate-100">
+        <CommandPalette
         selectedComponent={selectedComponent}
         onSelectComponent={setSelectedComponent}
       />
@@ -117,5 +121,6 @@ export function Layout() {
         </main>
       </div>
     </div>
+    </BuilderActionsRefProvider>
   );
 }

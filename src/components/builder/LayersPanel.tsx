@@ -35,6 +35,11 @@ const SECTIONS: { id: ComponentId; label: string }[] = [
   { id: 'faq', label: 'FAQ' },
 ];
 
+const COMPOSITES: { id: ComponentId; label: string }[] = [
+  { id: 'silk-hero-splittext', label: 'Silk Hero + Split Text' },
+  { id: 'aurora-hero-splittext', label: 'Aurora Hero + Split Text' },
+];
+
 const sectionIcons: Record<ComponentId, typeof Layout> = {
   'split-text': Type,
   'blur-text': Type,
@@ -45,14 +50,17 @@ const sectionIcons: Record<ComponentId, typeof Layout> = {
   'smooth-scroll-hero': Layout,
   'aurora-hero': Layout,
   faq: Layout,
+  'silk-hero-splittext': Layout,
+  'aurora-hero-splittext': Layout,
 };
 
-const CATEGORY_KEYS = ['textAnimations', 'backgrounds', 'sections'] as const;
+const CATEGORY_KEYS = ['textAnimations', 'backgrounds', 'composites', 'sections'] as const;
 type CategoryKey = (typeof CATEGORY_KEYS)[number];
 
 const defaultCategoriesOpen: Record<CategoryKey, boolean> = {
   textAnimations: false,
   backgrounds: false,
+  composites: false,
   sections: false,
 };
 
@@ -158,6 +166,26 @@ export function LayersPanel() {
             onToggle={() => toggleCategory('backgrounds')}
           >
             {BACKGROUNDS.map((comp) => (
+              <button
+                key={comp.id}
+                type="button"
+                onClick={() => addSection(comp.id)}
+                className="w-full flex items-center justify-between px-2 py-1.5 rounded-md text-left text-sm hover:bg-slate-800/80 transition-colors"
+                style={{
+                  color: 'hsl(var(--builder-text-secondary))',
+                }}
+              >
+                {comp.label}
+                <Plus className="h-3.5 w-3.5" />
+              </button>
+            ))}
+          </CategoryRow>
+          <CategoryRow
+            label="Composites"
+            open={categoriesOpen.composites}
+            onToggle={() => toggleCategory('composites')}
+          >
+            {COMPOSITES.map((comp) => (
               <button
                 key={comp.id}
                 type="button"

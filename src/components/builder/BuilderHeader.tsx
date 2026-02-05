@@ -8,6 +8,7 @@ import {
   Redo2,
   Eye,
   Save,
+  Trash2,
   MoreHorizontal,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,7 +19,7 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from '@/components/ui/tooltip';
-import { useBuilder } from '@/contexts/BuilderContext';
+import { useBuilder, clearBuilderStorage } from '@/contexts/BuilderContext';
 import type { DeviceType } from '@/types/builder.types';
 import { downloadProjectZip } from '@/utils/website-builder-export';
 import { toast } from 'sonner';
@@ -54,6 +55,12 @@ export function BuilderHeader() {
       console.error(err);
       toast.error('Export failed.');
     }
+  };
+
+  const handleClearCanvas = () => {
+    clearBuilderStorage();
+    dispatch({ type: 'RESET' });
+    toast.success('Canvas cleared.');
   };
 
   return (
@@ -211,6 +218,20 @@ export function BuilderHeader() {
               </Button>
             </TooltipTrigger>
             <TooltipContent>Preview</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                style={{ color: 'hsl(var(--builder-text-secondary))' }}
+                onClick={handleClearCanvas}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Clear canvas</TooltipContent>
           </Tooltip>
           <Button
             size="sm"
