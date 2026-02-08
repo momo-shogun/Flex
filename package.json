@@ -35,6 +35,7 @@
     "@tambo-ai/react": "^0.69.1",
     "@modelcontextprotocol/sdk": "^1.24.0",
     "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.23.5",
     "three": "^0.170.0",
     "@react-three/fiber": "^8.17.10",
     "lenis": "^1.1.14",
