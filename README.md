@@ -1,16 +1,58 @@
 # Flex
 
-Flex is a Vite + React design system playground for experimenting with React-Bits-inspired components, plus a simple page-builder/export tool for generating starter React projects. It also includes optional Tambo-powered AI editing for supported components.
-
-Built with **React + TypeScript + Tailwind CSS**, and inspired by **[React-Bits](https://github.com/DavidHDev/react-bits)**.
+Flex is a Vite + React design system playground and page-builder that lets you assemble website sections, edit them with live props or via AI chat, and export a starter React project as a `.zip`. Built with **React + TypeScript + Tailwind CSS**.
 
 **Highlights**
 
 - Interactive playground for components (preview + prop controls + code view)
-- Simple website builder that exports a starter React project as a `.zip`
-- Optional Tambo-powered AI editing for supported components
+- Website builder with layers, canvas, and inspector; export to a runnable Vite + React + Tailwind project
+- Tambo-powered AI: add or edit sections from natural language in the builder
 
-**Status:** Early-stage / experimental; APIs, component names, and the website-builder flow may change without notice. See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for current work and planned features.
+**Status:** Early-stage / experimental; APIs and website-builder flow may change. See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for current work and planned features.
+
+## Architecture
+
+```mermaid
+flowchart TB
+  subgraph User["User"]
+    Playground["Component Playground"]
+    Builder["Website Builder"]
+  end
+
+  subgraph BuilderUI["Website Builder UI"]
+    Layers["Layers Panel"]
+    Canvas["Canvas"]
+    Inspector["Inspector"]
+    AIChat["AI Chat"]
+  end
+
+  subgraph State["State & AI"]
+    BuilderContext["Builder Context\n(sections, selection)"]
+    Tambo["Tambo SDK"]
+    Tools["Builder tools\n(add / update / list / templates)"]
+  end
+
+  subgraph Output["Output"]
+    Export["Export .zip\n(Vite + React + Tailwind)"]
+  end
+
+  Playground --> Canvas
+  Builder --> Layers
+  Builder --> Canvas
+  Builder --> Inspector
+  Builder --> AIChat
+
+  AIChat --> Tambo
+  Tambo --> Tools
+  Tools --> BuilderContext
+  BuilderContext --> Canvas
+  Layers --> BuilderContext
+  Inspector --> BuilderContext
+
+  BuilderContext --> Export
+```
+
+**Flow in short:** The builder’s **canvas** and **inspector** read from **Builder Context** (sections, selection). **AI Chat** sends messages to **Tambo**; Tambo calls **builder tools** (e.g. add section, update props, use templates), which dispatch into Builder Context. **Export** uses the same section state to generate the project zip.
 
 ## What you can do
 
@@ -81,15 +123,13 @@ If you prefer `npm` or `yarn`:
 
 ## Optional: Tambo integration
 
-The project includes `@tambo-ai/react` and a set of `Interactable*` wrappers in `src/components/react-bits/` that can be used for AI-driven edits. The wrappers expose targets for Tambo to modify, but you'll still need to add a thread/chat UI to send instructions.
+The project uses `@tambo-ai/react`: `TamboProvider` wraps the app, builder tools are registered so Tambo can add/update sections and use templates, and Interactable wrappers let the AI edit existing component props from chat.
 
-At a high level, `TamboProvider` wraps the app shell, generative UI components are registered in `src/config/tambo-components.ts`, and `Interactable*` wrappers mark specific React-Bits components as AI-editable targets.
+- **Builder tools:** `src/lib/builder-tambo-tools.ts` (add/update/list/merge sections, templates, custom website).
+- **Generative components:** `src/config/tambo-components.ts`.
+- **Chat UI:** Website Builder includes an AI Chat panel that uses Tambo threads and tools.
 
-For how to wire up a thread/chat UI and skills, see [TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md) and [SKILLS_GUIDE.md](./SKILLS_GUIDE.md).
-
-Tambo-registered generative UI components live in `src/components/tambo/`.
-
-To see how Tambo is wired into the app shell, start from `src/main.tsx` (`TamboProvider`) and `src/config/tambo-components.ts`.
+For thread/chat wiring and skills, see [TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md) and [SKILLS_GUIDE.md](./SKILLS_GUIDE.md). Entry points: `src/main.tsx` (`TamboProvider`) and `src/config/tambo-components.ts`.
 
 To provide a Tambo API key locally:
 
@@ -100,12 +140,11 @@ VITE_TAMBO_API_KEY=sk_...
 
 ## Additional docs
 
-- [GET_STARTED.md](./GET_STARTED.md) - more detailed setup and usage steps
-- [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) - current implementation status and roadmap
-- [REACT_BITS_INTEGRATION.md](./REACT_BITS_INTEGRATION.md) - React-Bits component notes and integration details
-- [TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md) - concepts and patterns for Tambo integration
-- [SKILLS_GUIDE.md](./SKILLS_GUIDE.md) - defining and using AI skills
-- [PROJECT_IMPLEMENTATION_GUIDE.md](./PROJECT_IMPLEMENTATION_GUIDE.md) - broader project plan
+- [GET_STARTED.md](./GET_STARTED.md) – setup and usage
+- [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) – implementation status and roadmap
+- [TAMBO_CONCEPTS.md](./TAMBO_CONCEPTS.md) – Tambo integration concepts
+- [SKILLS_GUIDE.md](./SKILLS_GUIDE.md) – AI skills
+- [PROJECT_IMPLEMENTATION_GUIDE.md](./PROJECT_IMPLEMENTATION_GUIDE.md) – project plan
 
 ## Contributing
 
