@@ -1,0 +1,1 @@
+import{_ as a,M as n}from"./tambo-DmnkylAl.js";import"./react-vendor-OXTL999L.js";async function s(){try{const{toJsonSchema:t}=await a(async()=>{const{toJsonSchema:o}=await import("./standard-json-BPdA3TTP.js");return{toJsonSchema:o}},[]);return t}catch{throw new n("@valibot/to-json-schema")}}export{s as default};

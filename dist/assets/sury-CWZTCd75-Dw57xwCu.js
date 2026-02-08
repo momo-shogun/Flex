@@ -1,0 +1,1 @@
+import{_ as o,M as a}from"./tambo-DmnkylAl.js";import"./react-vendor-OXTL999L.js";async function c(){try{const{toJSONSchema:t}=await o(async()=>{const{toJSONSchema:r}=await import("./standard-json-DNqvg6tM.js");return{toJSONSchema:r}},[]);return t}catch{throw new a("sury")}}export{c as default};
