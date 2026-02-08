@@ -5,12 +5,14 @@ import { LayersPanel } from '@/components/builder/LayersPanel';
 import { Canvas } from '@/components/builder/Canvas';
 import { BuilderTamboBridge } from '@/components/builder/BuilderTamboBridge';
 import { BuilderRightPanel } from '@/components/builder/BuilderRightPanel';
+import { BuilderAutoSave } from '@/components/builder/BuilderAutoSave';
 import { TamboContextHelpersProvider } from '@tambo-ai/react';
 
 export function WebsiteBuilderPage() {
   return (
     <div className="h-full w-full min-h-0 flex flex-col overflow-hidden">
       <BuilderProvider>
+        <BuilderAutoSave />
         <TamboContextHelpersProvider
           contextHelpers={{
             // Expose current selection + props while builder page is mounted

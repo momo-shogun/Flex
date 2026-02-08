@@ -1,14 +1,18 @@
 import { useEffect } from 'react';
 import { useTambo } from '@tambo-ai/react';
 import { useBuilderActionsRef } from '@/contexts/BuilderActionsRefContext';
-import { createBuilderTools } from '@/lib/builder-tambo-tools';
-import { createEnhancedBuilderTools } from '@/lib/builder-tambo-tools-enhanced';
+import {
+  createBuilderTools,
+  createEnhancedBuilderTools,
+} from '@/lib/builder-tambo-tools';
+import { createComponentGenTools } from '@/lib/builder-tambo-tools-component-gen';
+import { createImportTool } from '@/lib/builder-tambo-tools-import';
+import { createAnalyzeResponsivenessTool } from '@/lib/builder-tambo-tools-responsive';
+import { createExportCodeTool } from '@/lib/builder-tambo-tools-export';
 
 /**
- * Registers website builder tools (add_builder_section, update_builder_section,
- * list_builder_sections, merge_builder_sections) and enhanced tools
- * (generate_website_from_template, search_website_templates, generate_custom_website)
- * with Tambo. The ref may be null when not on the builder page; tools no-op in that case.
+ * Registers website builder tools (add/update/list/merge sections), enhanced tools
+ * (templates, custom website), component-gen, import_component, analyze_responsiveness, export_website_code.
  */
 export function BuilderTamboToolRegistration() {
   const ref = useBuilderActionsRef();
@@ -18,7 +22,18 @@ export function BuilderTamboToolRegistration() {
     if (!ref) return;
     const baseTools = createBuilderTools(ref);
     const enhancedTools = createEnhancedBuilderTools(ref);
-    registerTools([...baseTools, ...enhancedTools]);
+    const componentGenTools = createComponentGenTools(ref);
+    const importTool = createImportTool(ref);
+    const responsiveTool = createAnalyzeResponsivenessTool(ref);
+    const exportTool = createExportCodeTool(ref);
+    registerTools([
+      ...baseTools,
+      ...enhancedTools,
+      ...componentGenTools,
+      importTool,
+      responsiveTool,
+      exportTool,
+    ]);
   }, [ref, registerTools]);
 
   return null;

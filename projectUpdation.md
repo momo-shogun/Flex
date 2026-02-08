@@ -1,532 +1,1289 @@
-# 🚀 Ultimate Flex Builder - The No-Code Revolution
-## From Component Editor → Full-Stack Website Generator
+# 🎯 Flex Builder Ultimate - Pure Tambo Architecture
+## No Third-Party Dependencies + Route-Based Tool Organization
 
 ---
 
-## 🎯 VISION: The Problem You're Solving
+## 🏗️ CORE PHILOSOPHY
 
-**Current Pain Points:**
-- 😫 UI libraries are scattered (shadcn, MUI, Chakra, custom)
-- 😫 Integration requires deep technical knowledge
-- 😫 Mixing components from different libraries = styling hell
-- 😫 No-code tools are limited and rigid
-- 😫 Code builders lose data on refresh
-- 😫 Can't generate custom components on demand
+**Key Principles:**
+1. ✅ **Use ONLY Tambo** - No direct Anthropic API calls, no external AI services
+2. ✅ **Tool-First Architecture** - Each feature = Tambo tool
+3. ✅ **Route-Based Organization** - Separate routes for different builder tools
+4. ✅ **Clean UI Management** - Each route = isolated feature with own UI
 
-**Your Solution:**
-✨ **One platform where AI generates ANY component you need, fully functional, with persistent state, exportable code, and zero configuration hassle**
+**Why This Approach:**
+- Simpler codebase
+- Tambo handles ALL AI orchestration
+- Better UI organization
+- Easier to maintain and extend
+- Works within Tambo's ecosystem perfectly
 
 ---
 
-## 🏗️ ULTIMATE ARCHITECTURE
+## 📁 NEW PROJECT STRUCTURE
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    FLEX BUILDER ULTIMATE                     │
-├─────────────────────────────────────────────────────────────┤
-│                                                               │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │   AI Engine  │  │  Component   │  │   Database   │      │
-│  │   (Tambo)    │◄─┤  Generator   │◄─┤  (Local +    │      │
-│  │              │  │  On-The-Go   │  │   Cloud)     │      │
-│  └──────────────┘  └──────────────┘  └──────────────┘      │
-│         │                  │                  │              │
-│         ▼                  ▼                  ▼              │
-│  ┌──────────────────────────────────────────────────┐      │
-│  │         Component Library Manager                 │      │
-│  │  • Pre-built (your current library)              │      │
-│  │  • AI-generated (created on demand)              │      │
-│  │  • Community (shared by users)                   │      │
-│  │  • Imported (from shadcn, MUI, etc)              │      │
-│  └──────────────────────────────────────────────────┘      │
-│         │                                                     │
-│         ▼                                                     │
-│  ┌──────────────────────────────────────────────────┐      │
-│  │           Canvas Builder Engine                   │      │
-│  │  • Drag & drop                                    │      │
-│  │  • AI composition                                 │      │
-│  │  • Live preview                                   │      │
-│  │  • Multi-device responsive                        │      │
-│  └──────────────────────────────────────────────────┘      │
-│         │                                                     │
-│         ▼                                                     │
-│  ┌──────────────────────────────────────────────────┐      │
-│  │        State Management & Persistence             │      │
-│  │  • Component state (useTamboComponentState)       │      │
-│  │  • Builder history (undo/redo infinite)           │      │
-│  │  • Version snapshots (save points)                │      │
-│  │  • Real-time sync (IndexedDB + Cloud)             │      │
-│  └──────────────────────────────────────────────────┘      │
-│         │                                                     │
-│         ▼                                                     │
-│  ┌──────────────────────────────────────────────────┐      │
-│  │              Export & Deploy                      │      │
-│  │  • React/Next.js/Remix code                       │      │
-│  │  • Standalone HTML/CSS/JS                         │      │
-│  │  • One-click deploy (Vercel, Netlify)            │      │
-│  │  • Component package (npm publishable)            │      │
-│  └──────────────────────────────────────────────────┘      │
-│                                                               │
-└─────────────────────────────────────────────────────────────┘
+src/
+├── main.tsx                          # Root setup
+├── App.tsx                           # Router
+│
+├── routes/                           # 🆕 Route-based organization
+│   ├── builder/                      # Main website builder
+│   │   ├── index.tsx                 # BuilderPage
+│   │   ├── components/
+│   │   │   ├── Canvas.tsx
+│   │   │   ├── LayersPanel.tsx
+│   │   │   ├── InspectorPanel.tsx
+│   │   │   └── BuilderChat.tsx
+│   │   └── tools/                    # Builder-specific tools
+│   │       ├── section-tools.ts
+│   │       ├── template-tools.ts
+│   │       └── export-tools.ts
+│   │
+│   ├── component-lab/                # 🆕 Component testing/creation
+│   │   ├── index.tsx
+│   │   ├── components/
+│   │   │   ├── ComponentPreview.tsx
+│   │   │   ├── PropsEditor.tsx
+│   │   │   └── ComponentLibrary.tsx
+│   │   └── tools/
+│   │       ├── component-tools.ts
+│   │       └── styling-tools.ts
+│   │
+│   ├── template-studio/              # 🆕 Template creation/management
+│   │   ├── index.tsx
+│   │   ├── components/
+│   │   │   ├── TemplateEditor.tsx
+│   │   │   ├── TemplateGallery.tsx
+│   │   │   └── TemplatePreview.tsx
+│   │   └── tools/
+│   │       └── template-tools.ts
+│   │
+│   ├── export-center/                # 🆕 Code export & deploy hub
+│   │   ├── index.tsx
+│   │   ├── components/
+│   │   │   ├── CodeViewer.tsx
+│   │   │   ├── ExportOptions.tsx
+│   │   │   └── DeployPanel.tsx
+│   │   └── tools/
+│   │       └── export-tools.ts
+│   │
+│   ├── library-manager/              # 🆕 Component library management
+│   │   ├── index.tsx
+│   │   ├── components/
+│   │   │   ├── ComponentList.tsx
+│   │   │   ├── ImportPanel.tsx
+│   │   │   └── VariantManager.tsx
+│   │   └── tools/
+│   │       └── library-tools.ts
+│   │
+│   └── design-analyzer/              # 🆕 Design analysis & suggestions
+│       ├── index.tsx
+│       ├── components/
+│       │   ├── ScoreCard.tsx
+│       │   ├── IssuesList.tsx
+│       │   └── Suggestions.tsx
+│       └── tools/
+│           └── analysis-tools.ts
+│
+├── lib/
+│   ├── persistence/                  # State & history management
+│   │   ├── indexeddb-store.ts
+│   │   ├── history-manager.ts
+│   │   └── auto-save.ts
+│   │
+│   ├── templates/                    # Template definitions
+│   │   ├── index.ts
+│   │   ├── saas-templates.ts
+│   │   ├── portfolio-templates.ts
+│   │   └── ecommerce-templates.ts
+│   │
+│   ├── component-system/             # Component registry & management
+│   │   ├── registry.ts
+│   │   ├── schema-generator.ts
+│   │   └── variant-system.ts
+│   │
+│   ├── code-generation/              # Code export logic
+│   │   ├── react-generator.ts
+│   │   ├── nextjs-generator.ts
+│   │   └── html-generator.ts
+│   │
+│   └── design-intelligence/          # Analysis & recommendations
+│       ├── analyzer.ts
+│       ├── responsive-checker.ts
+│       └── accessibility-checker.ts
+│
+└── types/
+    ├── builder.types.ts
+    ├── component.types.ts
+    └── template.types.ts
 ```
 
 ---
 
-## 🎨 PHASE-BY-PHASE ENHANCEMENT PLAN
+## 🚀 IMPLEMENTATION STRATEGY
 
----
+### **Approach: Pure Tambo Tools**
 
-## 📦 PHASE 1: ON-THE-GO COMPONENT GENERATOR (Week 1-2)
-### **The Core Innovation - AI Creates Any Component You Need**
+Instead of calling Claude API directly, we let Tambo do it through tools:
 
-### 1.1 Component Generation System
-
-**File**: `src/lib/component-generator/index.ts`
-
+**OLD WAY (Avoid):**
 ```typescript
-import Anthropic from '@anthropic-ai/sdk';
+// ❌ Direct API call
+const claude = new Anthropic({ apiKey: '...' });
+const response = await claude.messages.create({ ... });
+```
 
-interface GenerateComponentRequest {
-  description: string;
-  functionality: string[];
-  styling: 'minimal' | 'modern' | 'glassmorphism' | 'neumorphism';
-  interactivity: 'static' | 'interactive' | 'animated';
-  dataBinding?: {
-    fields: Array<{ name: string; type: string }>;
-  };
-}
-
-interface GeneratedComponent {
-  id: string;
-  name: string;
-  code: string;
-  props: Record<string, any>;
-  dependencies: string[];
-  propsSchema: any; // Zod schema
-  previewImage?: string;
-}
-
-export async function generateComponentOnTheFly(
-  request: GenerateComponentRequest
-): Promise<GeneratedComponent> {
-  const claude = new Anthropic({
-    apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
-  });
-
-  const prompt = `
-You are an expert React component generator. Create a production-ready, fully functional component based on these requirements:
-
-**Description**: ${request.description}
-**Functionality**: ${request.functionality.join(', ')}
-**Styling**: ${request.styling}
-**Interactivity**: ${request.interactivity}
-${request.dataBinding ? `**Data Fields**: ${JSON.stringify(request.dataBinding.fields)}` : ''}
-
-Requirements:
-1. Use TypeScript
-2. Use Tailwind CSS for styling
-3. Include all necessary imports
-4. Make it fully self-contained (no external file dependencies)
-5. Use React hooks (useState, useEffect) for interactivity
-6. Follow shadcn/ui design patterns
-7. Include proper TypeScript types for props
-8. Add Zod schema for props validation
-9. Include JSDoc comments
-
-Return ONLY a JSON object with this structure:
-{
-  "name": "ComponentName",
-  "code": "full component code here",
-  "propsSchema": "zod schema as string",
-  "dependencies": ["package-name@version"],
-  "description": "brief description"
-}
-
-Example styling patterns:
-- Glassmorphism: backdrop-blur-lg bg-white/10 border border-white/20
-- Neumorphism: shadow-[8px_8px_16px_#d1d9e6,-8px_-8px_16px_#ffffff]
-- Modern: bg-gradient-to-r from-purple-500 to-pink-500
-`;
-
-  const message = await claude.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 4000,
-    messages: [{ role: 'user', content: prompt }],
-  });
-
-  const responseText = message.content
-    .filter(block => block.type === 'text')
-    .map(block => (block as any).text)
-    .join('');
-
-  // Parse JSON response
-  const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) {
-    throw new Error('Failed to parse component generation response');
+**NEW WAY (Use This):**
+```typescript
+// ✅ Tambo tool - AI decides when to use it
+export const generateComponentVariantTool = {
+  name: 'generate_component_variant',
+  description: 'Generate a new variant of an existing component',
+  inputSchema: z.object({ ... }),
+  execute: async (args) => {
+    // Pure logic - no AI calls
+    // Return structured data Tambo can work with
   }
-
-  const generated = JSON.parse(jsonMatch[0]);
-
-  // Create component file dynamically
-  const componentId = `generated-${Date.now()}`;
-  
-  return {
-    id: componentId,
-    name: generated.name,
-    code: generated.code,
-    props: {},
-    dependencies: generated.dependencies || [],
-    propsSchema: eval(generated.propsSchema), // In production, use safer eval alternative
-  };
-}
+};
 ```
 
-### 1.2 Dynamic Component Registry
+**Tambo handles:**
+- When to call the tool
+- How to chain multiple tools
+- Streaming responses
+- Context management
 
-**File**: `src/lib/component-generator/registry.ts`
+---
+
+## 📋 PHASE 1: ENHANCED COMPONENT SYSTEM (Week 1)
+
+### 1.1 Component Variant System
+
+Instead of generating entirely new components, create **variants** of existing ones.
+
+**File**: `src/lib/component-system/variant-system.ts`
 
 ```typescript
-import React from 'react';
+import { ComponentId } from '@/types/builder.types';
 import { z } from 'zod';
 
-interface ComponentDefinition {
+export interface ComponentVariant {
   id: string;
+  baseComponentId: ComponentId;
   name: string;
-  component: React.ComponentType<any>;
-  propsSchema: z.ZodSchema;
-  category: 'ai-generated' | 'pre-built' | 'imported';
-  metadata: {
-    description: string;
-    author: string;
-    createdAt: Date;
-    usageCount: number;
+  description: string;
+  propsOverrides: Record<string, any>;
+  styleModifiers: {
+    theme?: 'light' | 'dark' | 'colored';
+    size?: 'sm' | 'md' | 'lg' | 'xl';
+    variant?: 'default' | 'outlined' | 'filled' | 'ghost';
   };
+  createdAt: Date;
 }
 
-class ComponentRegistry {
-  private components: Map<string, ComponentDefinition> = new Map();
-  private codeCache: Map<string, string> = new Map();
+class VariantRegistry {
+  private variants: Map<string, ComponentVariant> = new Map();
 
-  async registerGeneratedComponent(
-    code: string,
+  createVariant(
+    baseComponentId: ComponentId,
     name: string,
-    propsSchema: z.ZodSchema
-  ): Promise<string> {
-    const componentId = `gen-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-
-    // Dynamically create component from code string
-    const componentModule = this.createComponentFromCode(code);
-
-    this.components.set(componentId, {
-      id: componentId,
+    propsOverrides: Record<string, any>,
+    styleModifiers: ComponentVariant['styleModifiers']
+  ): ComponentVariant {
+    const variant: ComponentVariant = {
+      id: `variant-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      baseComponentId,
       name,
-      component: componentModule,
-      propsSchema,
-      category: 'ai-generated',
-      metadata: {
-        description: `AI-generated component: ${name}`,
-        author: 'AI',
-        createdAt: new Date(),
-        usageCount: 0,
-      },
-    });
+      description: `${name} variant of ${baseComponentId}`,
+      propsOverrides,
+      styleModifiers,
+      createdAt: new Date(),
+    };
 
-    // Cache the source code
-    this.codeCache.set(componentId, code);
-
-    // Persist to localStorage
+    this.variants.set(variant.id, variant);
     this.persistToStorage();
-
-    return componentId;
+    
+    return variant;
   }
 
-  private createComponentFromCode(code: string): React.ComponentType<any> {
-    // Remove import statements (we'll provide globals)
-    const cleanCode = code.replace(/import .+ from .+;?\n?/g, '');
-
-    // Create a function that returns the component
-    const componentFunction = new Function(
-      'React',
-      'useState',
-      'useEffect',
-      'useMemo',
-      'useCallback',
-      'z',
-      `
-      ${cleanCode}
-      return ${this.extractComponentName(code)};
-      `
-    );
-
-    // Execute with React context
-    return componentFunction(
-      React,
-      React.useState,
-      React.useEffect,
-      React.useMemo,
-      React.useCallback,
-      z
-    );
+  getVariant(id: string): ComponentVariant | undefined {
+    return this.variants.get(id);
   }
 
-  private extractComponentName(code: string): string {
-    // Extract component name from code
-    const match = code.match(/export (?:default )?(?:function|const) (\w+)/);
-    return match ? match[1] : 'GeneratedComponent';
+  getVariantsForComponent(baseComponentId: ComponentId): ComponentVariant[] {
+    return Array.from(this.variants.values())
+      .filter(v => v.baseComponentId === baseComponentId);
   }
 
-  getComponent(id: string): ComponentDefinition | undefined {
-    return this.components.get(id);
-  }
-
-  getAllComponents(): ComponentDefinition[] {
-    return Array.from(this.components.values());
-  }
-
-  getComponentCode(id: string): string | undefined {
-    return this.codeCache.get(id);
+  getAllVariants(): ComponentVariant[] {
+    return Array.from(this.variants.values());
   }
 
   private persistToStorage(): void {
-    const componentsData = Array.from(this.components.entries()).map(
-      ([id, def]) => ({
-        id,
-        name: def.name,
-        code: this.codeCache.get(id),
-        category: def.category,
-        metadata: def.metadata,
-      })
-    );
-
-    localStorage.setItem(
-      'flex-generated-components',
-      JSON.stringify(componentsData)
-    );
+    const variantsData = Array.from(this.variants.entries());
+    localStorage.setItem('flex-component-variants', JSON.stringify(variantsData));
   }
 
   loadFromStorage(): void {
-    const stored = localStorage.getItem('flex-generated-components');
+    const stored = localStorage.getItem('flex-component-variants');
     if (!stored) return;
 
-    const componentsData = JSON.parse(stored);
-    
-    for (const comp of componentsData) {
-      if (comp.code) {
-        this.registerGeneratedComponent(
-          comp.code,
-          comp.name,
-          z.any() // In production, store and restore actual schema
-        );
-      }
-    }
+    const variantsData = JSON.parse(stored);
+    this.variants = new Map(variantsData);
   }
 }
 
-export const componentRegistry = new ComponentRegistry();
+export const variantRegistry = new VariantRegistry();
 
-// Load on startup
+// Auto-load on startup
 if (typeof window !== 'undefined') {
-  componentRegistry.loadFromStorage();
+  variantRegistry.loadFromStorage();
 }
+
+// Preset variant definitions
+export const PRESET_VARIANTS: Record<ComponentId, ComponentVariant[]> = {
+  'aurora-hero-splittext': [
+    {
+      id: 'aurora-hero-dark',
+      baseComponentId: 'aurora-hero-splittext',
+      name: 'Dark Aurora Hero',
+      description: 'Dark theme with purple/blue gradient',
+      propsOverrides: {
+        topColor: '#1e1b4b',
+        bottomColor: '#312e81',
+      },
+      styleModifiers: { theme: 'dark' },
+      createdAt: new Date(),
+    },
+    {
+      id: 'aurora-hero-sunset',
+      baseComponentId: 'aurora-hero-splittext',
+      name: 'Sunset Hero',
+      description: 'Warm sunset colors',
+      propsOverrides: {
+        topColor: '#f97316',
+        bottomColor: '#dc2626',
+      },
+      styleModifiers: { theme: 'colored' },
+      createdAt: new Date(),
+    },
+  ],
+  'silk-hero-splittext': [
+    {
+      id: 'silk-hero-ocean',
+      baseComponentId: 'silk-hero-splittext',
+      name: 'Ocean Silk',
+      description: 'Cool blue tones',
+      propsOverrides: {
+        color: '#0ea5e9',
+        speed: 2,
+      },
+      styleModifiers: { theme: 'colored' },
+      createdAt: new Date(),
+    },
+  ],
+  // Add more presets...
+};
 ```
 
-### 1.3 Component Generation Tool for Tambo
+### 1.2 Variant Tools (Pure Tambo)
 
-**File**: `src/lib/builder-tambo-tools-component-gen.ts`
+**File**: `src/routes/component-lab/tools/component-tools.ts`
 
 ```typescript
 import { z } from 'zod';
-import { generateComponentOnTheFly } from './component-generator';
-import { componentRegistry } from './component-generator/registry';
+import { variantRegistry, PRESET_VARIANTS } from '@/lib/component-system/variant-system';
+import { ComponentId } from '@/types/builder.types';
 
-export const generateComponentTool = {
-  name: 'generate_component',
-  description: `Generate a brand new, fully functional React component on-the-fly based on user description.
-  Use this when user requests a component that doesn't exist in the library.
+// Tool 1: Create variant
+export const createComponentVariantTool = {
+  name: 'create_component_variant',
+  description: `Create a new variant of an existing component by modifying its props and styling.
+  Use this when user wants to customize a component (e.g., "make a dark version of the hero").
   
   Examples:
-  - "Create a pricing table with 3 tiers"
-  - "Build a contact form with name, email, and message"
-  - "Make an animated testimonial carousel"
-  - "Generate a product card with image, title, price, and buy button"`,
+  - "Create a dark version of aurora hero"
+  - "Make a smaller variant of the split text"
+  - "Create an outlined version of this button"`,
   
   inputSchema: z.object({
-    description: z.string().describe('What the component should do and look like'),
-    functionality: z.array(z.string()).describe('List of features (e.g., ["form validation", "submit button", "error messages"])'),
-    styling: z.enum(['minimal', 'modern', 'glassmorphism', 'neumorphism']).default('modern'),
-    interactivity: z.enum(['static', 'interactive', 'animated']).default('interactive'),
-    dataFields: z.array(
-      z.object({
-        name: z.string(),
-        type: z.enum(['string', 'number', 'boolean', 'email', 'url', 'date']),
-      })
-    ).optional().describe('If this component handles data, define the fields'),
+    baseComponentId: z.string().describe('The base component to create variant from'),
+    variantName: z.string().describe('Name for this variant (e.g., "Dark Hero", "Small Card")'),
+    propsChanges: z.record(z.any()).describe('Props to override from base component'),
+    styleModifiers: z.object({
+      theme: z.enum(['light', 'dark', 'colored']).optional(),
+      size: z.enum(['sm', 'md', 'lg', 'xl']).optional(),
+      variant: z.enum(['default', 'outlined', 'filled', 'ghost']).optional(),
+    }).optional(),
   }),
 
   execute: async (args: any, builderRef: any) => {
-    try {
-      // Generate component using AI
-      const generated = await generateComponentOnTheFly({
-        description: args.description,
-        functionality: args.functionality,
-        styling: args.styling,
-        interactivity: args.interactivity,
-        dataBinding: args.dataFields ? { fields: args.dataFields } : undefined,
-      });
+    const variant = variantRegistry.createVariant(
+      args.baseComponentId,
+      args.variantName,
+      args.propsChanges,
+      args.styleModifiers || {}
+    );
 
-      // Register component in registry
-      const componentId = await componentRegistry.registerGeneratedComponent(
-        generated.code,
-        generated.name,
-        generated.propsSchema
-      );
+    return `✅ Created variant: **${variant.name}**
 
-      // Add to builder canvas
-      const sectionId = builderRef.current?.addSection(componentId);
+📋 **Base component**: ${args.baseComponentId}
+🎨 **Theme**: ${variant.styleModifiers.theme || 'default'}
+📏 **Size**: ${variant.styleModifiers.size || 'default'}
+
+**Props modified**:
+${Object.entries(args.propsChanges).map(([key, val]) => `• ${key}: ${JSON.stringify(val)}`).join('\n')}
+
+The variant is saved and ready to use. Want to add it to your canvas?`;
+  },
+};
+
+// Tool 2: List variants
+export const listComponentVariantsTool = {
+  name: 'list_component_variants',
+  description: `List all available variants for a component or all variants in the system.
+  Use this when user asks "what variants exist?" or "show me hero variants".`,
+  
+  inputSchema: z.object({
+    componentId: z.string().optional().describe('Specific component to list variants for'),
+  }),
+
+  execute: async (args: any) => {
+    let variants: any[];
+    
+    if (args.componentId) {
+      variants = variantRegistry.getVariantsForComponent(args.componentId);
+      
+      if (variants.length === 0) {
+        return `No custom variants found for ${args.componentId}.
+
+📦 **Preset variants available**:
+${PRESET_VARIANTS[args.componentId as ComponentId]?.map((v, i) => `
+${i + 1}. **${v.name}**
+   ${v.description}
+   Theme: ${v.styleModifiers.theme || 'default'}
+`).join('\n') || 'None'}
+
+Want me to create a custom variant?`;
+      }
+    } else {
+      variants = variantRegistry.getAllVariants();
+    }
+
+    return `📦 **Component Variants** (${variants.length} total)
+
+${variants.map((v, i) => `
+${i + 1}. **${v.name}**
+   Base: ${v.baseComponentId}
+   Theme: ${v.styleModifiers.theme || 'default'}
+   Size: ${v.styleModifiers.size || 'default'}
+   Created: ${v.createdAt.toLocaleDateString()}
+`).join('\n')}
+
+To use a variant, just ask me to add it to your page!`;
+  },
+};
+
+// Tool 3: Apply variant to section
+export const applyVariantToSectionTool = {
+  name: 'apply_variant_to_section',
+  description: `Apply a variant's styling to an existing section on the canvas.
+  Use when user wants to change a section to use a specific variant.`,
+  
+  inputSchema: z.object({
+    sectionId: z.string().describe('Section to modify'),
+    variantId: z.string().describe('Variant to apply'),
+  }),
+
+  execute: async (args: any, builderRef: any) => {
+    const variant = variantRegistry.getVariant(args.variantId);
+    if (!variant) {
+      return `❌ Variant ${args.variantId} not found`;
+    }
+
+    const section = builderRef.current?.getSection(args.sectionId);
+    if (!section) {
+      return `❌ Section ${args.sectionId} not found`;
+    }
+
+    // Apply variant props
+    builderRef.current?.dispatch({
+      type: 'UPDATE_PROPS',
+      payload: {
+        id: args.sectionId,
+        props: {
+          ...section.props,
+          ...variant.propsOverrides,
+        },
+      },
+    });
+
+    return `✅ Applied **${variant.name}** to "${section.label}"!
+
+🎨 Changes applied:
+${Object.entries(variant.propsOverrides).map(([key, val]) => `• ${key}: ${JSON.stringify(val)}`).join('\n')}
+
+Check the canvas to see the updated styling!`;
+  },
+};
+
+// Tool 4: Use preset variant
+export const usePresetVariantTool = {
+  name: 'use_preset_variant',
+  description: `Use a pre-defined variant (like Dark Hero, Ocean Silk, etc).
+  Faster than creating custom variants for common use cases.`,
+  
+  inputSchema: z.object({
+    presetId: z.string().describe('ID of preset variant'),
+    addToCanvas: z.boolean().default(true).describe('Add to canvas immediately'),
+  }),
+
+  execute: async (args: any, builderRef: any) => {
+    // Find preset in PRESET_VARIANTS
+    let preset: any = null;
+    for (const variants of Object.values(PRESET_VARIANTS)) {
+      preset = variants.find(v => v.id === args.presetId);
+      if (preset) break;
+    }
+
+    if (!preset) {
+      return `❌ Preset variant ${args.presetId} not found`;
+    }
+
+    if (args.addToCanvas) {
+      const sectionId = builderRef.current?.addSection(preset.baseComponentId);
       
       if (sectionId) {
         builderRef.current?.dispatch({
-          type: 'UPDATE_SECTION',
-          payload: { 
-            id: sectionId, 
-            updates: { label: generated.name } 
+          type: 'UPDATE_PROPS',
+          payload: {
+            id: sectionId,
+            props: preset.propsOverrides,
           },
         });
+
+        builderRef.current?.dispatch({
+          type: 'UPDATE_SECTION',
+          payload: {
+            id: sectionId,
+            updates: { label: preset.name },
+          },
+        });
+
+        return `✅ Added **${preset.name}** to canvas!
+
+📋 ${preset.description}
+🎨 Theme: ${preset.styleModifiers.theme || 'default'}
+
+The section is ready to customize!`;
       }
-
-      return `✨ **Generated new component: ${generated.name}**
-
-📝 **Description**: ${args.description}
-
-🎨 **Styling**: ${args.styling}
-⚡ **Interactivity**: ${args.interactivity}
-
-✅ **Features included**:
-${args.functionality.map((f: string, i: number) => `${i + 1}. ${f}`).join('\n')}
-
-${args.dataFields ? `
-📊 **Data fields**:
-${args.dataFields.map((f: any) => `- ${f.name} (${f.type})`).join('\n')}
-` : ''}
-
-🎯 **Component added to canvas!**
-
-You can now:
-- Edit its content in the inspector
-- Customize styling and behavior
-- Use it multiple times
-- Export it with your website code
-
-Want me to modify anything about this component?`;
-    } catch (error) {
-      return `❌ Failed to generate component: ${error instanceof Error ? error.message : 'Unknown error'}
-
-Please try:
-- Simplifying the description
-- Breaking complex components into smaller parts
-- Being more specific about requirements`;
-    }
-  },
-};
-
-export const listGeneratedComponentsTool = {
-  name: 'list_generated_components',
-  description: 'List all AI-generated components available in the library',
-  inputSchema: z.object({}),
-  
-  execute: async () => {
-    const components = componentRegistry
-      .getAllComponents()
-      .filter(c => c.category === 'ai-generated');
-
-    if (components.length === 0) {
-      return 'No AI-generated components yet. Ask me to generate one!';
     }
 
-    return `📦 **Your Generated Components** (${components.length} total)
+    return `✅ Preset **${preset.name}** is ready to use!
 
-${components.map((c, i) => `
-${i + 1}. **${c.name}**
-   - Created: ${c.metadata.createdAt.toLocaleDateString()}
-   - Used: ${c.metadata.usageCount} times
-   - ID: \`${c.id}\`
-`).join('\n')}
-
-Use any of these components by asking me to add them to your page!`;
-  },
-};
-
-export const improveGeneratedComponentTool = {
-  name: 'improve_generated_component',
-  description: 'Improve an existing AI-generated component based on feedback',
-  inputSchema: z.object({
-    componentId: z.string(),
-    improvements: z.string().describe('What to improve (e.g., "add animations", "make it responsive", "improve colors")'),
-  }),
-  
-  execute: async (args: any, builderRef: any) => {
-    const existing = componentRegistry.getComponent(args.componentId);
-    if (!existing) {
-      return `Component ${args.componentId} not found`;
-    }
-
-    const existingCode = componentRegistry.getComponentCode(args.componentId);
-    if (!existingCode) {
-      return 'Could not retrieve component code';
-    }
-
-    // Use Claude to improve the code
-    const claude = new Anthropic({
-      apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
-    });
-
-    const improvePrompt = `
-Improve this React component based on the following feedback: ${args.improvements}
-
-Current component code:
-\`\`\`tsx
-${existingCode}
-\`\`\`
-
-Return the improved component code maintaining the same structure and props.
-Only return the improved code, nothing else.
-`;
-
-    const message = await claude.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 4000,
-      messages: [{ role: 'user', content: improvePrompt }],
-    });
-
-    const improvedCode = message.content
-      .filter(block => block.type === 'text')
-      .map(block => (block as any).text)
-      .join('');
-
-    // Re-register improved component
-    const newComponentId = await componentRegistry.registerGeneratedComponent(
-      improvedCode,
-      `${existing.name} (Improved)`,
-      existing.propsSchema
-    );
-
-    return `✨ **Component improved!**
-
-**Changes applied**: ${args.improvements}
-
-The improved version has been saved as "${existing.name} (Improved)".
-
-Your original component is still available. Want to use the improved version instead?`;
+Use "apply variant to section" to add it to an existing section, or ask me to add it to canvas.`;
   },
 };
 ```
 
 ---
 
-## 💾 PHASE 2: ADVANCED STATE PERSISTENCE (Week 2-3)
-### **Never Lose Work - Infinite History with Cloud Sync**
+## 🎨 PHASE 2: ROUTE-BASED TOOL ORGANIZATION (Week 1-2)
 
-### 2.1 IndexedDB Storage Layer
+### 2.1 Component Lab Route
+
+**Purpose**: Isolated environment to test, create, and refine component variants.
+
+**File**: `src/routes/component-lab/index.tsx`
+
+```typescript
+import React, { useState } from 'react';
+import { TamboContextHelpersProvider, useTambo } from '@tambo-ai/react';
+import { ComponentPreview } from './components/ComponentPreview';
+import { PropsEditor } from './components/PropsEditor';
+import { ComponentLibrary } from './components/ComponentLibrary';
+import { LabChat } from './components/LabChat';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+// Import lab-specific tools
+import {
+  createComponentVariantTool,
+  listComponentVariantsTool,
+  applyVariantToSectionTool,
+  usePresetVariantTool,
+} from './tools/component-tools';
+
+export default function ComponentLabPage() {
+  const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
+  const [currentProps, setCurrentProps] = useState<Record<string, any>>({});
+  const { registerTools } = useTambo();
+
+  // Register lab-specific tools
+  React.useEffect(() => {
+    registerTools([
+      createComponentVariantTool,
+      listComponentVariantsTool,
+      applyVariantToSectionTool,
+      usePresetVariantTool,
+    ]);
+  }, [registerTools]);
+
+  return (
+    <TamboContextHelpersProvider
+      contextHelpers={{
+        labState: () => ({
+          selectedComponent,
+          currentProps,
+          message: 'User is in Component Lab - help them test and create variants',
+        }),
+      }}
+    >
+      <div className="h-screen flex">
+        {/* Left Sidebar - Component Library */}
+        <div className="w-64 border-r bg-gray-50 overflow-y-auto">
+          <ComponentLibrary
+            onSelect={setSelectedComponent}
+            selected={selectedComponent}
+          />
+        </div>
+
+        {/* Center - Preview & Props */}
+        <div className="flex-1 flex flex-col">
+          <div className="flex-1 p-8 bg-gray-100">
+            <ComponentPreview
+              componentId={selectedComponent}
+              props={currentProps}
+            />
+          </div>
+
+          <div className="h-80 border-t">
+            <Tabs defaultValue="props">
+              <TabsList className="w-full">
+                <TabsTrigger value="props">Props</TabsTrigger>
+                <TabsTrigger value="variants">Variants</TabsTrigger>
+                <TabsTrigger value="code">Code</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="props">
+                <PropsEditor
+                  componentId={selectedComponent}
+                  props={currentProps}
+                  onChange={setCurrentProps}
+                />
+              </TabsContent>
+
+              <TabsContent value="variants">
+                {/* Variant management UI */}
+              </TabsContent>
+
+              <TabsContent value="code">
+                {/* Generated code preview */}
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+
+        {/* Right Sidebar - AI Chat */}
+        <div className="w-96 border-l flex flex-col">
+          <LabChat />
+        </div>
+      </div>
+    </TamboContextHelpersProvider>
+  );
+}
+```
+
+**File**: `src/routes/component-lab/components/LabChat.tsx`
+
+```typescript
+import React from 'react';
+import { useTamboThread, useTamboThreadInput } from '@tambo-ai/react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Send } from 'lucide-react';
+
+const LAB_CONTEXT = `
+You are in the Component Lab - a space for testing and creating component variants.
+
+## What you can do here:
+
+**Create Variants**:
+- "Create a dark version of aurora hero"
+- "Make a smaller variant with size sm"
+- "Create an outlined variant"
+
+**List Variants**:
+- "Show me all hero variants"
+- "What preset variants are available?"
+
+**Apply Variants**:
+- "Use the dark hero preset"
+- "Apply ocean silk variant to this section"
+
+**Test Props**:
+- "Set the text to 'Hello World'"
+- "Change the color to blue"
+- "Make the animation faster"
+
+## Current Context:
+User is testing components in isolation before adding to their website.
+Help them experiment, create variants, and understand component behavior.
+
+Be encouraging and suggest creative variants!
+`;
+
+export function LabChat() {
+  const { thread } = useTamboThread();
+  const { value, setValue, submit } = useTamboThreadInput();
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="p-4 border-b bg-purple-50">
+        <h3 className="font-semibold text-lg">Component Lab Assistant</h3>
+        <p className="text-sm text-gray-600 mt-1">
+          Test variants, experiment with props, create custom versions
+        </p>
+      </div>
+
+      {/* System context - hidden from user */}
+      <div className="hidden">{LAB_CONTEXT}</div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {thread?.messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`max-w-[80%] rounded-lg p-3 ${
+                msg.role === 'user'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-gray-100 text-gray-900'
+              }`}
+            >
+              {msg.content}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="p-4 border-t">
+        <div className="flex gap-2">
+          <Textarea
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="Describe variant or ask for help..."
+            className="resize-none"
+            rows={3}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                submit();
+              }
+            }}
+          />
+          <Button onClick={submit} size="icon" className="shrink-0">
+            <Send className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+### 2.2 Template Studio Route
+
+**Purpose**: Create, manage, and organize website templates.
+
+**File**: `src/routes/template-studio/index.tsx`
+
+```typescript
+import React, { useState } from 'react';
+import { TamboContextHelpersProvider, useTambo } from '@tambo-ai/react';
+import { TemplateEditor } from './components/TemplateEditor';
+import { TemplateGallery } from './components/TemplateGallery';
+import { TemplatePreview } from './components/TemplatePreview';
+
+// Template studio tools
+import {
+  createTemplateTool,
+  updateTemplateTool,
+  saveTemplateSnapshotTool,
+} from './tools/template-tools';
+
+export default function TemplateStudioPage() {
+  const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
+  const { registerTools } = useTambo();
+
+  React.useEffect(() => {
+    registerTools([
+      createTemplateTool,
+      updateTemplateTool,
+      saveTemplateSnapshotTool,
+    ]);
+  }, [registerTools]);
+
+  return (
+    <TamboContextHelpersProvider
+      contextHelpers={{
+        studioState: () => ({
+          activeTemplate,
+          mode: 'template-studio',
+        }),
+      }}
+    >
+      <div className="h-screen flex">
+        {/* Template Gallery Sidebar */}
+        <div className="w-80 border-r overflow-y-auto">
+          <TemplateGallery
+            onSelect={setActiveTemplate}
+            selected={activeTemplate}
+          />
+        </div>
+
+        {/* Template Editor */}
+        <div className="flex-1">
+          {activeTemplate ? (
+            <TemplateEditor templateId={activeTemplate} />
+          ) : (
+            <div className="h-full flex items-center justify-center text-gray-500">
+              Select a template or create a new one
+            </div>
+          )}
+        </div>
+
+        {/* Preview Panel */}
+        <div className="w-96 border-l">
+          {activeTemplate && <TemplatePreview templateId={activeTemplate} />}
+        </div>
+      </div>
+    </TamboContextHelpersProvider>
+  );
+}
+```
+
+**File**: `src/routes/template-studio/tools/template-tools.ts`
+
+```typescript
+import { z } from 'zod';
+import { WEBSITE_TEMPLATES, WebsiteTemplate } from '@/lib/templates';
+
+export const createTemplateTool = {
+  name: 'create_website_template',
+  description: `Create a new reusable website template from current sections or from scratch.
+  Templates can be used to quickly generate websites.`,
+  
+  inputSchema: z.object({
+    name: z.string(),
+    description: z.string(),
+    category: z.enum(['landing', 'portfolio', 'saas', 'ecommerce', 'blog']),
+    sections: z.array(z.object({
+      type: z.string(),
+      label: z.string(),
+      props: z.record(z.any()),
+    })),
+    tags: z.array(z.string()).optional(),
+  }),
+
+  execute: async (args: any) => {
+    const template: WebsiteTemplate = {
+      id: `template-${Date.now()}`,
+      name: args.name,
+      description: args.description,
+      category: args.category,
+      sections: args.sections.map((s: any) => ({
+        ...s,
+        purpose: `Part of ${args.name} template`,
+      })),
+      tags: args.tags || [],
+    };
+
+    // Save to templates registry
+    WEBSITE_TEMPLATES.push(template);
+    
+    // Persist to localStorage
+    localStorage.setItem(
+      'flex-custom-templates',
+      JSON.stringify(WEBSITE_TEMPLATES)
+    );
+
+    return `✅ Created template: **${template.name}**
+
+📋 **Category**: ${template.category}
+📦 **Sections**: ${template.sections.length}
+🏷️ **Tags**: ${template.tags.join(', ')}
+
+Your template is saved and ready to use!
+Use it with: "Generate website from ${template.name} template"`;
+  },
+};
+
+export const updateTemplateTool = {
+  name: 'update_template',
+  description: 'Modify an existing template',
+  inputSchema: z.object({
+    templateId: z.string(),
+    updates: z.object({
+      name: z.string().optional(),
+      description: z.string().optional(),
+      sections: z.array(z.any()).optional(),
+      tags: z.array(z.string()).optional(),
+    }),
+  }),
+
+  execute: async (args: any) => {
+    const template = WEBSITE_TEMPLATES.find(t => t.id === args.templateId);
+    if (!template) {
+      return `❌ Template not found`;
+    }
+
+    Object.assign(template, args.updates);
+    
+    localStorage.setItem(
+      'flex-custom-templates',
+      JSON.stringify(WEBSITE_TEMPLATES)
+    );
+
+    return `✅ Updated template: **${template.name}**`;
+  },
+};
+
+export const saveTemplateSnapshotTool = {
+  name: 'save_current_as_template',
+  description: 'Save the current website state as a reusable template',
+  inputSchema: z.object({
+    name: z.string(),
+    description: z.string(),
+    category: z.enum(['landing', 'portfolio', 'saas', 'ecommerce', 'blog']),
+  }),
+
+  execute: async (args: any, builderRef: any) => {
+    const state = builderRef.current?.state;
+    if (!state) {
+      return '❌ No website to save as template';
+    }
+
+    const template: WebsiteTemplate = {
+      id: `snapshot-${Date.now()}`,
+      name: args.name,
+      description: args.description,
+      category: args.category,
+      sections: state.sections.map((s: any) => ({
+        type: s.type,
+        label: s.label,
+        props: s.props,
+        purpose: `Section from ${args.name}`,
+      })),
+      tags: [args.category, 'custom'],
+    };
+
+    WEBSITE_TEMPLATES.push(template);
+    
+    localStorage.setItem(
+      'flex-custom-templates',
+      JSON.stringify(WEBSITE_TEMPLATES)
+    );
+
+    return `✅ Saved current website as template: **${template.name}**
+
+Your website is now a reusable template!
+It contains ${template.sections.length} sections and can be used to create similar sites.`;
+  },
+};
+```
+
+### 2.3 Export Center Route
+
+**Purpose**: Dedicated space for code export and deployment.
+
+**File**: `src/routes/export-center/index.tsx`
+
+```typescript
+import React, { useState } from 'react';
+import { TamboContextHelpersProvider, useTambo } from '@tambo-ai/react';
+import { CodeViewer } from './components/CodeViewer';
+import { ExportOptions } from './components/ExportOptions';
+import { DeployPanel } from './components/DeployPanel';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+// Export tools
+import {
+  exportReactCodeTool,
+  exportNextJSCodeTool,
+  exportHTMLCodeTool,
+  generatePackageJsonTool,
+} from './tools/export-tools';
+
+export default function ExportCenterPage() {
+  const [exportedFiles, setExportedFiles] = useState<Map<string, string>>(new Map());
+  const [exportConfig, setExportConfig] = useState({
+    framework: 'nextjs' as const,
+    typescript: true,
+    styling: 'tailwind' as const,
+  });
+  const { registerTools } = useTambo();
+
+  React.useEffect(() => {
+    registerTools([
+      exportReactCodeTool,
+      exportNextJSCodeTool,
+      exportHTMLCodeTool,
+      generatePackageJsonTool,
+    ]);
+  }, [registerTools]);
+
+  return (
+    <TamboContextHelpersProvider
+      contextHelpers={{
+        exportState: () => ({
+          config: exportConfig,
+          filesGenerated: exportedFiles.size,
+        }),
+      }}
+    >
+      <div className="h-screen flex flex-col">
+        {/* Header */}
+        <div className="border-b p-4 bg-white">
+          <h1 className="text-2xl font-bold">Export Center</h1>
+          <p className="text-gray-600 text-sm mt-1">
+            Generate production-ready code from your website
+          </p>
+        </div>
+
+        <div className="flex-1 flex overflow-hidden">
+          {/* Left - Export Options */}
+          <div className="w-80 border-r overflow-y-auto bg-gray-50 p-4">
+            <ExportOptions
+              config={exportConfig}
+              onChange={setExportConfig}
+            />
+          </div>
+
+          {/* Center - Code Viewer */}
+          <div className="flex-1 overflow-hidden">
+            <Tabs defaultValue="preview" className="h-full flex flex-col">
+              <TabsList className="w-full">
+                <TabsTrigger value="preview">Preview</TabsTrigger>
+                <TabsTrigger value="files">Files ({exportedFiles.size})</TabsTrigger>
+                <TabsTrigger value="deploy">Deploy</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="preview" className="flex-1 overflow-auto">
+                <CodeViewer files={exportedFiles} />
+              </TabsContent>
+
+              <TabsContent value="files" className="flex-1 overflow-auto">
+                {/* File tree view */}
+              </TabsContent>
+
+              <TabsContent value="deploy" className="flex-1 overflow-auto">
+                <DeployPanel files={exportedFiles} />
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* Right - AI Assistant */}
+          <div className="w-96 border-l">
+            {/* Export-specific AI chat */}
+          </div>
+        </div>
+      </div>
+    </TamboContextHelpersProvider>
+  );
+}
+```
+
+**File**: `src/routes/export-center/tools/export-tools.ts`
+
+```typescript
+import { z } from 'zod';
+import { generateProductionCode } from '@/lib/code-generation/react-generator';
+
+export const exportReactCodeTool = {
+  name: 'export_react_code',
+  description: 'Export current website as React + Vite project',
+  inputSchema: z.object({
+    typescript: z.boolean().default(true),
+    includeTests: z.boolean().default(false),
+  }),
+
+  execute: async (args: any, builderRef: any) => {
+    const state = builderRef.current?.state;
+    if (!state) {
+      return '❌ No website to export';
+    }
+
+    const files = await generateProductionCode(state, {
+      framework: 'react',
+      typescript: args.typescript,
+      styling: 'tailwind',
+      includeTests: args.includeTests,
+      includeStorybook: false,
+    });
+
+    return `✅ **React project generated!**
+
+📦 **Files created**: ${files.size}
+⚙️ **TypeScript**: ${args.typescript ? 'Yes' : 'No'}
+🧪 **Tests**: ${args.includeTests ? 'Included' : 'Not included'}
+
+**Project structure**:
+- src/App.tsx (main component)
+- src/components/ (${state.sections.length} components)
+- package.json (dependencies configured)
+- vite.config.ts (build configuration)
+${args.includeTests ? '- __tests__/ (test files)' : ''}
+
+Files are ready to download or deploy!`;
+  },
+};
+
+export const exportNextJSCodeTool = {
+  name: 'export_nextjs_code',
+  description: 'Export as Next.js 14 App Router project',
+  inputSchema: z.object({
+    typescript: z.boolean().default(true),
+  }),
+
+  execute: async (args: any, builderRef: any) => {
+    const state = builderRef.current?.state;
+    if (!state) return '❌ No website to export';
+
+    const files = await generateProductionCode(state, {
+      framework: 'nextjs',
+      typescript: args.typescript,
+      styling: 'tailwind',
+      includeTests: false,
+      includeStorybook: false,
+    });
+
+    return `✅ **Next.js project generated!**
+
+📦 **Files created**: ${files.size}
+🚀 **Framework**: Next.js 14 (App Router)
+⚙️ **TypeScript**: ${args.typescript ? 'Yes' : 'No'}
+
+**Project structure**:
+- app/page.tsx (homepage)
+- app/layout.tsx (root layout)
+- components/ (reusable components)
+- next.config.js
+- tailwind.config.js
+
+Ready for deployment to Vercel!`;
+  },
+};
+
+export const exportHTMLCodeTool = {
+  name: 'export_html_code',
+  description: 'Export as standalone HTML/CSS/JS (no framework)',
+  inputSchema: z.object({}),
+
+  execute: async (args: any, builderRef: any) => {
+    const state = builderRef.current?.state;
+    if (!state) return '❌ No website to export';
+
+    // Generate static HTML
+    const html = generateStaticHTML(state);
+    const css = generateCSS(state);
+
+    return `✅ **Static HTML generated!**
+
+📄 **Files**:
+- index.html (complete page)
+- styles.css (Tailwind CDN + custom styles)
+
+🌐 **Deployment**: Ready to upload to any hosting
+📦 **Size**: ~${(html.length / 1024).toFixed(1)} KB
+
+No build step required - just upload and go!`;
+  },
+};
+
+export const generatePackageJsonTool = {
+  name: 'generate_package_json',
+  description: 'Generate package.json with all dependencies',
+  inputSchema: z.object({
+    projectName: z.string().default('flex-website'),
+    framework: z.enum(['react', 'nextjs', 'remix']).default('nextjs'),
+  }),
+
+  execute: async (args: any, builderRef: any) => {
+    const state = builderRef.current?.state;
+    
+    const packageJson = {
+      name: args.projectName,
+      version: '1.0.0',
+      private: true,
+      scripts: {
+        dev: args.framework === 'nextjs' ? 'next dev' : 'vite',
+        build: args.framework === 'nextjs' ? 'next build' : 'vite build',
+        start: args.framework === 'nextjs' ? 'next start' : 'vite preview',
+      },
+      dependencies: {
+        react: '^18.2.0',
+        'react-dom': '^18.2.0',
+        ...(args.framework === 'nextjs' && { next: '^14.0.0' }),
+        tailwindcss: '^3.4.0',
+      },
+      devDependencies: {
+        '@types/react': '^18.2.0',
+        '@types/react-dom': '^18.2.0',
+        typescript: '^5.0.0',
+      },
+    };
+
+    return `✅ **package.json generated!**
+
+\`\`\`json
+${JSON.stringify(packageJson, null, 2)}
+\`\`\`
+
+Install with: \`npm install\``;
+  },
+};
+
+function generateStaticHTML(state: any): string {
+  // Implementation for static HTML generation
+  return '<!DOCTYPE html>...';
+}
+
+function generateCSS(state: any): string {
+  return '/* Tailwind + custom styles */';
+}
+```
+
+---
+
+## 🗺️ PHASE 3: NAVIGATION & APP STRUCTURE (Week 2)
+
+### 3.1 Main App Router
+
+**File**: `src/App.tsx`
+
+```typescript
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { AppLayout } from './components/layouts/AppLayout';
+
+// Route pages
+import WebsiteBuilderPage from './routes/builder';
+import ComponentLabPage from './routes/component-lab';
+import TemplateStudioPage from './routes/template-studio';
+import ExportCenterPage from './routes/export-center';
+import LibraryManagerPage from './routes/library-manager';
+import DesignAnalyzerPage from './routes/design-analyzer';
+
+export default function App() {
+  return (
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route index element={<Navigate to="/builder" replace />} />
+        
+        {/* Main builder */}
+        <Route path="/builder" element={<WebsiteBuilderPage />} />
+        
+        {/* Tool-specific routes */}
+        <Route path="/component-lab" element={<ComponentLabPage />} />
+        <Route path="/template-studio" element={<TemplateStudioPage />} />
+        <Route path="/export-center" element={<ExportCenterPage />} />
+        <Route path="/library-manager" element={<LibraryManagerPage />} />
+        <Route path="/design-analyzer" element={<DesignAnalyzerPage />} />
+      </Route>
+    </Routes>
+  );
+}
+```
+
+### 3.2 App Layout with Navigation
+
+**File**: `src/components/layouts/AppLayout.tsx`
+
+```typescript
+import React from 'react';
+import { Outlet, Link, useLocation } from 'react-router-dom';
+import {
+  LayoutDashboard,
+  TestTube,
+  FileText,
+  Download,
+  Library,
+  Sparkles,
+} from 'lucide-react';
+
+const navigation = [
+  { name: 'Builder', href: '/builder', icon: LayoutDashboard },
+  { name: 'Component Lab', href: '/component-lab', icon: TestTube },
+  { name: 'Templates', href: '/template-studio', icon: FileText },
+  { name: 'Export', href: '/export-center', icon: Download },
+  { name: 'Library', href: '/library-manager', icon: Library },
+  { name: 'Analyzer', href: '/design-analyzer', icon: Sparkles },
+];
+
+export function AppLayout() {
+  const location = useLocation();
+
+  return (
+    <div className="h-screen flex">
+      {/* Sidebar Navigation */}
+      <div className="w-20 bg-gray-900 flex flex-col items-center py-4 space-y-4">
+        {/* Logo */}
+        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+          <span className="text-white font-bold text-xl">F</span>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 flex flex-col space-y-2">
+          {navigation.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.href;
+            
+            return (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`
+                  w-14 h-14 rounded-lg flex items-center justify-center
+                  transition-colors relative group
+                  ${isActive 
+                    ? 'bg-purple-600 text-white' 
+                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                  }
+                `}
+                title={item.name}
+              >
+                <Icon className="w-6 h-6" />
+                
+                {/* Tooltip */}
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  {item.name}
+                </div>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* User Menu */}
+        <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center cursor-pointer">
+          <span className="text-white text-sm font-medium">U</span>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-hidden">
+        <Outlet />
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## 📊 PHASE 4: PERSISTENCE & HISTORY (Week 2-3)
+
+### 4.1 Enhanced IndexedDB Implementation
 
 **File**: `src/lib/persistence/indexeddb-store.ts`
 
@@ -539,12 +1296,14 @@ interface FlexBuilderDB extends DBSchema {
     value: {
       id: string;
       name: string;
+      route: string; // Which route created it
       lastModified: Date;
-      state: any; // PageState
+      state: any;
       thumbnail?: string;
     };
-    indexes: { 'by-date': Date };
+    indexes: { 'by-date': Date; 'by-route': string };
   };
+  
   history: {
     key: string;
     value: {
@@ -553,18 +1312,35 @@ interface FlexBuilderDB extends DBSchema {
       timestamp: Date;
       state: any;
       description: string;
+      route: string;
     };
     indexes: { 'by-project': string; 'by-date': Date };
   };
-  components: {
+  
+  variants: {
     key: string;
     value: {
       id: string;
-      code: string;
+      baseComponentId: string;
+      name: string;
+      propsOverrides: any;
+      styleModifiers: any;
+      createdAt: Date;
+    };
+    indexes: { 'by-component': string };
+  };
+  
+  templates: {
+    key: string;
+    value: {
+      id: string;
       name: string;
       category: string;
-      metadata: any;
+      sections: any[];
+      tags: string[];
+      createdAt: Date;
     };
+    indexes: { 'by-category': string };
   };
 }
 
@@ -572,31 +1348,40 @@ class IndexedDBStore {
   private db: IDBPDatabase<FlexBuilderDB> | null = null;
 
   async init() {
-    this.db = await openDB<FlexBuilderDB>('flex-builder-db', 1, {
-      upgrade(db) {
-        // Projects store
-        const projectStore = db.createObjectStore('projects', { keyPath: 'id' });
-        projectStore.createIndex('by-date', 'lastModified');
+    this.db = await openDB<FlexBuilderDB>('flex-builder-db', 2, {
+      upgrade(db, oldVersion, newVersion) {
+        // Projects
+        if (!db.objectStoreNames.contains('projects')) {
+          const projectStore = db.createObjectStore('projects', { keyPath: 'id' });
+          projectStore.createIndex('by-date', 'lastModified');
+          projectStore.createIndex('by-route', 'route');
+        }
 
-        // History store
-        const historyStore = db.createObjectStore('history', { keyPath: 'id' });
-        historyStore.createIndex('by-project', 'projectId');
-        historyStore.createIndex('by-date', 'timestamp');
+        // History
+        if (!db.objectStoreNames.contains('history')) {
+          const historyStore = db.createObjectStore('history', { keyPath: 'id' });
+          historyStore.createIndex('by-project', 'projectId');
+          historyStore.createIndex('by-date', 'timestamp');
+        }
 
-        // Components store
-        db.createObjectStore('components', { keyPath: 'id' });
+        // Variants
+        if (!db.objectStoreNames.contains('variants')) {
+          const variantStore = db.createObjectStore('variants', { keyPath: 'id' });
+          variantStore.createIndex('by-component', 'baseComponentId');
+        }
+
+        // Templates
+        if (!db.objectStoreNames.contains('templates')) {
+          const templateStore = db.createObjectStore('templates', { keyPath: 'id' });
+          templateStore.createIndex('by-category', 'category');
+        }
       },
     });
   }
 
-  async saveProject(project: {
-    id: string;
-    name: string;
-    state: any;
-    thumbnail?: string;
-  }) {
+  // Projects
+  async saveProject(project: any) {
     if (!this.db) await this.init();
-    
     await this.db!.put('projects', {
       ...project,
       lastModified: new Date(),
@@ -608,1479 +1393,199 @@ class IndexedDBStore {
     return this.db!.get('projects', id);
   }
 
-  async getAllProjects() {
+  async getAllProjects(route?: string) {
     if (!this.db) await this.init();
-    return this.db!.getAllFromIndex('projects', 'by-date');
+    if (route) {
+      return this.db!.getAllFromIndex('projects', 'by-route', route);
+    }
+    return this.db!.getAll('projects');
   }
 
-  async saveHistorySnapshot(
-    projectId: string,
-    state: any,
-    description: string
-  ) {
+  // History
+  async saveHistorySnapshot(snapshot: any) {
     if (!this.db) await this.init();
-    
-    const id = `${projectId}-${Date.now()}`;
-    await this.db!.add('history', {
-      id,
-      projectId,
-      timestamp: new Date(),
-      state,
-      description,
-    });
+    await this.db!.add('history', snapshot);
 
-    // Keep only last 50 snapshots per project
-    const allHistory = await this.db!.getAllFromIndex(
+    // Keep only last 50 per project
+    const history = await this.db!.getAllFromIndex(
       'history',
       'by-project',
-      projectId
+      snapshot.projectId
     );
     
-    if (allHistory.length > 50) {
-      const toDelete = allHistory.slice(0, allHistory.length - 50);
+    if (history.length > 50) {
+      const toDelete = history.slice(0, history.length - 50);
       for (const item of toDelete) {
         await this.db!.delete('history', item.id);
       }
     }
   }
 
-  async getHistory(projectId: string) {
+  async getHistory(projectId: string, limit = 50) {
     if (!this.db) await this.init();
-    return this.db!.getAllFromIndex('history', 'by-project', projectId);
+    const all = await this.db!.getAllFromIndex('history', 'by-project', projectId);
+    return all.slice(-limit).reverse();
   }
 
-  async saveComponent(component: {
-    id: string;
-    code: string;
-    name: string;
-    category: string;
-    metadata: any;
-  }) {
+  // Variants
+  async saveVariant(variant: any) {
     if (!this.db) await this.init();
-    await this.db!.put('components', component);
+    await this.db!.put('variants', variant);
   }
 
-  async getComponent(id: string) {
+  async getVariantsForComponent(componentId: string) {
     if (!this.db) await this.init();
-    return this.db!.get('components', id);
+    return this.db!.getAllFromIndex('variants', 'by-component', componentId);
   }
 
-  async getAllComponents() {
+  // Templates
+  async saveTemplate(template: any) {
     if (!this.db) await this.init();
-    return this.db!.getAll('components');
+    await this.db!.put('templates', template);
+  }
+
+  async getTemplatesByCategory(category: string) {
+    if (!this.db) await this.init();
+    return this.db!.getAllFromIndex('templates', 'by-category', category);
+  }
+
+  async getAllTemplates() {
+    if (!this.db) await this.init();
+    return this.db!.getAll('templates');
   }
 }
 
 export const indexedDBStore = new IndexedDBStore();
 ```
 
-### 2.2 History Management System
-
-**File**: `src/lib/persistence/history-manager.ts`
-
-```typescript
-import { PageState } from '@/types/builder.types';
-import { indexedDBStore } from './indexeddb-store';
-
-interface HistoryEntry {
-  id: string;
-  timestamp: Date;
-  state: PageState;
-  description: string;
-}
-
-class HistoryManager {
-  private currentProjectId: string = 'default';
-  private undoStack: HistoryEntry[] = [];
-  private redoStack: HistoryEntry[] = [];
-  private maxStackSize = 50;
-
-  setProject(projectId: string) {
-    this.currentProjectId = projectId;
-    this.loadHistory();
-  }
-
-  async saveSnapshot(state: PageState, description: string) {
-    const entry: HistoryEntry = {
-      id: `${Date.now()}`,
-      timestamp: new Date(),
-      state: JSON.parse(JSON.stringify(state)), // Deep clone
-      description,
-    };
-
-    this.undoStack.push(entry);
-    
-    // Clear redo stack when new action is taken
-    this.redoStack = [];
-
-    // Keep stack size manageable
-    if (this.undoStack.length > this.maxStackSize) {
-      this.undoStack.shift();
-    }
-
-    // Persist to IndexedDB
-    await indexedDBStore.saveHistorySnapshot(
-      this.currentProjectId,
-      state,
-      description
-    );
-  }
-
-  undo(): PageState | null {
-    if (this.undoStack.length <= 1) return null; // Keep at least one state
-
-    const current = this.undoStack.pop()!;
-    this.redoStack.push(current);
-
-    const previous = this.undoStack[this.undoStack.length - 1];
-    return previous ? previous.state : null;
-  }
-
-  redo(): PageState | null {
-    if (this.redoStack.length === 0) return null;
-
-    const next = this.redoStack.pop()!;
-    this.undoStack.push(next);
-
-    return next.state;
-  }
-
-  canUndo(): boolean {
-    return this.undoStack.length > 1;
-  }
-
-  canRedo(): boolean {
-    return this.redoStack.length > 0;
-  }
-
-  getHistory(): HistoryEntry[] {
-    return [...this.undoStack].reverse();
-  }
-
-  async loadHistory() {
-    const history = await indexedDBStore.getHistory(this.currentProjectId);
-    this.undoStack = history.map(h => ({
-      id: h.id,
-      timestamp: h.timestamp,
-      state: h.state,
-      description: h.description,
-    }));
-  }
-
-  async restoreFromSnapshot(snapshotId: string): Promise<PageState | null> {
-    const snapshot = this.undoStack.find(e => e.id === snapshotId);
-    return snapshot ? snapshot.state : null;
-  }
-}
-
-export const historyManager = new HistoryManager();
-```
-
-### 2.3 Auto-Save Hook
+### 4.2 Auto-Save Hook (Universal)
 
 **File**: `src/hooks/useAutoSave.ts`
 
 ```typescript
 import { useEffect, useRef } from 'react';
-import { PageState } from '@/types/builder.types';
-import { indexedDBStore } from '@/lib/persistence/indexeddb-store';
-import { historyManager } from '@/lib/persistence/history-manager';
 import { debounce } from 'lodash';
+import { indexedDBStore } from '@/lib/persistence/indexeddb-store';
+import { useLocation } from 'react-router-dom';
 
 export function useAutoSave(
-  state: PageState,
+  state: any,
   projectId: string,
   projectName: string
 ) {
-  const previousState = useRef<PageState | null>(null);
+  const location = useLocation();
+  const previousState = useRef<any>(null);
 
-  const saveProject = debounce(async (currentState: PageState) => {
+  const saveProject = debounce(async (currentState: any) => {
     await indexedDBStore.saveProject({
       id: projectId,
       name: projectName,
+      route: location.pathname,
       state: currentState,
     });
   }, 1000);
 
-  const saveHistorySnapshot = debounce(async (
-    currentState: PageState,
-    prevState: PageState
-  ) => {
-    // Determine what changed
-    const description = getChangeDescription(prevState, currentState);
-    
-    await historyManager.saveSnapshot(currentState, description);
-  }, 5000); // Save history less frequently
+  const saveSnapshot = debounce(async (currentState: any) => {
+    await indexedDBStore.saveHistorySnapshot({
+      id: `${projectId}-${Date.now()}`,
+      projectId,
+      timestamp: new Date(),
+      state: currentState,
+      description: getChangeDescription(previousState.current, currentState),
+      route: location.pathname,
+    });
+  }, 5000);
 
   useEffect(() => {
     if (previousState.current) {
       saveProject(state);
-      saveHistorySnapshot(state, previousState.current);
+      saveSnapshot(state);
     }
-    
     previousState.current = state;
   }, [state]);
 
   return {
-    manualSave: () => saveProject.flush(),
-  };
-}
-
-function getChangeDescription(prev: PageState, current: PageState): string {
-  if (prev.sections.length < current.sections.length) {
-    return 'Added section';
-  }
-  if (prev.sections.length > current.sections.length) {
-    return 'Removed section';
-  }
-  
-  // Check for prop changes
-  for (let i = 0; i < current.sections.length; i++) {
-    if (JSON.stringify(prev.sections[i].props) !== JSON.stringify(current.sections[i].props)) {
-      return `Updated ${current.sections[i].label}`;
-    }
-  }
-  
-  if (prev.selectedId !== current.selectedId) {
-    return 'Changed selection';
-  }
-  
-  return 'Modified layout';
-}
-```
-
----
-
-## 🎨 PHASE 3: COMPONENT LIBRARY UNIFICATION (Week 3-4)
-### **One Library to Rule Them All - Import from Anywhere**
-
-### 3.1 Universal Component Importer
-
-**File**: `src/lib/component-importer/index.ts`
-
-```typescript
-interface ImportSource {
-  type: 'shadcn' | 'mui' | 'chakra' | 'custom' | 'url';
-  identifier: string; // component name or URL
-}
-
-interface ImportedComponent {
-  id: string;
-  name: string;
-  source: ImportSource;
-  code: string;
-  adaptedCode: string; // Converted to match your system
-  dependencies: string[];
-}
-
-export async function importComponent(
-  source: ImportSource
-): Promise<ImportedComponent> {
-  switch (source.type) {
-    case 'shadcn':
-      return importFromShadcn(source.identifier);
-    case 'mui':
-      return importFromMUI(source.identifier);
-    case 'chakra':
-      return importFromChakra(source.identifier);
-    case 'url':
-      return importFromURL(source.identifier);
-    default:
-      throw new Error(`Unsupported import source: ${source.type}`);
-  }
-}
-
-async function importFromShadcn(componentName: string): Promise<ImportedComponent> {
-  // Fetch from shadcn/ui registry
-  const response = await fetch(
-    `https://ui.shadcn.com/registry/styles/default/${componentName}.json`
-  );
-  
-  const data = await response.json();
-  
-  // Adapt to your system
-  const adapted = await adaptComponentToFlexSystem(data.files[0].content, 'shadcn');
-  
-  return {
-    id: `shadcn-${componentName}-${Date.now()}`,
-    name: componentName,
-    source: { type: 'shadcn', identifier: componentName },
-    code: data.files[0].content,
-    adaptedCode: adapted,
-    dependencies: data.dependencies || [],
-  };
-}
-
-async function importFromMUI(componentName: string): Promise<ImportedComponent> {
-  // Use AI to convert MUI component to your system
-  const claude = new Anthropic({
-    apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
-  });
-
-  const prompt = `
-Convert this Material-UI ${componentName} component to a standalone React component using Tailwind CSS instead of MUI styling.
-
-Requirements:
-1. Replace all MUI imports with pure React
-2. Convert MUI styling to Tailwind classes
-3. Maintain the same functionality
-4. Make it compatible with TypeScript
-5. Use shadcn/ui patterns for interactive elements
-
-Return only the converted component code.
-`;
-
-  const message = await claude.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 4000,
-    messages: [{ role: 'user', content: prompt }],
-  });
-
-  const convertedCode = message.content
-    .filter(block => block.type === 'text')
-    .map(block => (block as any).text)
-    .join('');
-
-  return {
-    id: `mui-${componentName}-${Date.now()}`,
-    name: componentName,
-    source: { type: 'mui', identifier: componentName },
-    code: '', // Original MUI code
-    adaptedCode: convertedCode,
-    dependencies: [],
-  };
-}
-
-async function adaptComponentToFlexSystem(
-  code: string,
-  sourceType: string
-): Promise<string> {
-  // Use AI to adapt any component to your system
-  const claude = new Anthropic({
-    apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
-  });
-
-  const prompt = `
-Adapt this ${sourceType} component to work in the Flex Builder system.
-
-Requirements:
-1. Make it work with Tambo (useTamboComponentState for state that AI should see)
-2. Add Zod schema for props validation
-3. Ensure it works with the canvas rendering system
-4. Keep all original functionality
-5. Add proper TypeScript types
-
-Original code:
-\`\`\`tsx
-${code}
-\`\`\`
-
-Return the adapted component code.
-`;
-
-  const message = await claude.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 4000,
-    messages: [{ role: 'user', content: prompt }],
-  });
-
-  return message.content
-    .filter(block => block.type === 'text')
-    .map(block => (block as any).text)
-    .join('');
-}
-
-async function importFromURL(url: string): Promise<ImportedComponent> {
-  // Fetch component code from URL
-  const response = await fetch(url);
-  const code = await response.text();
-  
-  const adapted = await adaptComponentToFlexSystem(code, 'custom');
-  
-  return {
-    id: `url-${Date.now()}`,
-    name: extractComponentName(code),
-    source: { type: 'url', identifier: url },
-    code,
-    adaptedCode: adapted,
-    dependencies: extractDependencies(code),
-  };
-}
-
-function extractComponentName(code: string): string {
-  const match = code.match(/export (?:default )?(?:function|const) (\w+)/);
-  return match ? match[1] : 'ImportedComponent';
-}
-
-function extractDependencies(code: string): string[] {
-  const imports = code.match(/from ['"](.+?)['"]/g) || [];
-  return imports
-    .map(imp => imp.replace(/from ['"]/g, '').replace(/['"]/g, ''))
-    .filter(dep => !dep.startsWith('.') && !dep.startsWith('@/'));
-}
-```
-
-### 3.2 Component Import Tool
-
-**File**: `src/lib/builder-tambo-tools-import.ts`
-
-```typescript
-import { z } from 'zod';
-import { importComponent } from './component-importer';
-import { componentRegistry } from './component-generator/registry';
-
-export const importComponentTool = {
-  name: 'import_component',
-  description: `Import components from popular UI libraries (shadcn, MUI, Chakra) or from any URL.
-  Automatically adapts them to work in Flex Builder.
-  
-  Examples:
-  - "Import the button component from shadcn"
-  - "Import card from Material-UI"
-  - "Import from https://example.com/component.tsx"`,
-  
-  inputSchema: z.object({
-    source: z.enum(['shadcn', 'mui', 'chakra', 'url']),
-    identifier: z.string().describe('Component name or URL'),
-  }),
-
-  execute: async (args: any, builderRef: any) => {
-    try {
-      const imported = await importComponent({
-        type: args.source,
-        identifier: args.identifier,
-      });
-
-      // Register in component registry
-      const componentId = await componentRegistry.registerGeneratedComponent(
-        imported.adaptedCode,
-        imported.name,
-        z.any() // Generate proper schema from adapted code
-      );
-
-      // Add to canvas
-      const sectionId = builderRef.current?.addSection(componentId);
-      
-      if (sectionId) {
-        builderRef.current?.dispatch({
-          type: 'UPDATE_SECTION',
-          payload: { 
-            id: sectionId, 
-            updates: { label: imported.name } 
-          },
-        });
-      }
-
-      return `✅ **Imported ${imported.name} from ${args.source}!**
-
-📦 **Dependencies needed**:
-${imported.dependencies.length > 0 
-  ? imported.dependencies.map(d => `- ${d}`).join('\n')
-  : 'None - fully self-contained!'}
-
-🎯 **Component added to canvas!**
-
-The component has been automatically adapted to work with Flex Builder.
-You can now customize it just like any other component.
-
-${imported.dependencies.length > 0 
-  ? '\n⚠️ **Note**: Install dependencies with `npm install ' + imported.dependencies.join(' ') + '`'
-  : ''}`;
-    } catch (error) {
-      return `❌ Failed to import component: ${error instanceof Error ? error.message : 'Unknown error'}
-
-Please check:
-- Component name is correct
-- URL is accessible
-- Source library is supported`;
-    }
-  },
-};
-```
-
----
-
-## 🚀 PHASE 4: SMART CANVAS & RESPONSIVE DESIGN (Week 4-5)
-### **Real Device Testing - No Surprises**
-
-### 4.1 Multi-Device Preview System
-
-**File**: `src/components/builder/DevicePreview.tsx`
-
-```typescript
-import React, { useState } from 'react';
-import { Monitor, Tablet, Smartphone } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useBuilder } from '@/contexts/BuilderContext';
-
-interface DeviceFrame {
-  name: string;
-  width: number;
-  height: number;
-  icon: React.ReactNode;
-  scale: number;
-}
-
-const DEVICES: DeviceFrame[] = [
-  { name: 'desktop', width: 1920, height: 1080, icon: <Monitor />, scale: 0.5 },
-  { name: 'tablet', width: 768, height: 1024, icon: <Tablet />, scale: 0.7 },
-  { name: 'mobile', width: 375, height: 667, icon: <Smartphone />, scale: 1 },
-];
-
-export function DevicePreview() {
-  const [activeDevice, setActiveDevice] = useState<string>('desktop');
-  const [showAllDevices, setShowAllDevices] = useState(false);
-  const { state } = useBuilder();
-
-  const currentDevice = DEVICES.find(d => d.name === activeDevice)!;
-
-  if (showAllDevices) {
-    return (
-      <div className="grid grid-cols-3 gap-4 p-4">
-        {DEVICES.map(device => (
-          <div key={device.name} className="border rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              {device.icon}
-              <span className="font-semibold capitalize">{device.name}</span>
-              <span className="text-sm text-gray-500">
-                {device.width}×{device.height}
-              </span>
-            </div>
-            <div
-              className="border bg-white overflow-auto"
-              style={{
-                width: device.width * device.scale,
-                height: device.height * device.scale,
-              }}
-            >
-              <div
-                style={{
-                  width: device.width,
-                  height: device.height,
-                  transform: `scale(${device.scale})`,
-                  transformOrigin: 'top left',
-                }}
-              >
-                <CanvasPreview state={state} device={device.name} />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between p-4 border-b">
-        <div className="flex gap-2">
-          {DEVICES.map(device => (
-            <Button
-              key={device.name}
-              variant={activeDevice === device.name ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setActiveDevice(device.name)}
-            >
-              {device.icon}
-              <span className="ml-2 capitalize">{device.name}</span>
-            </Button>
-          ))}
-        </div>
-        
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowAllDevices(!showAllDevices)}
-        >
-          {showAllDevices ? 'Single View' : 'All Devices'}
-        </Button>
-      </div>
-
-      <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
-        <div
-          className="border-8 border-gray-800 rounded-lg bg-white shadow-2xl overflow-auto"
-          style={{
-            width: currentDevice.width * currentDevice.scale,
-            height: currentDevice.height * currentDevice.scale,
-          }}
-        >
-          <div
-            style={{
-              width: currentDevice.width,
-              height: currentDevice.height,
-              transform: `scale(${currentDevice.scale})`,
-              transformOrigin: 'top left',
-            }}
-          >
-            <CanvasPreview state={state} device={activeDevice} />
-          </div>
-        </div>
-      </div>
-
-      <div className="p-4 border-t bg-white">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600">
-            Viewport: {currentDevice.width}×{currentDevice.height}px
-          </span>
-          <span className="text-gray-600">
-            Scale: {(currentDevice.scale * 100).toFixed(0)}%
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-```
-
-### 4.2 Responsive Design Analyzer
-
-**File**: `src/lib/responsive-analyzer.ts`
-
-```typescript
-import { PageSection } from '@/types/builder.types';
-
-interface ResponsiveIssue {
-  sectionId: string;
-  sectionLabel: string;
-  device: 'mobile' | 'tablet' | 'desktop';
-  issue: string;
-  severity: 'error' | 'warning' | 'info';
-  fix: string;
-}
-
-export function analyzeResponsiveness(sections: PageSection[]): ResponsiveIssue[] {
-  const issues: ResponsiveIssue[] = [];
-
-  for (const section of sections) {
-    // Check for fixed widths
-    if (section.props.width && typeof section.props.width === 'number') {
-      if (section.props.width > 768) {
-        issues.push({
-          sectionId: section.id,
-          sectionLabel: section.label,
-          device: 'mobile',
-          issue: 'Fixed width exceeds mobile viewport',
-          severity: 'error',
-          fix: 'Use percentage width or max-width: 100%',
-        });
-      }
-    }
-
-    // Check text sizes
-    if (section.props.fontSize) {
-      const size = parseInt(String(section.props.fontSize));
-      if (size > 48) {
-        issues.push({
-          sectionId: section.id,
-          sectionLabel: section.label,
-          device: 'mobile',
-          issue: 'Text too large for mobile',
-          severity: 'warning',
-          fix: 'Reduce font size on mobile to 32px or less',
-        });
-      }
-    }
-
-    // Check for horizontal overflow
-    if (section.props.padding) {
-      const padding = parseInt(String(section.props.padding));
-      if (padding > 40) {
-        issues.push({
-          sectionId: section.id,
-          sectionLabel: section.label,
-          device: 'mobile',
-          issue: 'Excessive padding may cause content overflow',
-          severity: 'warning',
-          fix: 'Reduce padding on mobile to 16-24px',
-        });
-      }
-    }
-
-    // Check images
-    if (section.props.imageUrl) {
-      if (!section.props.imageAlt) {
-        issues.push({
-          sectionId: section.id,
-          sectionLabel: section.label,
-          device: 'mobile',
-          issue: 'Missing alt text for image',
-          severity: 'error',
-          fix: 'Add descriptive alt text for accessibility',
-        });
-      }
-    }
-  }
-
-  return issues;
-}
-
-export function generateResponsiveFixes(issues: ResponsiveIssue[]): string {
-  if (issues.length === 0) {
-    return '✅ Your website is responsive! No issues found.';
-  }
-
-  const errors = issues.filter(i => i.severity === 'error');
-  const warnings = issues.filter(i => i.severity === 'warning');
-
-  return `
-📱 **Responsive Design Analysis**
-
-${errors.length > 0 ? `
-❌ **Critical Issues** (${errors.length}):
-${errors.map((e, i) => `
-${i + 1}. **${e.sectionLabel}** (${e.device})
-   Problem: ${e.issue}
-   Fix: ${e.fix}
-`).join('\n')}
-` : ''}
-
-${warnings.length > 0 ? `
-⚠️ **Warnings** (${warnings.length}):
-${warnings.map((w, i) => `
-${i + 1}. **${w.sectionLabel}** (${w.device})
-   Problem: ${w.issue}
-   Fix: ${w.fix}
-`).join('\n')}
-` : ''}
-
-Would you like me to automatically fix these issues?
-`;
-}
-```
-
----
-
-## 🎯 PHASE 5: PRODUCTION EXPORT & DEPLOY (Week 5-6)
-### **One Click from Canvas to Production**
-
-### 5.1 Production Code Generator
-
-**File**: `src/lib/export/production-generator.ts`
-
-```typescript
-import { PageState } from '@/types/builder.types';
-import { componentRegistry } from '../component-generator/registry';
-
-interface ExportConfig {
-  framework: 'nextjs' | 'react' | 'remix' | 'astro';
-  typescript: boolean;
-  styling: 'tailwind' | 'css-modules' | 'styled-components';
-  includeTests: boolean;
-  includeStorybook: boolean;
-}
-
-export async function generateProductionCode(
-  state: PageState,
-  config: ExportConfig
-): Promise<Map<string, string>> {
-  const files = new Map<string, string>();
-
-  // Generate package.json
-  files.set('package.json', generatePackageJson(state, config));
-
-  // Generate main page/component
-  files.set(
-    getMainFilePath(config),
-    await generateMainComponent(state, config)
-  );
-
-  // Generate component files
-  for (const section of state.sections) {
-    const componentCode = componentRegistry.getComponentCode(section.type);
-    if (componentCode) {
-      files.set(
-        `components/${section.type}.${config.typescript ? 'tsx' : 'jsx'}`,
-        componentCode
-      );
-    }
-  }
-
-  // Generate config files
-  if (config.framework === 'nextjs') {
-    files.set('next.config.js', generateNextConfig());
-    files.set('app/layout.tsx', generateNextLayout(config));
-  }
-
-  if (config.styling === 'tailwind') {
-    files.set('tailwind.config.js', generateTailwindConfig());
-    files.set('globals.css', generateGlobalCSS());
-  }
-
-  // Generate tests if requested
-  if (config.includeTests) {
-    files.set('__tests__/page.test.tsx', generateTests(state, config));
-  }
-
-  // Generate Storybook stories if requested
-  if (config.includeStorybook) {
-    files.set('.storybook/main.js', generateStorybookConfig());
-    for (const section of state.sections) {
-      files.set(
-        `stories/${section.type}.stories.tsx`,
-        generateStory(section, config)
-      );
-    }
-  }
-
-  // Generate README
-  files.set('README.md', generateREADME(state, config));
-
-  return files;
-}
-
-function generatePackageJson(state: PageState, config: ExportConfig): string {
-  const deps: Record<string, string> = {
-    react: '^18.2.0',
-    'react-dom': '^18.2.0',
-  };
-
-  if (config.framework === 'nextjs') {
-    deps.next = '^14.0.0';
-  }
-
-  if (config.styling === 'tailwind') {
-    deps.tailwindcss = '^3.4.0';
-    deps.autoprefixer = '^10.4.0';
-    deps.postcss = '^8.4.0';
-  }
-
-  // Add component dependencies
-  for (const section of state.sections) {
-    const component = componentRegistry.getComponent(section.type);
-    if (component) {
-      // Add component-specific dependencies
-    }
-  }
-
-  return JSON.stringify(
-    {
-      name: 'flex-generated-website',
-      version: '1.0.0',
-      private: true,
-      scripts: {
-        dev: config.framework === 'nextjs' ? 'next dev' : 'vite',
-        build: config.framework === 'nextjs' ? 'next build' : 'vite build',
-        start: config.framework === 'nextjs' ? 'next start' : 'vite preview',
-        lint: 'eslint .',
-        test: config.includeTests ? 'vitest' : undefined,
-      },
-      dependencies: deps,
-      devDependencies: {
-        '@types/react': '^18.2.0',
-        '@types/react-dom': '^18.2.0',
-        ...(config.typescript && {
-          typescript: '^5.0.0',
-        }),
-        ...(config.includeTests && {
-          vitest: '^1.0.0',
-          '@testing-library/react': '^14.0.0',
-        }),
-      },
+    manualSave: () => {
+      saveProject.flush();
+      saveSnapshot.flush();
     },
-    null,
-    2
-  );
+  };
 }
 
-async function generateMainComponent(
-  state: PageState,
-  config: ExportConfig
-): Promise<string> {
-  const imports = state.sections
-    .map(s => `import { ${getComponentName(s.type)} } from '@/components/${s.type}';`)
-    .join('\n');
-
-  const components = state.sections
-    .filter(s => s.visible)
-    .map(s => {
-      const props = Object.entries(s.props)
-        .map(([key, value]) => {
-          if (typeof value === 'string') return `${key}="${value}"`;
-          if (typeof value === 'number') return `${key}={${value}}`;
-          if (typeof value === 'boolean') return value ? key : '';
-          return `${key}={${JSON.stringify(value)}}`;
-        })
-        .filter(Boolean)
-        .join(' ');
-
-      return `      <${getComponentName(s.type)} ${props} />`;
-    })
-    .join('\n');
-
-  return `
-${imports}
-
-export default function Page() {
-  return (
-    <div className="min-h-screen">
-${components}
-    </div>
-  );
-}
-`.trim();
-}
-
-function getComponentName(type: string): string {
-  return type
-    .split('-')
-    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-    .join('');
-}
-
-function getMainFilePath(config: ExportConfig): string {
-  if (config.framework === 'nextjs') {
-    return `app/page.${config.typescript ? 'tsx' : 'jsx'}`;
-  }
-  return `src/App.${config.typescript ? 'tsx' : 'jsx'}`;
-}
-
-function generateNextConfig(): string {
-  return `
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  images: {
-    domains: [], // Add your image domains
-  },
-};
-
-module.exports = nextConfig;
-`.trim();
-}
-
-function generateNextLayout(config: ExportConfig): string {
-  return `
-import './globals.css';
-
-export const metadata = {
-  title: 'Generated by Flex Builder',
-  description: 'Built with Flex Builder',
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  );
-}
-`.trim();
-}
-
-function generateTailwindConfig(): string {
-  return `
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};
-`.trim();
-}
-
-function generateGlobalCSS(): string {
-  return `
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-`.trim();
-}
-
-function generateREADME(state: PageState, config: ExportConfig): string {
-  return `
-# Website Generated by Flex Builder
-
-This website was automatically generated using Flex Builder.
-
-## 📊 Project Stats
-
-- **Framework**: ${config.framework}
-- **Components**: ${state.sections.length}
-- **Styling**: ${config.styling}
-- **TypeScript**: ${config.typescript ? 'Yes' : 'No'}
-
-## 🚀 Getting Started
-
-\`\`\`bash
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-\`\`\`
-
-## 📦 Components
-
-${state.sections.map(s => `- **${s.label}** (\`${s.type}\`)`).join('\n')}
-
-## 🎨 Customization
-
-Edit components in the \`components/\` directory.
-Modify styling in \`globals.css\` or component files.
-
-## 📝 License
-
-MIT
-
----
-
-**Built with ❤️ using Flex Builder**
-`.trim();
-}
-
-function generateTests(state: PageState, config: ExportConfig): string {
-  return `
-import { render, screen } from '@testing-library/react';
-import Page from '../app/page';
-
-describe('Page', () => {
-  it('renders all sections', () => {
-    render(<Page />);
-    // Add your tests here
-  });
-});
-`.trim();
-}
-
-function generateStory(section: any, config: ExportConfig): string {
-  const componentName = getComponentName(section.type);
-  
-  return `
-import type { Meta, StoryObj } from '@storybook/react';
-import { ${componentName} } from '../components/${section.type}';
-
-const meta: Meta<typeof ${componentName}> = {
-  title: 'Components/${componentName}',
-  component: ${componentName},
-};
-
-export default meta;
-type Story = StoryObj<typeof ${componentName}>;
-
-export const Default: Story = {
-  args: ${JSON.stringify(section.props, null, 2)},
-};
-`.trim();
-}
-
-function generateStorybookConfig(): string {
-  return `
-module.exports = {
-  stories: ['../stories/**/*.stories.@(js|jsx|ts|tsx)'],
-  addons: ['@storybook/addon-essentials'],
-  framework: '@storybook/react-webpack5',
-};
-`.trim();
-}
-```
-
-### 5.2 One-Click Deploy
-
-**File**: `src/lib/export/deploy.ts`
-
-```typescript
-export async function deployToVercel(files: Map<string, string>): Promise<string> {
-  // Use Vercel API to deploy
-  const formData = new FormData();
-  
-  for (const [path, content] of files.entries()) {
-    const blob = new Blob([content], { type: 'text/plain' });
-    formData.append('files', blob, path);
-  }
-
-  const response = await fetch('https://api.vercel.com/v13/deployments', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${import.meta.env.VITE_VERCEL_TOKEN}`,
-    },
-    body: formData,
-  });
-
-  const data = await response.json();
-  return data.url; // Deployment URL
-}
-
-export async function deployToNetlify(files: Map<string, string>): Promise<string> {
-  // Use Netlify API
-  const deploy = await fetch('https://api.netlify.com/api/v1/sites', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${import.meta.env.VITE_NETLIFY_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      name: `flex-site-${Date.now()}`,
-    }),
-  });
-
-  const site = await deploy.json();
-  
-  // Upload files...
-  
-  return site.ssl_url;
-}
-
-export function downloadAsZip(files: Map<string, string>): void {
-  // Use JSZip to create downloadable package
-  const JSZip = require('jszip');
-  const zip = new JSZip();
-
-  for (const [path, content] of files.entries()) {
-    zip.file(path, content);
-  }
-
-  zip.generateAsync({ type: 'blob' }).then((blob: Blob) => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'flex-website.zip';
-    a.click();
-  });
+function getChangeDescription(prev: any, current: any): string {
+  if (!prev) return 'Initial state';
+  // Analyze changes
+  return 'State updated';
 }
 ```
 
 ---
 
-## 🎨 PHASE 6: COMMUNITY & COLLABORATION (Week 6-7)
-### **Share, Discover, Remix**
-
-### 6.1 Component Marketplace
-
-**File**: `src/lib/marketplace/index.ts`
-
-```typescript
-interface MarketplaceComponent {
-  id: string;
-  name: string;
-  description: string;
-  author: string;
-  downloads: number;
-  rating: number;
-  tags: string[];
-  code: string;
-  thumbnail: string;
-  price: number; // 0 for free
-  license: 'MIT' | 'Apache' | 'GPL' | 'Commercial';
-}
-
-export async function publishComponent(
-  component: Omit<MarketplaceComponent, 'id' | 'downloads' | 'rating'>
-): Promise<string> {
-  // Publish to your backend/database
-  const response = await fetch('/api/marketplace/publish', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(component),
-  });
-
-  const data = await response.json();
-  return data.componentId;
-}
-
-export async function searchMarketplace(
-  query: string,
-  filters?: {
-    tags?: string[];
-    priceRange?: [number, number];
-    minRating?: number;
-  }
-): Promise<MarketplaceComponent[]> {
-  const params = new URLSearchParams({
-    q: query,
-    ...(filters?.tags && { tags: filters.tags.join(',') }),
-    ...(filters?.minRating && { rating: filters.minRating.toString() }),
-  });
-
-  const response = await fetch(`/api/marketplace/search?${params}`);
-  return response.json();
-}
-
-export async function installFromMarketplace(
-  componentId: string
-): Promise<void> {
-  const response = await fetch(`/api/marketplace/component/${componentId}`);
-  const component = await response.json();
-
-  // Register in local registry
-  await componentRegistry.registerGeneratedComponent(
-    component.code,
-    component.name,
-    z.any()
-  );
-
-  // Track download
-  await fetch(`/api/marketplace/component/${componentId}/download`, {
-    method: 'POST',
-  });
-}
-```
-
----
-
-## 🎯 FINAL SYSTEM ARCHITECTURE
-
-```typescript
-// src/main.tsx - Ultimate setup
-
-import { TamboProvider } from '@tambo-ai/react';
-import { BrowserRouter } from 'react-router-dom';
-import App from './App';
-import { componentRegistry } from './lib/component-generator/registry';
-import { indexedDBStore } from './lib/persistence/indexeddb-store';
-import { createEnhancedContextHelpers } from './lib/enhanced-context-helpers';
-
-// Initialize systems
-await indexedDBStore.init();
-componentRegistry.loadFromStorage();
-
-const tamboComponents = [
-  // Your existing components
-  ...componentRegistry.getAllComponents().map(c => ({
-    name: c.name,
-    component: c.component,
-    propsSchema: c.propsSchema,
-    description: c.metadata.description,
-  })),
-];
-
-const enhancedTools = [
-  // Phase 1: On-the-go generation
-  generateComponentTool,
-  listGeneratedComponentsTool,
-  improveGeneratedComponentTool,
-  
-  // Phase 2: Templates
-  generateWebsiteFromTemplateTool,
-  searchTemplatesTool,
-  generateCustomWebsiteTool,
-  
-  // Phase 3: Import
-  importComponentTool,
-  
-  // Phase 4: Analysis
-  analyzeComponentTool,
-  analyzeWebsiteTool,
-  improveComponentTool,
-  analyzeResponsivenessTool,
-  
-  // Phase 5: Export
-  exportCodeTool,
-  deployToVercelTool,
-  deployToNetlifyTool,
-];
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <TamboProvider
-      apiKey={import.meta.env.VITE_TAMBO_API_KEY}
-      components={tamboComponents}
-      contextHelpers={createEnhancedContextHelpers()}
-    >
-      <BrowserRouter>
-        <App />
-        <Toaster />
-      </BrowserRouter>
-    </TamboProvider>
-  </React.StrictMode>
-);
-```
-
----
-
-## ✨ USER EXPERIENCE EXAMPLES
-
-### Example 1: Generate Component on Demand
-
-```
-User: "I need a pricing table with 3 tiers - Basic, Pro, and Enterprise"
-
-AI: [Calls generate_component with detailed spec]
-
-✨ Generated new component: PricingTable
-
-📝 Description: I need a pricing table with 3 tiers - Basic, Pro, and Enterprise
-
-🎨 Styling: modern
-⚡ Interactivity: interactive
-
-✅ Features included:
-1. Three pricing tiers
-2. Feature comparison
-3. Call-to-action buttons
-4. Responsive layout
-
-📊 Data fields:
-- tierName (string)
-- price (number)
-- features (string)
-- popular (boolean)
-
-🎯 Component added to canvas!
-
-[User sees a fully functional, beautiful pricing table on canvas]
-```
-
-### Example 2: Import from shadcn
-
-```
-User: "Import the card component from shadcn"
-
-AI: [Calls import_component]
-
-✅ Imported card from shadcn!
-
-📦 Dependencies needed:
-None - fully self-contained!
-
-🎯 Component added to canvas!
-
-The component has been automatically adapted to work with Flex Builder.
-You can now customize it just like any other component.
-```
-
-### Example 3: Full Website Generation
-
-```
-User: "Create a complete website for my coffee shop with hero, menu, about, and contact sections"
-
-AI: [Calls search_website_templates, then generate_custom_website]
-
-✅ Created custom landing page with 4 sections:
-
-1. Hero
-2. Menu
-3. About
-4. Contact
-
-🎯 Tailored for: Coffee shop
-🎨 Style: warm and inviting
-
-[User sees complete website rendered instantly]
-
-User: "Make it look more premium"
-
-AI: [Calls improve_component multiple times]
-
-✨ Enhanced all sections with:
-- Glassmorphism effects
-- Elegant typography
-- Warm color palette (#92400E, #F59E0B)
-- Smooth animations
-
-[Website transforms to premium look]
-```
-
-### Example 4: Export & Deploy
-
-```
-User: "Export this as a Next.js app and deploy to Vercel"
-
-AI: [Calls export_website_code then deploy_to_vercel]
-
-✅ Code generated!
-✅ Deployed to Vercel!
-
-🌐 Your website is live at: https://flex-coffee-shop-abc123.vercel.app
-
-📦 Generated files:
-- 12 component files
-- Next.js configuration
-- Tailwind setup
-- Tests & Storybook stories
-- Complete package.json
-
-Would you like to download the source code as a zip file?
-```
-
----
-
-## 📊 IMPLEMENTATION PRIORITY MATRIX
-
-```
-┌────────────────────────────────────────────────────┐
-│                 PRIORITY MATRIX                    │
-├────────────────────────────────────────────────────┤
-│                                                     │
-│  HIGH IMPACT + EASY                                 │
-│  ✅ Phase 1: Component Generator (WEEK 1)          │
-│  ✅ Phase 2: State Persistence (WEEK 2)            │
-│                                                     │
-│  HIGH IMPACT + MEDIUM                               │
-│  ⭐ Phase 3: Component Import (WEEK 3)             │
-│  ⭐ Phase 4: Responsive Tools (WEEK 4)             │
-│                                                     │
-│  HIGH IMPACT + HARD                                 │
-│  🎯 Phase 5: Export & Deploy (WEEK 5-6)            │
-│                                                     │
-│  NICE TO HAVE                                       │
-│  💎 Phase 6: Marketplace (WEEK 7+)                 │
-│                                                     │
-└────────────────────────────────────────────────────┘
-```
-
----
-
-## 🎯 SUCCESS METRICS
-
-After all phases:
-
-### User Can:
-✅ Generate ANY component by describing it
-✅ Import components from shadcn, MUI, Chakra, or any URL
-✅ Never lose work (auto-save + history + cloud sync)
-✅ See real device previews (mobile/tablet/desktop)
-✅ Export production-ready code (Next.js/React/Remix)
-✅ Deploy to Vercel/Netlify with one click
-✅ Share/discover components in marketplace
-✅ Build a complete, functional website in <5 minutes
-
-### Technical:
-✅ Component generation success rate: >90%
-✅ Import success rate: >85%
-✅ Page load time: <2s
-✅ Auto-save latency: <500ms
-✅ Export build time: <30s
-✅ Zero data loss on refresh
-
----
-
-## 🚀 QUICK START IMPLEMENTATION
-
-**Week 1 Focus**: Component Generator
-
-1. Create `src/lib/component-generator/index.ts`
-2. Create `src/lib/component-generator/registry.ts`
-3. Add `generateComponentTool` to Tambo
-4. Test with: "Create a button component"
-
-**This alone will be revolutionary** - users can generate ANY component they imagine!
-
----
-
-## 💡 THE ULTIMATE VALUE PROPOSITION
-
-**Before Flex Builder:**
-- Find UI library → Learn syntax → Install deps → Configure → Style → Integrate → Debug = 2-3 hours per component
-
-**After Flex Builder:**
-- Describe what you want → AI generates it → Done = 30 seconds
-
-**That's a 360x productivity increase.**
-
-You're not just building a website builder. You're building **the end of component libraries as we know them**.
-
-🚀 **Ready to start? Begin with Phase 1 - Component Generator!**
+## 🎯 SUMMARY: PURE TAMBO ARCHITECTURE
+
+### ✅ **What We've Built (Without Third-Party AI)**
+
+**1. Component Variant System**
+- Create variants of existing components
+- Preset variants library
+- Save custom variants
+- Apply variants to sections
+- **ALL via Tambo tools**
+
+**2. Route-Based Organization**
+- `/builder` - Main website builder
+- `/component-lab` - Test and create variants
+- `/template-studio` - Manage templates
+- `/export-center` - Export code
+- `/library-manager` - Organize components
+- `/design-analyzer` - Quality analysis
+
+**3. Robust Persistence**
+- IndexedDB for all data
+- Automatic history tracking
+- Never lose work
+- Works offline
+
+**4. Clean Tool Architecture**
+- Each route has own tools
+- Tools registered per-route
+- Context helpers per-route
+- Clean separation of concerns
+
+### 🚀 **Next Implementation Steps**
+
+**Week 1:**
+1. ✅ Create variant system (`variant-system.ts`)
+2. ✅ Build Component Lab route
+3. ✅ Add variant tools
+
+**Week 2:**
+1. ✅ Template Studio route
+2. ✅ Export Center route
+3. ✅ App layout with navigation
+
+**Week 3:**
+1. ✅ IndexedDB implementation
+2. ✅ Auto-save hooks
+3. ✅ History management
+
+### 💡 **Key Advantages**
+
+**vs Direct API Calls:**
+- ✅ Tambo handles orchestration
+- ✅ No API key management
+- ✅ Streaming built-in
+- ✅ Context automatically managed
+- ✅ Simpler codebase
+
+**vs Single Route:**
+- ✅ Better UI organization
+- ✅ Focused tools per feature
+- ✅ Isolated contexts
+- ✅ Easier to maintain
+- ✅ Clearer user flow
+
+**Result:**
+A production-grade, maintainable, scalable website builder that works entirely within Tambo's ecosystem!
+
+🎯 **Ready to implement? Start with Component Lab (Week 1)!**

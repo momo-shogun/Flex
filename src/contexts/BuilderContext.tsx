@@ -8,8 +8,9 @@ import {
   DEFAULT_FLOATING_LINES_PROPS,
   DEFAULT_LIGHT_PILLAR_PROPS,
 } from '@/types/components';
-import type { PageState, PageAction, PageSection } from '@/types/builder.types';
+import type { PageState, PageAction, PageSection, SectionType } from '@/types/builder.types';
 import { setBuilderStateForTambo } from '@/lib/tambo-builder-context';
+import { componentRegistry } from '@/lib/component-generator/registry';
 
 const COMPONENT_LABELS: Record<ComponentId, string> = {
   'split-text': 'Split Text',
@@ -81,11 +82,14 @@ export const DEFAULT_FIGMA_STYLE_PROPS: Record<string, unknown> = {
 };
 
 export function getDefaultPropsForType(
-  type: ComponentId
+  type: SectionType
 ): Record<string, unknown> {
+  if (typeof type === 'string' && type.startsWith('gen-')) {
+    return {};
+  }
   const layout = { ...DEFAULT_LAYOUT_PROPS };
   const figmaStyle = { ...DEFAULT_FIGMA_STYLE_PROPS };
-  const innerLayout = INNER_LAYOUT_TYPES.includes(type)
+  const innerLayout = INNER_LAYOUT_TYPES.includes(type as ComponentId)
     ? { ...DEFAULT_INNER_LAYOUT_PROPS }
     : {};
   switch (type) {
@@ -140,8 +144,11 @@ export function getDefaultPropsForType(
   }
 }
 
-export function getDefaultLabelForType(type: ComponentId): string {
-  return COMPONENT_LABELS[type] ?? type;
+export function getDefaultLabelForType(type: SectionType): string {
+  if (typeof type === 'string' && type.startsWith('gen-')) {
+    return componentRegistry.getComponent(type)?.name ?? type;
+  }
+  return COMPONENT_LABELS[type as ComponentId] ?? String(type);
 }
 
 function generateId(): string {
@@ -154,9 +161,12 @@ const VALID_SECTION_TYPES = new Set<ComponentId>(Object.keys(COMPONENT_LABELS) a
 function isValidSection(s: unknown): s is PageSection {
   if (!s || typeof s !== 'object') return false;
   const o = s as Record<string, unknown>;
+  const typeValid =
+    VALID_SECTION_TYPES.has(o.type as ComponentId) ||
+    (typeof o.type === 'string' && o.type.startsWith('gen-'));
   return (
     typeof o.id === 'string' &&
-    VALID_SECTION_TYPES.has(o.type as ComponentId) &&
+    typeValid &&
     typeof o.label === 'string' &&
     typeof o.visible === 'boolean' &&
     o.props != null &&
@@ -293,7 +303,7 @@ interface BuilderContextValue {
   dispatch: React.Dispatch<PageAction>;
   getSection: (id: string) => PageSection | undefined;
   selectedSection: PageSection | undefined;
-  addSection: (type: ComponentId) => string;
+  addSection: (type: SectionType) => string;
 }
 
 const BuilderContext = createContext<BuilderContextValue | null>(null);
@@ -327,7 +337,7 @@ export function BuilderProvider({ children }: { children: ReactNode }) {
     ? getSection(state.selectedId)
     : undefined;
 
-  const addSection = (type: ComponentId): string => {
+  const addSection = (type: SectionType): string => {
     const id = generateId();
     const label = getDefaultLabelForType(type);
     const props = getDefaultPropsForType(type);

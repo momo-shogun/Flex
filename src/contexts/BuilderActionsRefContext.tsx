@@ -1,9 +1,8 @@
 import { createContext, useContext, useRef, type ReactNode } from 'react';
-import type { ComponentId } from '@/types/components';
-import type { PageAction, PageSection, PageState } from '@/types/builder.types';
+import type { PageAction, PageSection, PageState, SectionType } from '@/types/builder.types';
 
 export interface BuilderActions {
-  addSection: (type: ComponentId) => string;
+  addSection: (type: SectionType) => string;
   dispatch: React.Dispatch<PageAction>;
   getSection: (id: string) => PageSection | undefined;
   state: PageState;
