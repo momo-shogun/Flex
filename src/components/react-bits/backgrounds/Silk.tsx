@@ -88,7 +88,8 @@ const SilkPlane = forwardRef<THREE.Mesh, SilkPlaneProps>(function SilkPlane(
   useFrame((_, delta) => {
     if (ref && typeof ref !== 'function' && ref.current?.material && 'uniforms' in ref.current.material) {
       const u = (ref.current.material as THREE.ShaderMaterial).uniforms;
-      if (u.uTime) u.uTime.value += 0.1 * delta;
+      const t = u.uTime?.value;
+      if (typeof t === 'number') u.uTime!.value = t + 0.1 * delta;
     }
   });
 
@@ -96,10 +97,12 @@ const SilkPlane = forwardRef<THREE.Mesh, SilkPlaneProps>(function SilkPlane(
     <mesh ref={ref}>
       <planeGeometry args={[1, 1]} />
       <shaderMaterial
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        uniforms={uniforms}
-        depthWrite={false}
+        {...({
+          vertexShader,
+          fragmentShader,
+          uniforms,
+          depthWrite: false,
+        } as unknown as Record<string, unknown>)}
       />
     </mesh>
   );

@@ -3,12 +3,6 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { ComponentId } from '../../types/components';
 
-const GET_STARTED_ITEMS = [
-  { label: 'Introduction', id: 'intro' },
-  { label: 'Installation', id: 'install' },
-  { label: 'Index', id: 'index' },
-] as const;
-
 const TEXT_ANIMATION_ITEMS: { id: ComponentId; label: string }[] = [
   { id: 'split-text', label: 'Split Text' },
   { id: 'blur-text', label: 'Blur Text' },
@@ -45,7 +39,7 @@ export function Sidebar({ selectedComponent, onSelectComponent }: SidebarProps) 
   return (
     <aside className="w-64 flex-shrink-0 bg-slate-900 border-r border-slate-700 overflow-y-auto">
       <nav className="p-4 space-y-6">
-        <div>
+        {/* <div>
           <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
             Get Started
           </h2>
@@ -62,7 +56,7 @@ export function Sidebar({ selectedComponent, onSelectComponent }: SidebarProps) 
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
             Text Animations

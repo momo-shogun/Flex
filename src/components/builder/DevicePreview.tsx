@@ -20,7 +20,7 @@ const DEVICES: DeviceFrame[] = [
 ];
 
 export function DevicePreview() {
-  const [activeDevice, setActiveDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [activeDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [showAllDevices, setShowAllDevices] = useState(false);
   const { state, dispatch } = useBuilder();
 

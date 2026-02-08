@@ -1,5 +1,4 @@
 import type { ComponentId } from '@/types/components';
-import { z } from 'zod';
 
 export interface ComponentVariant {
   id: string;
@@ -58,8 +57,8 @@ class VariantRegistry {
     try {
       if (typeof window === 'undefined') return;
       const data = Array.from(this.variants.entries()).map(([id, v]) => ({
-        id,
         ...v,
+        id,
         createdAt: v.createdAt.toISOString(),
       }));
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));

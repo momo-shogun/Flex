@@ -4,7 +4,6 @@ import { z } from 'zod';
 import type { BuilderActions } from '@/contexts/BuilderActionsRefContext';
 import { generateProductionCode } from '@/lib/export/production-generator';
 import { setLastExport } from '@/lib/export/last-export';
-import { downloadAsZip } from '@/lib/export/deploy';
 
 const defaultConfig = {
   framework: 'react' as const,

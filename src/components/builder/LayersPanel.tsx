@@ -17,6 +17,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useBuilder } from '@/contexts/BuilderContext';
 import { useTamboThreadInput, useTamboContextAttachment } from '@tambo-ai/react';
 import { cn } from '@/lib/utils';
+import { toComponentId } from '@/types/builder.types';
 import type { ComponentId } from '@/types/components';
 import { toast } from 'sonner';
 
@@ -348,7 +349,7 @@ Call merge_builder_sections with sectionId1="${sectionId1}" and sectionId2="${se
                   style={{ borderColor: 'hsl(var(--builder-divider))' }}
                 >
                   {state.sections.map((section, index) => {
-                    const Icon = sectionIcons[section.type] ?? Layout;
+                    const Icon = sectionIcons[toComponentId(section.type)] ?? Layout;
                     const isSelected = state.selectedId === section.id;
                     const isHovered = state.hoveredId === section.id;
                     const nextSection = state.sections[index + 1];

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Command } from 'cmdk';
 import type { ComponentId } from '../../types/components';
@@ -71,19 +71,21 @@ export function CommandPalette({
       >
         <Command
           className="w-full rounded-lg border border-slate-700 bg-slate-900 shadow-2xl overflow-hidden"
-        onSelect={(value) => {
-          if (value === WEBSITE_BUILDER_VALUE) {
-            navigate('/tools/website-builder');
-            setOpen(false);
-            return;
+          onSelect={
+            ((value: string) => {
+              if (value === WEBSITE_BUILDER_VALUE) {
+                navigate('/tools/website-builder');
+                setOpen(false);
+                return;
+              }
+              const item = ALL_ITEMS.find((i) => i.id === value);
+              if (item) {
+                onSelectComponent(item.id);
+                setOpen(false);
+              }
+            }) as unknown as React.ReactEventHandler<HTMLDivElement>
           }
-          const item = ALL_ITEMS.find((i) => i.id === value);
-          if (item) {
-            onSelectComponent(item.id);
-            setOpen(false);
-          }
-        }}
-      >
+        >
         <Command.Input
           placeholder="Search components..."
           className="w-full px-4 py-3 bg-transparent border-b border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-0 text-base"

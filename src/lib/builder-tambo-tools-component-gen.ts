@@ -40,7 +40,7 @@ export function createComponentGenTools(
         );
 
         if (addToCanvas && builderActionsRef.current) {
-          const sectionId = builderActionsRef.current.addSection(componentId);
+          const sectionId = builderActionsRef.current.addSection(componentId as import('@/types/builder.types').SectionType);
           builderActionsRef.current.dispatch({
             type: 'UPDATE_SECTION',
             id: sectionId,

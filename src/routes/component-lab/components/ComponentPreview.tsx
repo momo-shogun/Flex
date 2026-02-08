@@ -1,5 +1,3 @@
-import type { ComponentId } from '@/types/components';
-
 interface ComponentPreviewProps {
   componentId: string | null;
   props: Record<string, unknown>;

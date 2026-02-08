@@ -17,6 +17,8 @@ const COMPONENT_IMPORT_NAMES: Record<ComponentId, string> = {
   'smooth-scroll-hero': 'SmoothScrollHero',
   'aurora-hero': 'AuroraHero',
   faq: 'FAQ',
+  'silk-hero-splittext': 'SilkHeroSplitText',
+  'aurora-hero-splittext': 'AuroraHeroSplitText',
 };
 
 export function getInstallCommand(packageManager: 'pnpm' | 'npm' | 'yarn' | 'bun'): string {

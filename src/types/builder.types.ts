@@ -5,6 +5,12 @@ export type DeviceType = 'desktop' | 'tablet' | 'mobile';
 /** Section type: built-in component id or AI-generated id (gen-*) */
 export type SectionType = ComponentId | `gen-${string}`;
 
+/** Narrow SectionType to ComponentId for APIs that require ComponentId (gen-* uses fallback). */
+export function toComponentId(t: SectionType): ComponentId {
+  if (typeof t === 'string' && t.startsWith('gen-')) return 'split-text';
+  return t as ComponentId;
+}
+
 export interface PageSection {
   id: string;
   type: SectionType;

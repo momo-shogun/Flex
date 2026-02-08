@@ -78,22 +78,25 @@ export function TamboModePanel({
   }, [messages.length, scrollToBottom, checkScroll]);
 
   // Stage minimal context for the next message (Interactables already send props to Tambo; avoid duplicate large payloads).
+  // Only run when selectedComponent changes; Tambo's add/clear can have unstable refs and would cause an infinite loop.
+  const addContextAttachmentRef = useRef(addContextAttachment);
+  const clearContextAttachmentsRef = useRef(clearContextAttachments);
+  addContextAttachmentRef.current = addContextAttachment;
+  clearContextAttachmentsRef.current = clearContextAttachments;
   useEffect(() => {
     const editableComponents = ['split-text', 'blur-text', 'text-cursor', 'faq'];
     if (!editableComponents.includes(selectedComponent)) {
-      clearContextAttachments();
+      clearContextAttachmentsRef.current();
       return;
     }
-
-    // One-line context: component focus only. Tambo gets current props from Interactable registry.
     const contextLine = `Editing: ${selectedComponent}. Update this component's props via the Interactable.`;
-    clearContextAttachments();
-    addContextAttachment({
+    clearContextAttachmentsRef.current();
+    addContextAttachmentRef.current({
       context: contextLine,
       displayName: selectedComponent,
       type: 'playground-component',
     });
-  }, [selectedComponent, addContextAttachment, clearContextAttachments]);
+  }, [selectedComponent]);
 
   // Sync Tambo thread messages with localStorage (per-component history).
   // Handle streaming: update messages as they arrive (thread.messages updates during streaming).

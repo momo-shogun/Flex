@@ -3,12 +3,9 @@ import { defineTool } from '@tambo-ai/react';
 import { z } from 'zod';
 import type { BuilderActions } from '@/contexts/BuilderActionsRefContext';
 import type { WebsiteTemplate } from '@/lib/templates';
-import {
-  WEBSITE_TEMPLATES,
-  getCustomTemplates,
-  addCustomTemplate,
-  updateCustomTemplate,
-} from '@/lib/templates';
+import { addCustomTemplate, updateCustomTemplate } from '@/lib/templates';
+import { toComponentId } from '@/types/builder.types';
+import type { ComponentId } from '@/types/components';
 
 const sectionSchema = z.object({
   type: z.string(),
@@ -37,7 +34,9 @@ export function createTemplateStudioTools(
         description,
         category,
         sections: sections.map((s) => ({
-          ...s,
+          type: s.type as ComponentId,
+          label: s.label,
+          props: s.props,
           purpose: `Part of ${name} template`,
         })),
         tags: tags ?? [],
@@ -67,7 +66,18 @@ Use it with: "Generate website from template" (search for "${name}").`;
     }),
     outputSchema: z.string(),
     tool: async ({ templateId, updates }) => {
-      const ok = updateCustomTemplate(templateId, updates);
+      const normalizedUpdates: Partial<WebsiteTemplate> = updates.sections
+        ? {
+            ...updates,
+            sections: updates.sections.map((s) => ({
+              type: s.type as ComponentId,
+              label: s.label,
+              props: s.props,
+              purpose: (s as { purpose?: string }).purpose ?? 'Section',
+            })),
+          }
+        : updates as Partial<WebsiteTemplate>;
+      const ok = updateCustomTemplate(templateId, normalizedUpdates);
       if (!ok) return `❌ Template ${templateId} not found.`;
       return `✅ Updated template **${templateId}**.`;
     },
@@ -93,7 +103,7 @@ Use it with: "Generate website from template" (search for "${name}").`;
         description,
         category,
         sections: state.sections.map((s) => ({
-          type: s.type,
+          type: toComponentId(s.type),
           label: s.label,
           props: s.props,
           purpose: `Section from ${name}`,

@@ -23,6 +23,11 @@ import type { SplitTextProps, BlurTextProps, TextCursorProps } from '@/types/com
 import type { SilkProps, FloatingLinesProps, LightPillarProps } from '@/types/components';
 import { componentRegistry } from '@/lib/component-generator/registry';
 
+/** Interactable components accept id for Tambo; types may not expose it. */
+type InteractableSplitTextProps = SplitTextProps & { id: string };
+type InteractableBlurTextProps = BlurTextProps & { id: string };
+type InteractableTextCursorProps = TextCursorProps & { id: string };
+
 export function CanvasPreview() {
   const { state, dispatch } = useBuilder();
 
@@ -229,8 +234,8 @@ export function CanvasPreview() {
                   {...{
                     ...DEFAULT_SPLIT_TEXT_PROPS,
                     ...(section.props as Partial<SplitTextProps>),
-                  }}
-                  id={section.id}
+                    id: section.id,
+                  } as InteractableSplitTextProps}
                 />
               </div>
             )}
@@ -243,8 +248,8 @@ export function CanvasPreview() {
                   {...{
                     ...DEFAULT_BLUR_TEXT_PROPS,
                     ...(section.props as Partial<BlurTextProps>),
-                  }}
-                  id={section.id}
+                    id: section.id,
+                  } as InteractableBlurTextProps}
                 />
               </div>
             )}
@@ -257,8 +262,8 @@ export function CanvasPreview() {
                   {...{
                     ...DEFAULT_TEXT_CURSOR_PROPS,
                     ...(section.props as Partial<TextCursorProps>),
-                  }}
-                  id={section.id}
+                    id: section.id,
+                  } as InteractableTextCursorProps}
                 />
               </div>
             )}
@@ -276,8 +281,8 @@ export function CanvasPreview() {
                       {...{
                         ...DEFAULT_SPLIT_TEXT_PROPS,
                         ...(section.props as Partial<SplitTextProps>),
-                      }}
-                      id={section.id}
+                        id: section.id,
+                      } as InteractableSplitTextProps}
                     />
                   ) : (
                     <h2 className="text-4xl font-bold text-white">
@@ -286,7 +291,7 @@ export function CanvasPreview() {
                         : 'Silk Background'}
                     </h2>
                   )}
-                  {section.props?.subtitle && String(section.props.subtitle).trim() !== '' && (
+                  {section.props?.subtitle != null && String(section.props.subtitle).trim() !== '' && (
                     <p className="max-w-2xl text-center text-base text-slate-200/90">
                       {String(section.props.subtitle)}
                     </p>
@@ -310,10 +315,10 @@ export function CanvasPreview() {
                     {...{
                       ...DEFAULT_SPLIT_TEXT_PROPS,
                       ...(section.props as Partial<SplitTextProps>),
-                    }}
-                    id={section.id}
+                      id: section.id,
+                    } as InteractableSplitTextProps}
                   />
-                  {section.props?.subtitle && String(section.props.subtitle).trim() !== '' && (
+                  {section.props?.subtitle != null && String(section.props.subtitle).trim() !== '' && (
                     <p className="max-w-2xl text-center text-base text-slate-200/90">
                       {String(section.props.subtitle)}
                     </p>
@@ -358,19 +363,19 @@ export function CanvasPreview() {
             {section.type === 'smooth-scroll-hero' && (
               <div className="relative w-full">
                 <SmoothScrollHero />
-                {(section.props?.text || section.props?.subtitle) && (
+                {(section.props?.text != null || section.props?.subtitle != null) && (
                   <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-4">
                     <div className="pointer-events-auto max-w-3xl text-center space-y-3">
-                      {section.props?.text && String(section.props.text).trim() !== '' && (
+                      {section.props?.text != null && String(section.props.text).trim() !== '' && (
                         <InteractableSplitText
                           {...{
                             ...DEFAULT_SPLIT_TEXT_PROPS,
                             ...(section.props as Partial<SplitTextProps>),
-                          }}
-                          id={section.id}
+                            id: section.id,
+                          } as InteractableSplitTextProps}
                         />
                       )}
-                      {section.props?.subtitle && String(section.props.subtitle).trim() !== '' && (
+                      {section.props?.subtitle != null && String(section.props.subtitle).trim() !== '' && (
                         <p className="text-base text-slate-100/90">
                           {String(section.props.subtitle)}
                         </p>
@@ -398,8 +403,8 @@ export function CanvasPreview() {
                       className:
                         (section.props?.className as string) ||
                         'max-w-3xl bg-gradient-to-br from-white to-gray-400 bg-clip-text text-center text-3xl font-medium leading-tight text-transparent sm:text-5xl sm:leading-tight md:text-7xl md:leading-tight',
-                    }}
-                    id={section.id}
+                      id: section.id,
+                    } as InteractableSplitTextProps}
                   />
                 }
                 innerStyle={getInnerLayoutStyle(section.props as Record<string, unknown>)}

@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/tooltip';
 import { useBuilder, clearBuilderStorage } from '@/contexts/BuilderContext';
 import type { DeviceType } from '@/types/builder.types';
+import { toComponentId } from '@/types/builder.types';
 import { downloadProjectZip } from '@/utils/website-builder-export';
 import { toast } from 'sonner';
 
@@ -48,7 +49,7 @@ export function BuilderHeader() {
     }
     try {
       await downloadProjectZip(
-        state.sections.map((s) => ({ id: s.id, type: s.type }))
+        state.sections.map((s) => ({ id: s.id, type: toComponentId(s.type) }))
       );
       toast.success('Project downloaded.');
     } catch (err) {

@@ -31,6 +31,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useBuilder } from '@/contexts/BuilderContext';
 import { INNER_LAYOUT_TYPES } from '@/contexts/BuilderContext';
+import { toComponentId } from '@/types/builder.types';
 import type { ComponentId } from '@/types/components';
 
 const borderCls = 'border-b';
@@ -98,7 +99,7 @@ function InspectSection({
 }
 
 export function InspectorPanel() {
-  const { state, dispatch, selectedSection } = useBuilder();
+  const { dispatch, selectedSection } = useBuilder();
 
   const updateProp = (key: string, value: unknown) => {
     if (selectedSection) {
@@ -154,7 +155,7 @@ export function InspectorPanel() {
   const isDev = import.meta.env.MODE === 'development';
 
   const props = selectedSection.props as Record<string, unknown>;
-  const showInnerLayout = INNER_LAYOUT_TYPES.includes(selectedSection.type);
+  const showInnerLayout = INNER_LAYOUT_TYPES.includes(toComponentId(selectedSection.type));
 
   return (
     <div className="h-full flex flex-col min-w-0 bg-slate-900/50">
@@ -211,7 +212,7 @@ export function InspectorPanel() {
         {/* Content */}
         <InspectSection title="Content" defaultOpen>
           <ContentProperties
-            type={selectedSection.type}
+            type={toComponentId(selectedSection.type)}
             props={props}
             onUpdate={updateProp}
           />
@@ -317,7 +318,7 @@ export function InspectorPanel() {
         {/* Layout — padding & margin */}
         <InspectSection title="Layout">
           <LayoutProperties
-            type={selectedSection.type}
+            type={toComponentId(selectedSection.type)}
             props={props}
             onUpdate={updateProp}
             showInnerLayout={showInnerLayout}
@@ -495,7 +496,7 @@ export function InspectorPanel() {
 }
 
 function LayoutProperties({
-  type,
+  type: _type,
   props,
   onUpdate,
   showInnerLayout,

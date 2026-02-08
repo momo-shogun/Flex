@@ -115,8 +115,7 @@ ${sections.join('\n')}
 `;
 }
 
-function generateSectionPlaceholder(config: ExportConfig): string {
-  const ext = config.typescript ? 'tsx' : 'jsx';
+function generateSectionPlaceholder(_config: ExportConfig): string {
   return `import React from 'react';
 
 export function SectionPlaceholder({ type, label, props }: { type: string; label: string; props: Record<string, unknown> }) {

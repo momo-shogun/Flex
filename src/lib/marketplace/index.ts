@@ -19,7 +19,7 @@ const MOCK_ITEMS: MarketplaceComponent[] = [];
 
 /** Publish a component to the marketplace (stub: requires backend API). */
 export async function publishComponent(
-  component: Omit<MarketplaceComponent, 'id' | 'downloads' | 'rating'>
+  _component: Omit<MarketplaceComponent, 'id' | 'downloads' | 'rating'>
 ): Promise<string> {
   const id = `mp-${Date.now()}`;
   if (typeof window !== 'undefined') {

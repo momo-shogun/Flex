@@ -34,6 +34,8 @@ const COMPONENT_TITLES: Record<ComponentId, string> = {
   'smooth-scroll-hero': 'Smooth Scroll Hero',
   'aurora-hero': 'Aurora Hero',
   faq: 'FAQ',
+  'silk-hero-splittext': 'Silk Hero + Split Text',
+  'aurora-hero-splittext': 'Aurora Hero + Split Text',
 };
 
 interface MainContentProps {

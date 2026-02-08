@@ -133,7 +133,7 @@ export function LightPillar({
       const w = container.clientWidth;
       const h = container.clientHeight;
       renderer.setSize(w, h);
-      material.uniforms.uResolution.value.set(w, h);
+      (material.uniforms.uResolution.value as THREE.Vector2).set(w, h);
     };
     window.addEventListener('resize', handleResize);
 

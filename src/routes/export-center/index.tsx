@@ -8,9 +8,13 @@ import { DeployPanel } from './components/DeployPanel';
 import { createExportCenterTools } from './tools/export-tools';
 
 export default function ExportCenterPage() {
-  const [exportedFiles, setExportedFiles] = useState<Map<string, string>>(new Map());
-  const [exportConfig, setExportConfig] = useState({
-    framework: 'nextjs' as const,
+  const [exportedFiles] = useState<Map<string, string>>(new Map());
+  const [exportConfig, setExportConfig] = useState<{
+    framework: 'react' | 'nextjs';
+    typescript: boolean;
+    styling: string;
+  }>({
+    framework: 'nextjs',
     typescript: true,
     styling: 'tailwind',
   });

@@ -2,6 +2,7 @@ import type { MutableRefObject } from 'react';
 import { defineTool } from '@tambo-ai/react';
 import { z } from 'zod';
 import type { BuilderActions } from '@/contexts/BuilderActionsRefContext';
+import { toComponentId } from '@/types/builder.types';
 import type { ComponentId } from '@/types/components';
 import {
   WEBSITE_TEMPLATES,
@@ -165,8 +166,8 @@ export function createBuilderTools(
         // Otherwise, respect caller's mergedType if provided
         finalType = mergedType;
       } else {
-        // Fallback: keep first section type
-        finalType = section1.type;
+        // Fallback: keep first section type (narrow for composite types)
+        finalType = toComponentId(section1.type);
       }
 
       // Merge props (for known composites, merge smartly)

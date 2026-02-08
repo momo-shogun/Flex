@@ -68,40 +68,38 @@ export function useComponentChatHistory(componentId: ComponentId) {
   const addMessage = useCallback(
     (role: 'user' | 'assistant', content: string, id?: string) => {
       const messageId = id || `${Date.now()}-${Math.random()}`;
-      // Check if message already exists - if yes, update it (for streaming)
-      const existingIndex = messages.findIndex((m) => m.id === messageId);
-      if (existingIndex >= 0) {
-        // Update existing message (streaming update)
-        const updated = [...messages];
-        updated[existingIndex] = {
-          ...updated[existingIndex],
+      setMessages((prev) => {
+        const existingIndex = prev.findIndex((m) => m.id === messageId);
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          updated[existingIndex] = {
+            ...updated[existingIndex],
+            content,
+            timestamp: Date.now(),
+          };
+          try {
+            localStorage.setItem(storageKey, JSON.stringify(updated));
+          } catch {
+            // ignore
+          }
+          return updated;
+        }
+        const newMessage: ChatMessage = {
+          id: messageId,
+          role,
           content,
-          timestamp: Date.now(), // Update timestamp on content change
+          timestamp: Date.now(),
         };
-        setMessages(updated);
+        const updated = [...prev, newMessage];
         try {
           localStorage.setItem(storageKey, JSON.stringify(updated));
         } catch {
-          // ignore storage errors
+          // ignore
         }
-        return;
-      }
-      // Add new message
-      const newMessage: ChatMessage = {
-        id: messageId,
-        role,
-        content,
-        timestamp: Date.now(),
-      };
-      const updated = [...messages, newMessage];
-      setMessages(updated);
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(updated));
-      } catch {
-        // ignore storage errors
-      }
+        return updated;
+      });
     },
-    [messages, storageKey]
+    [storageKey]
   );
 
   const saveLastUpdate = useCallback(

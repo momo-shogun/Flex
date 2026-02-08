@@ -19,7 +19,7 @@ function debounce<T extends (...args: Parameters<T>) => void>(
     if (timeout) {
       clearTimeout(timeout);
       timeout = null;
-      fn();
+      (fn as unknown as (...args: unknown[]) => void)();
     }
   };
   return wrapped as T & { flush?: () => void };
