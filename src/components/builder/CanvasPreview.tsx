@@ -21,6 +21,7 @@ import {
 } from '@/types/components';
 import type { SplitTextProps, BlurTextProps, TextCursorProps } from '@/types/components';
 import type { SilkProps, FloatingLinesProps, LightPillarProps } from '@/types/components';
+import { componentRegistry } from '@/lib/component-generator/registry';
 
 export function CanvasPreview() {
   const { state, dispatch } = useBuilder();
@@ -199,6 +200,25 @@ export function CanvasPreview() {
                 </div>
               </div>
             )}
+
+            {typeof section.type === 'string' &&
+              section.type.startsWith('gen-') &&
+              (() => {
+                const def = componentRegistry.getComponent(section.type);
+                if (!def) {
+                  return (
+                    <div className="min-h-[200px] flex items-center justify-center bg-slate-800/50 text-slate-400 rounded-lg">
+                      Unknown generated component
+                    </div>
+                  );
+                }
+                const Comp = def.component;
+                return (
+                  <div className="min-h-[200px] w-full flex items-center justify-center p-4">
+                    <Comp {...(section.props as Record<string, unknown>)} />
+                  </div>
+                );
+              })()}
 
             {section.type === 'split-text' && (
               <div

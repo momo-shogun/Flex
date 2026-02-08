@@ -2,9 +2,12 @@ import type { ComponentId } from './components';
 
 export type DeviceType = 'desktop' | 'tablet' | 'mobile';
 
+/** Section type: built-in component id or AI-generated id (gen-*) */
+export type SectionType = ComponentId | `gen-${string}`;
+
 export interface PageSection {
   id: string;
-  type: ComponentId;
+  type: SectionType;
   label: string;
   visible: boolean;
   props: Record<string, unknown>;
